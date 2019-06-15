@@ -2,8 +2,8 @@
   <nav class="site-navbar" :class="'site-navbar--' + navbarLayoutType">
     <div class="site-navbar__header">
       <h1 class="site-navbar__brand" @click="$router.push({ name: 'home' })">
-        <a class="site-navbar__brand-lg" href="javascript:;">人人快速开发平台</a>
-        <a class="site-navbar__brand-mini" href="javascript:;">人人</a>
+        <a class="site-navbar__brand-lg" href="javascript:;">教务管理系统</a>
+        <a class="site-navbar__brand-mini" href="javascript:;">教务</a>
       </h1>
     </div>
     <div class="site-navbar__body clearfix">
@@ -19,28 +19,30 @@
         mode="horizontal">
         <el-menu-item index="1" @click="$router.push({ name: 'theme' })">
           <template slot="title">
-            <el-badge value="new">
-              <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
-            </el-badge>
+<!--            <el-badge value="new">-->
+            <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
+            <a>设置</a>
+<!--            </el-badge>-->
           </template>
         </el-menu-item>
-        <el-menu-item index="2">
-          <el-badge value="hot">
-            <a href="//www.renren.io/" target="_blank">官方社区</a>
-          </el-badge>
-        </el-menu-item>
-        <el-submenu index="3">
-          <template slot="title">Git源码</template>
-          <el-menu-item index="2-1"><a href="//github.com/daxiongYang/renren-fast-vue" target="_blank">前端</a></el-menu-item>
-          <el-menu-item index="2-2"><a href="//git.oschina.net/renrenio/renren-fast" target="_blank">后台</a></el-menu-item>
-          <el-menu-item index="2-3"><a href="//git.oschina.net/renrenio/renren-generator" target="_blank">代码生成器</a></el-menu-item>
-        </el-submenu>
+<!--        <el-menu-item index="2">-->
+<!--          <el-badge value="hot">-->
+<!--            <a href="//www.renren.io/" target="_blank">官方社区</a>-->
+<!--          </el-badge>-->
+<!--        </el-menu-item>-->
+<!--        <el-submenu index="3">-->
+<!--          <template slot="title">Git源码</template>-->
+<!--          <el-menu-item index="2-1"><a href="//github.com/daxiongYang/renren-fast-vue" target="_blank">前端</a></el-menu-item>-->
+<!--          <el-menu-item index="2-2"><a href="//git.oschina.net/renrenio/renren-fast" target="_blank">后台</a></el-menu-item>-->
+<!--          <el-menu-item index="2-3"><a href="//git.oschina.net/renrenio/renren-generator" target="_blank">代码生成器</a></el-menu-item>-->
+<!--        </el-submenu>-->
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
               <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}
             </span>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="updateInFormationHandle()">个人设置</el-dropdown-item>
               <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
               <el-dropdown-item @click.native="logoutHandle()">退出</el-dropdown-item>
             </el-dropdown-menu>
@@ -48,22 +50,29 @@
         </el-menu-item>
       </el-menu>
     </div>
+
+    <!-- 弹窗, 修改个人信息 -->
+    <update-information v-if="updateInformationVisible" ref="updateInformation"></update-information>
     <!-- 弹窗, 修改密码 -->
     <update-password v-if="updatePassowrdVisible" ref="updatePassowrd"></update-password>
+
   </nav>
 </template>
 
 <script>
   import UpdatePassword from './main-navbar-update-password'
+  import UpdateInformation from './main-navbar-update-information'
   import { clearLoginInfo } from '@/utils'
   export default {
     data () {
       return {
-        updatePassowrdVisible: false
+        updatePassowrdVisible: false,
+        updateInformationVisible: false
       }
     },
     components: {
-      UpdatePassword
+      UpdatePassword,
+      UpdateInformation
     },
     computed: {
       navbarLayoutType: {
@@ -82,6 +91,13 @@
       }
     },
     methods: {
+      // 修改个人信息
+      updateInFormationHandle () {
+        this.updateInformationVisible = true
+        this.$nextTick(() => {
+          this.$refs.updateInformation.init()
+        })
+      },
       // 修改密码
       updatePasswordHandle () {
         this.updatePassowrdVisible = true
