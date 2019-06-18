@@ -4,11 +4,8 @@
     :visible.sync="visible"
     :append-to-body="true">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-      <el-form-item label="账号">
-        <span>{{ userName }}</span>
-      </el-form-item>
       <el-form-item label="昵称" prop="nickName">
-        <el-input type="text" v-model="dataForm.nickName"></el-input>
+        <el-input type="text" v-model="dataForm.nickname"></el-input>
       </el-form-item>
       <el-form-item label="手机号码" prop="mobile">
         <el-input type="text" v-model="dataForm.mobile"></el-input>
@@ -47,8 +44,9 @@
         visible: false,
         dataForm: {
           id: 0,
-          userName: '',
-          nickName: '',
+          // userName: '',
+          sysUserId: 0,
+          nickname: '',
           mobile: '',
           email: ''
         },
@@ -67,23 +65,27 @@
         }
       }
     },
-    computed: {
-      userName: {
-        get () { return this.$store.state.user.name }
-      }
-    },
+    computed: {},
     methods: {
       // 初始化
-      init () {
-        this.dataForm.id = this.$store.state.user.id
-        this.dataForm.userName = this.$store.state.user.name
-
+      init (sysUserId) {
+        this.dataForm.sysUserId = sysUserId
+        // this.dataForm.userName = this.$store.state.user.name
+        this.$message({
+          message: sysUserId,
+          type: 'success',
+          duration: 1500
+        })
         this.$http({
-          url: this.$http.adornUrl(`/sys/user/info/${this.dataForm.id}`),
+          // url: this.$http.adornUrl(`/sys/user/info/${this.dataForm.id}`),
+          url: this.$http.adornUrl(`/weixin/employee/infoByUserId/${this.dataForm.sysUserId}`),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
           if (data && data.code === 0) {
+            // this.dataForm.id = !data.user.id ? 0 : data.user.id
+            this.dataForm.sysUserId = data.user.sysUserId
+            this.dataForm.nickname = data.user.nickname
             this.dataForm.email = data.user.email
             this.dataForm.mobile = data.user.mobile
           }
@@ -101,7 +103,7 @@
               url: this.$http.adornUrl(`/sys/user/update`),
               method: 'post',
               data: this.$http.adornData({
-                'username': this.dataForm.userName,
+                // 'username': this.dataForm.userName,
                 'userId': this.dataForm.id || undefined,
                 'email': this.dataForm.email,
                 'mobile': this.dataForm.mobile

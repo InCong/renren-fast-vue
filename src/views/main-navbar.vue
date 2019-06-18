@@ -44,6 +44,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="updateInFormationHandle()">个人设置</el-dropdown-item>
               <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
+              <el-dropdown-item @click.native="bindingWXHandle()">绑定微信</el-dropdown-item>
               <el-dropdown-item @click.native="logoutHandle()">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -55,24 +56,28 @@
     <update-information v-if="updateInformationVisible" ref="updateInformation"></update-information>
     <!-- 弹窗, 修改密码 -->
     <update-password v-if="updatePassowrdVisible" ref="updatePassowrd"></update-password>
-
+    <!-- 弹窗, 绑定微信 -->
+    <binding-WX v-if="bindingWXVisible" ref="bindingWX"></binding-WX>
   </nav>
 </template>
 
 <script>
   import UpdatePassword from './main-navbar-update-password'
   import UpdateInformation from './main-navbar-update-information'
+  import BindingWX from './main-navbar-bindingWX'
   import { clearLoginInfo } from '@/utils'
   export default {
     data () {
       return {
         updatePassowrdVisible: false,
-        updateInformationVisible: false
+        updateInformationVisible: false,
+        bindingWXVisible: false
       }
     },
     components: {
       UpdatePassword,
-      UpdateInformation
+      UpdateInformation,
+      BindingWX
     },
     computed: {
       navbarLayoutType: {
@@ -88,6 +93,9 @@
       },
       userName: {
         get () { return this.$store.state.user.name }
+      },
+      userId: {
+        get () { return this.$store.state.user.id }
       }
     },
     methods: {
@@ -95,7 +103,7 @@
       updateInFormationHandle () {
         this.updateInformationVisible = true
         this.$nextTick(() => {
-          this.$refs.updateInformation.init()
+          this.$refs.updateInformation.init(this.$store.state.user.id)
         })
       },
       // 修改密码
@@ -123,6 +131,13 @@
             }
           })
         }).catch(() => {})
+      },
+      // 绑定微信用户
+      bindingWXHandle () {
+        this.bindingWXVisible = true
+        this.$nextTick(() => {
+          this.$refs.bindingWX.init()
+        })
       }
     }
   }
