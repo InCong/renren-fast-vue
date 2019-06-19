@@ -4,8 +4,23 @@
     :visible.sync="visible"
     :append-to-body="true">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-      <el-form-item label="昵称" prop="nickName">
-        <el-input type="text" v-model="dataForm.nickname"></el-input>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="昵称" prop="nickname">
+            <el-input type="text" v-model="dataForm.nickname"></el-input>
+          </el-form-item>
+        </el-col>
+<!--        <el-col :span="12">-->
+<!--          <el-form-item label="昵称" prop="nickname">-->
+<!--            <el-input type="text" v-model="dataForm.nickname"></el-input>-->
+<!--          </el-form-item>-->
+<!--        </el-col>-->
+      </el-row>
+      <el-form-item label="性别" size="mini" prop="sex">
+        <el-radio-group v-model="dataForm.sex">
+          <el-radio :label="1">男</el-radio>
+          <el-radio :label="0">女</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item label="手机号码" prop="mobile">
         <el-input type="text" v-model="dataForm.mobile"></el-input>
@@ -44,14 +59,14 @@
         visible: false,
         dataForm: {
           id: 0,
-          // userName: '',
-          sysUserId: 0,
+          sex: 1,
+          sysUserId: '',
           nickname: '',
           mobile: '',
           email: ''
         },
         dataRule: {
-          nickName: [
+          nickname: [
             { required: true, message: '昵称不能为空', trigger: 'blur' }
           ],
           mobile: [
@@ -65,46 +80,44 @@
         }
       }
     },
-    computed: {},
+    computed: {
+      userName: {
+        get () { return this.$store.state.user.name },
+        set (val) { this.$store.commit('user/updateName', val) }
+      }
+    },
     methods: {
       // 初始化
       init (sysUserId) {
         this.dataForm.sysUserId = sysUserId
-        // this.dataForm.userName = this.$store.state.user.name
-        this.$message({
-          message: sysUserId,
-          type: 'success',
-          duration: 1500
-        })
         this.$http({
           // url: this.$http.adornUrl(`/sys/user/info/${this.dataForm.id}`),
           url: this.$http.adornUrl(`/weixin/employee/infoByUserId/${this.dataForm.sysUserId}`),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          if (data && data.code === 0) {
-            // this.dataForm.id = !data.user.id ? 0 : data.user.id
-            this.dataForm.sysUserId = data.user.sysUserId
-            this.dataForm.nickname = data.user.nickname
-            this.dataForm.email = data.user.email
-            this.dataForm.mobile = data.user.mobile
+          if (data && data.employee && data.code === 0) {
+            this.dataForm.id = data.employee.id
+            this.dataForm.sex = data.employee.sex
+            this.dataForm.nickname = data.employee.nickname
+            this.dataForm.email = data.employee.email
+            this.dataForm.mobile = data.employee.mobile
           }
         }).then(() => {
           this.visible = true
-          this.$nextTick(() => {
-            this.$refs['dataForm'].resetFields()
-          })
         })
       },
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/user/update`),
+              url: this.$http.adornUrl(`/weixin/employee/${!this.dataForm.id ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
-                // 'username': this.dataForm.userName,
-                'userId': this.dataForm.id || undefined,
+                'id': this.dataForm.id || undefined,
+                'sex': this.dataForm.sex,
+                'nickname': this.dataForm.nickname,
+                'sysUserId': this.dataForm.sysUserId,
                 'email': this.dataForm.email,
                 'mobile': this.dataForm.mobile
               })
@@ -115,6 +128,7 @@
                   type: 'success',
                   duration: 1500
                 })
+                this.userName = this.dataForm.nickname
                 this.visible = false
               } else {
                 this.visible = true

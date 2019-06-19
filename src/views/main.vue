@@ -48,6 +48,7 @@
     },
     created () {
       this.getUserInfo()
+      // this.getNickName()
     },
     mounted () {
       this.resetDocumentClientHeight()
@@ -72,6 +73,18 @@
             this.userId = data.user.userId
             this.userName = data.user.username
           }
+        }).then(() => {
+          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' + this.userId)
+          this.$http({
+            url: this.$http.adornUrl('/weixin/employee/infoByUserId/' + this.userId),
+            method: 'get',
+            params: this.$http.adornParams()
+          }).then(({data}) => {
+            if (data && data.employee && data.code === 0) {
+              this.loading = false
+              this.userName = data.employee.nickname ? data.employee.nickname : this.userName
+            }
+          })
         })
       }
     }
