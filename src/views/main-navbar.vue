@@ -134,10 +134,47 @@
         }).catch(() => {})
       },
       // 绑定微信用户
-      bindingWXHandle () {
-        this.bindingWXVisible = true
-        this.$nextTick(() => {
-          this.$refs.bindingWX.init()
+      bindingWXHandle: function () {
+        this.$http({
+          url: this.$http.adornUrl('/weixin/employee/getOpenId'),
+          method: 'post',
+          data: this.$http.adornData()
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            if (data.openId) {
+              this.$message({
+                message: '已绑定微信，无需再次绑定！',
+                type: 'error',
+                duration: 1500
+              })
+            } else {
+              this.$http({
+                url: this.$http.adornUrl('/weixin/employee/getQrCodeUrl'),
+                method: 'post',
+                data: this.$http.adornData()
+              }).then(({data}) => {
+                if (data && data.code === 0) {
+                  if (data.url) {
+                    this.$message({
+                      message: '成功获取微信二维码Url！',
+                      type: 'sucess',
+                      duration: 1500
+                    })
+                    this.bindingWXVisible = true
+                    this.$nextTick(() => {
+                      this.$refs.bindingWX.init(data.url)
+                    })
+                  } else {
+                    this.$message({
+                      message: '获取失败！',
+                      type: 'error',
+                      duration: 1500
+                    })
+                  }
+                }
+              })
+            }
+          }
         })
       }
     }
