@@ -4,7 +4,7 @@
     id="dialog"
     :visible.sync="visible"
     :append-to-body="true"
-    width="470px"
+    width="480px"
     center>
     <span slot="title"><h1 id = "title">绑定微信</h1></span>
     <div class="marginCenter">

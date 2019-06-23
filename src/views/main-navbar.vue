@@ -144,7 +144,7 @@
             if (data.openId) {
               this.$message({
                 message: '已绑定微信，无需再次绑定！',
-                type: 'error',
+                type: 'warning',
                 duration: 1500
               })
             } else {
