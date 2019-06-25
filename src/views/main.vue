@@ -74,7 +74,6 @@
             this.userName = data.user.username
           }
         }).then(() => {
-          console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' + this.userId)
           this.$http({
             url: this.$http.adornUrl('/weixin/employee/infoByUserId'),
             method: 'get',

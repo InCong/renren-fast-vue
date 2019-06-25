@@ -153,9 +153,24 @@
       },
       // 新增 / 修改
       addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+        // this.addOrUpdateVisible = true
+        // this.$nextTick(() => {
+        //   this.$refs.addOrUpdate.init(id)
+        // })
+        this.$http({
+          url: this.$http.adornUrl(`/wechat/TemplateMessage/${id}`),
+          method: 'post',
+          data: this.$http.adornData()
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.$message({
+              message: '消息已成功推送！',
+              type: 'success',
+              duration: 1500
+            })
+          } else {
+            this.$message.error(data.msg)
+          }
         })
       },
       // 删除
