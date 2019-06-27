@@ -140,7 +140,7 @@
       // 绑定微信用户
       bindingWXHandle: function () {
         this.$http({
-          url: this.$http.adornUrl('/weixin/employee/getOpenId'),
+          url: this.$http.adornUrl('/wechat/member/getOpenId'),
           method: 'post',
           data: this.$http.adornData()
         }).then(({data}) => {
@@ -153,7 +153,7 @@
               })
             } else {
               this.$http({
-                url: this.$http.adornUrl('/weixin/employee/getQrCodeUrl'),
+                url: this.$http.adornUrl('/wechat/member/getQrCodeUrl'),
                 method: 'post',
                 data: this.$http.adornData()
               }).then(({data}) => {

@@ -24,6 +24,17 @@
           <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
+      <el-form-item label="身份" prop="identity">
+<!--        <el-input v-model="dataForm.identity" placeholder="身份，0-未知，1-管理员，2-教师，3-学生，9-其它"></el-input>-->
+        <el-select v-model="dataForm.identity" placeholder="请选择">
+          <el-option
+            v-for="item in identities"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="状态" size="mini" prop="status">
         <el-radio-group v-model="dataForm.status">
           <el-radio :label="0">禁用</el-radio>
@@ -75,6 +86,22 @@
       return {
         visible: false,
         roleList: [],
+        identities: [{
+          value: 0,
+          label: '未知'
+        }, {
+          value: 1,
+          label: '管理员'
+        }, {
+          value: 2,
+          label: '教师'
+        }, {
+          value: 3,
+          label: '学生'
+        }, {
+          value: 9,
+          label: '其他'
+        }],
         dataForm: {
           id: 0,
           userName: '',
@@ -83,6 +110,7 @@
           salt: '',
           email: '',
           mobile: '',
+          identity: '',
           roleIdList: [],
           status: 1
         },
@@ -103,6 +131,9 @@
           mobile: [
             { required: true, message: '手机号不能为空', trigger: 'blur' },
             { validator: validateMobile, trigger: 'blur' }
+          ],
+          identity: [
+            { required: true, message: '身份，0-未知，1-管理员，2-教师，3-学生，9-其它不能为空', trigger: 'blur' }
           ]
         }
       }
@@ -133,6 +164,7 @@
                 this.dataForm.salt = data.user.salt
                 this.dataForm.email = data.user.email
                 this.dataForm.mobile = data.user.mobile
+                this.dataForm.identity = data.user.identity
                 this.dataForm.roleIdList = data.user.roleIdList
                 this.dataForm.status = data.user.status
               }
@@ -154,6 +186,7 @@
                 'salt': this.dataForm.salt,
                 'email': this.dataForm.email,
                 'mobile': this.dataForm.mobile,
+                'identity': this.dataForm.identity,
                 'status': this.dataForm.status,
                 'roleIdList': this.dataForm.roleIdList
               })

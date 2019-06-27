@@ -79,14 +79,14 @@
           }
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/weixin/employee/infoByUserId'),
+            url: this.$http.adornUrl('/wechat/member/infoByUserId'),
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            if (data && data.employee && data.code === 0) {
+            if (data && data.member && data.code === 0) {
               this.loading = false
-              this.userName = data.employee.nickname ? data.employee.nickname : this.userName
-              this.headImgUrl = data.employee.headImgUrl ? data.employee.headImgUrl : 'src/assets/img/avatar.png'
+              this.userName = data.member.nickname ? data.member.nickname : this.userName
+              this.headImgUrl = data.member.headImgUrl ? data.member.headImgUrl : 'src/assets/img/avatar.png'
             }
           })
         })
