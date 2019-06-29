@@ -226,7 +226,8 @@
       max-width: 370px;
     }
     &__icon-list {
-      max-height: 180px;
+      /*max-height: 150px;*/
+      height: auto;
       padding: 0;
       margin: -8px 0 0 -8px;
       > .el-button {
