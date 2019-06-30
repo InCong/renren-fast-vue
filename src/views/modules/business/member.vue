@@ -63,7 +63,7 @@
         header-align="center"
         align="center"
         :formatter="formatOrg"
-        label="所属机构（部门）">
+        label="部门">
       </el-table-column>
       <el-table-column
         prop="status"
@@ -144,7 +144,8 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'nickname': this.dataForm.nickname
+            'nickname': this.dataForm.nickname,
+            'id': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -160,11 +161,11 @@
       // 获取机构（部门）ID
       getOrgList () {
         this.$http({
-          url: this.$http.adornUrl('/business/org/select'),
+          url: this.$http.adornUrl('/business/org/list'),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          this.orgList = data.orgList
+          this.orgList = data
         })
       },
       // 每页数

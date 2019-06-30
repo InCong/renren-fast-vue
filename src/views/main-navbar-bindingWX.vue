@@ -33,7 +33,7 @@
     },
     computed: {
       headImgUrl: {
-        get () { return this.$store.state.use.headImgUrl },
+        get () { return this.$store.state.user.headImgUrl },
         set (val) { this.$store.commit('user/updateHeadImgUrl', val) }
       }
     },

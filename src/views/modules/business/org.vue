@@ -109,7 +109,8 @@
           url: this.$http.adornUrl('/business/org/list'),
           method: 'get',
           params: this.$http.adornParams({
-            'name': this.dataForm.name
+            'name': this.$store.state.user.id === 1 ? null : this.dataForm.name, // 超级管理员可以获取全部机构部门的列表
+            'id': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
           if (data) {

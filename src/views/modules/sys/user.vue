@@ -61,6 +61,13 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="bdOrgId"
+        header-align="center"
+        align="center"
+        :formatter="formatOrg"
+        label="部门">
+      </el-table-column>
+      <el-table-column
         prop="status"
         header-align="center"
         align="center"
@@ -112,6 +119,7 @@
           userName: ''
         },
         dataList: [],
+        orgList: [],
         pageIndex: 1,
         pageSize: 10,
         totalPage: 0,
@@ -125,6 +133,7 @@
     },
     activated () {
       this.getDataList()
+      this.getOrgList()
     },
     methods: {
       // 获取数据列表
@@ -147,6 +156,16 @@
             this.totalPage = 0
           }
           this.dataListLoading = false
+        })
+      },
+      // 获取机构（部门）ID
+      getOrgList () {
+        this.$http({
+          url: this.$http.adornUrl('/business/org/select'),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.orgList = data.orgList
         })
       },
       // 每页数
@@ -215,6 +234,17 @@
             }
           })
         }).catch(() => {})
+      },
+      formatOrg: function (row, column) {
+        let orgName = '未知'
+        for (let i = 0; i < this.orgList.length; i++) {
+          let item = this.orgList[i]
+          if (item.id === row.bdOrgId) {
+            orgName = item.name
+            break
+          }
+        }
+        return orgName
       }
     }
   }

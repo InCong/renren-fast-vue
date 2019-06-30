@@ -46,8 +46,12 @@
         set (val) { this.$store.commit('user/updateName', val) }
       },
       headImgUrl: {
-        get () { return this.$store.state.use.headImgUrl },
+        get () { return this.$store.state.user.headImgUrl },
         set (val) { this.$store.commit('user/updateHeadImgUrl', val) }
+      },
+      bdOrgId: {
+        get () { return this.$store.state.user.bdOrgId },
+        set (val) { this.$store.commit('user/updateBdOrgId', val) }
       }
     },
     created () {
@@ -76,6 +80,7 @@
             this.loading = false
             this.userId = data.user.userId
             this.userName = data.user.username
+            this.bdOrgId = data.user.bdOrgId
           }
         }).then(() => {
           this.$http({
@@ -87,6 +92,9 @@
               this.loading = false
               this.userName = data.member.nickname ? data.member.nickname : this.userName
               this.headImgUrl = data.member.headImgUrl ? data.member.headImgUrl : 'src/assets/img/avatar.png'
+            } else {
+              this.loading = false
+              this.headImgUrl = 'src/assets/img/avatar.png'
             }
           })
         })
