@@ -19,6 +19,24 @@
     <el-form-item label="邮箱地址" prop="email">
       <el-input v-model="dataForm.email" placeholder="邮箱地址"></el-input>
     </el-form-item>
+    <el-form-item label="上级" prop="bdOrgName">
+      <el-popover
+        ref="orgListPopover"
+        placement="bottom-start"
+        trigger="click">
+        <el-tree
+          :data="orgList"
+          :props="orgListTreeProps"
+          node-key="id"
+          ref="orgListTree"
+          @current-change="orgListTreeCurrentChangeHandle"
+          :default-expand-all="true"
+          :highlight-current="true"
+          :expand-on-click-node="false">
+        </el-tree>
+      </el-popover>
+      <el-input v-model="dataForm.bdOrgName" v-popover:orgListPopover :readonly="true" placeholder="点击选择部门" class="menu-list__input"></el-input>
+    </el-form-item>
     <el-form-item label="成员状态" prop="status">
 <!--      <el-input v-model="dataForm.status" placeholder="成员状态，0-未知，1-在职，2-离职，9-其它"></el-input>-->
       <el-select v-model="dataForm.status" placeholder="请选择">
@@ -42,6 +60,7 @@
 </template>
 
 <script>
+  import { treeDataTranslate } from '@/utils'
   export default {
     data () {
       return {
@@ -52,8 +71,15 @@
           sex: 0,
           mobile: '',
           email: '',
+          bdOrgId: -2,
+          bdOrgName: '',
           status: 1,
           createTime: ''
+        },
+        orgList: [],
+        orgListTreeProps: {
+          label: 'name',
+          children: 'children'
         },
         status: [{
           value: 0,
@@ -90,10 +116,23 @@
     methods: {
       init (id) {
         this.dataForm.id = id || 0
-        this.visible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].resetFields()
-          if (this.dataForm.id) {
+        this.$http({
+          url: this.$http.adornUrl('/business/org/select'),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.orgList = treeDataTranslate(data.orgList, 'id')
+        }).then(() => {
+          this.visible = true
+          this.$nextTick(() => {
+            this.$refs['dataForm'].resetFields()
+          })
+        }).then(() => {
+          if (!this.dataForm.id) {
+            // 新增
+            this.orgListTreeSetCurrentNode()
+          } else {
+            // 修改
             this.$http({
               url: this.$http.adornUrl(`/wechat/member/info/${this.dataForm.id}`),
               method: 'get',
@@ -104,12 +143,24 @@
                 this.dataForm.sex = data.member.sex
                 this.dataForm.mobile = data.member.mobile
                 this.dataForm.email = data.member.email
+                this.dataForm.bdOrgId = data.member.bdOrgId
                 this.dataForm.status = data.member.status
                 this.dataForm.createTime = data.member.createTime
+                this.orgListTreeSetCurrentNode()
               }
             })
           }
         })
+      },
+      // 菜单树选中
+      orgListTreeCurrentChangeHandle (data, node) {
+        this.dataForm.bdOrgId = data.id
+        this.dataForm.bdOrgName = data.name
+      },
+      // 菜单树设置当前选中节点
+      orgListTreeSetCurrentNode () {
+        this.$refs.orgListTree.setCurrentKey(this.dataForm.bdOrgId)
+        this.dataForm.bdOrgName = (this.$refs.orgListTree.getCurrentNode() || {})['name']
       },
       // 表单提交
       dataFormSubmit () {
@@ -124,6 +175,7 @@
                 'sex': this.dataForm.sex,
                 'mobile': this.dataForm.mobile,
                 'email': this.dataForm.email,
+                'bdOrgId': this.dataForm.bdOrgId,
                 'status': this.dataForm.status,
                 'createTime': this.dataForm.createTime
               })
@@ -148,3 +200,13 @@
     }
   }
 </script>
+
+<style lang="scss">
+  .mod-config {
+    .menu-list__input {
+      > .el-input__inner {
+        cursor: pointer;
+      }
+    }
+  }
+</style>

@@ -2,7 +2,7 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="昵称" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -31,7 +31,6 @@
       <table-tree-column
         prop="name"
         header-align="center"
-        align="center"
         treeKey="id"
         label="名称">
       </table-tree-column>

@@ -16,24 +16,23 @@
     <el-form-item label="描述" prop="remark">
       <el-input v-model="dataForm.remark" placeholder="描述"></el-input>
     </el-form-item>
-    <el-form-item label="上级" prop="parentId">
+    <el-form-item label="上级" prop="parentName">
       <el-popover
-        ref="menuListPopover"
+        ref="orgListPopover"
         placement="bottom-start"
         trigger="click">
         <el-tree
-          :data="menuList"
-          :props="menuListTreeProps"
-          node-key="menuId"
-          ref="menuListTree"
-          @current-change="menuListTreeCurrentChangeHandle"
+          :data="orgList"
+          :props="orgListTreeProps"
+          node-key="id"
+          ref="orgListTree"
+          @current-change="orgListTreeCurrentChangeHandle"
           :default-expand-all="true"
           :highlight-current="true"
           :expand-on-click-node="false">
         </el-tree>
       </el-popover>
-      <el-input v-model="dataForm.parentName" v-popover:menuListPopover :readonly="true" placeholder="点击选择上级" class="menu-list__input"></el-input>
-<!--      <el-input v-model="dataForm.parentId" placeholder="上级ID"></el-input>-->
+      <el-input v-model="dataForm.parentName" v-popover:orgListPopover :readonly="true" placeholder="点击选择部门" class="menu-list__input"></el-input>
     </el-form-item>
     <el-form-item label="创建时间" prop="createTime">
       <el-input v-model="dataForm.createTime" placeholder="创建时间，无需填写，自动生成" :disabled="true"></el-input>
@@ -47,31 +46,33 @@
 </template>
 
 <script>
+  import { treeDataTranslate } from '@/utils'
   export default {
     data () {
       return {
         visible: false,
         dataForm: {
           id: 0,
-          parentId: '',
+          parentId: 0,
+          parentName: '',
           name: '',
           header: '',
           mobile: '',
           remark: ''
         },
         dataRule: {
-          parentId: [
-            { required: true, message: '上级不能为空', trigger: 'blur' }
-          ],
           name: [
             { required: true, message: '名称不能为空', trigger: 'blur' }
+          ],
+          parentName: [
+            { required: true, message: '部门不能为空', trigger: 'change' }
           ],
           header: [
             { required: true, message: '负责人不能为空', trigger: 'blur' }
           ]
         },
-        menuList: [],
-        menuListTreeProps: {
+        orgList: [],
+        orgListTreeProps: {
           label: 'name',
           children: 'children'
         }
@@ -80,25 +81,48 @@
     methods: {
       init (id) {
         this.dataForm.id = id || 0
-        this.visible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].resetFields()
-          if (this.dataForm.id) {
+        this.$http({
+          url: this.$http.adornUrl('/business/org/select'),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          this.orgList = treeDataTranslate(data.orgList, 'id')
+        }).then(() => {
+          this.visible = true
+          this.$nextTick(() => {
+            this.$refs['dataForm'].resetFields()
+          })
+        }).then(() => {
+          if (!this.dataForm.id) {
+            // 新增
+            this.orgListTreeSetCurrentNode()
+          } else {
+            // 修改
             this.$http({
               url: this.$http.adornUrl(`/business/org/info/${this.dataForm.id}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.dataForm.parentId = data.org.parentId
-                this.dataForm.name = data.org.name
-                this.dataForm.header = data.org.header
-                this.dataForm.mobile = data.org.mobile
-                this.dataForm.remark = data.org.remark
-              }
+              this.dataForm.id = data.org.id
+              this.dataForm.parentId = data.org.parentId
+              this.dataForm.name = data.org.name
+              this.dataForm.header = data.org.header
+              this.dataForm.mobile = data.org.mobile
+              this.dataForm.remark = data.org.remark
+              this.orgListTreeSetCurrentNode()
             })
           }
         })
+      },
+      // 菜单树选中
+      orgListTreeCurrentChangeHandle (data, node) {
+        this.dataForm.parentId = data.id
+        this.dataForm.parentName = data.name
+      },
+      // 菜单树设置当前选中节点
+      orgListTreeSetCurrentNode () {
+        this.$refs.orgListTree.setCurrentKey(this.dataForm.parentId)
+        this.dataForm.parentName = (this.$refs.orgListTree.getCurrentNode() || {})['name']
       },
       // 表单提交
       dataFormSubmit () {
@@ -136,3 +160,13 @@
     }
   }
 </script>
+
+<style lang="scss">
+  .mod-config {
+    .menu-list__input {
+      > .el-input__inner {
+        cursor: pointer;
+      }
+    }
+  }
+</style>
