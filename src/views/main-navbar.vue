@@ -39,13 +39,12 @@
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
-<!--              <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}-->
-              <img :src="headImgUrl" :alt="userName">{{ userName }}
+              <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="updateInFormationHandle()">个人设置</el-dropdown-item>
+              <el-dropdown-item @click.native="addOrUpdateHandle()">个人设置</el-dropdown-item>
               <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
-              <el-dropdown-item @click.native="bindingWXHandle()">绑定微信</el-dropdown-item>
+<!--              <el-dropdown-item @click.native="bindingWXHandle()">绑定微信</el-dropdown-item>-->
               <el-dropdown-item @click.native="logoutHandle()">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -54,31 +53,31 @@
     </div>
 
     <!-- 弹窗, 修改个人信息 -->
-    <update-information v-if="updateInformationVisible" ref="updateInformation"></update-information>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate"></add-or-update>
     <!-- 弹窗, 修改密码 -->
     <update-password v-if="updatePassowrdVisible" ref="updatePassowrd"></update-password>
     <!-- 弹窗, 绑定微信 -->
-    <binding-WX v-if="bindingWXVisible" ref="bindingWX"></binding-WX>
+<!--    <binding-WX v-if="bindingWXVisible" ref="bindingWX"></binding-WX>-->
   </nav>
 </template>
 
 <script>
   import UpdatePassword from './main-navbar-update-password'
-  import UpdateInformation from './main-navbar-update-information'
-  import BindingWX from './main-navbar-bindingWX'
+  import AddOrUpdate from './main-user-update'
+  // import BindingWX from './main-navbar-bindingWX'
   import { clearLoginInfo } from '@/utils'
   export default {
     data () {
       return {
         updatePassowrdVisible: false,
-        updateInformationVisible: false,
-        bindingWXVisible: false
+        addOrUpdateVisible: false
+        // bindingWXVisible: false
       }
     },
     components: {
       UpdatePassword,
-      UpdateInformation,
-      BindingWX
+      AddOrUpdate
+      // BindingWX
     },
     computed: {
       navbarLayoutType: {
@@ -98,17 +97,17 @@
       },
       userId: {
         get () { return this.$store.state.user.id }
-      },
-      headImgUrl: {
-        get () { return this.$store.state.user.headImgUrl }
       }
+      // headImgUrl: {
+      //   get () { return this.$store.state.user.headImgUrl }
+      // }
     },
     methods: {
       // 修改个人信息
-      updateInFormationHandle () {
-        this.updateInformationVisible = true
+      addOrUpdateHandle () {
+        this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.updateInformation.init(this.$store.state.user.id)
+          this.$refs.addOrUpdate.init(this.$store.state.user.id)
         })
       },
       // 修改密码
@@ -136,51 +135,51 @@
             }
           })
         }).catch(() => {})
-      },
-      // 绑定微信用户
-      bindingWXHandle: function () {
-        this.$http({
-          url: this.$http.adornUrl('/wechat/member/getOpenId'),
-          method: 'post',
-          data: this.$http.adornData()
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            if (data.openId) {
-              this.$message({
-                message: '已绑定微信，无需再次绑定！',
-                type: 'warning',
-                duration: 1500
-              })
-            } else {
-              this.$http({
-                url: this.$http.adornUrl('/wechat/member/getQrCodeUrl'),
-                method: 'post',
-                data: this.$http.adornData()
-              }).then(({data}) => {
-                if (data && data.code === 0) {
-                  if (data.url) {
-                    this.$message({
-                      message: '成功获取微信二维码Url！',
-                      type: 'sucess',
-                      duration: 1500
-                    })
-                    this.bindingWXVisible = true
-                    this.$nextTick(() => {
-                      this.$refs.bindingWX.init(data.url)
-                    })
-                  } else {
-                    this.$message({
-                      message: '获取失败！',
-                      type: 'error',
-                      duration: 1500
-                    })
-                  }
-                }
-              })
-            }
-          }
-        })
       }
+      // 绑定微信用户，不在这里做微信绑定
+      // bindingWXHandle: function () {
+      //   this.$http({
+      //     url: this.$http.adornUrl('/business/student/getOpenId'),
+      //     method: 'post',
+      //     data: this.$http.adornData()
+      //   }).then(({data}) => {
+      //     if (data && data.code === 0) {
+      //       if (data.openId) {
+      //         this.$message({
+      //           message: '已绑定微信，无需再次绑定！',
+      //           type: 'warning',
+      //           duration: 1500
+      //         })
+      //       } else {
+      //         this.$http({
+      //           url: this.$http.adornUrl('/business/student/getQrCodeUrl'),
+      //           method: 'post',
+      //           data: this.$http.adornData()
+      //         }).then(({data}) => {
+      //           if (data && data.code === 0) {
+      //             if (data.url) {
+      //               this.$message({
+      //                 message: '成功获取微信二维码Url！',
+      //                 type: 'sucess',
+      //                 duration: 1500
+      //               })
+      //               this.bindingWXVisible = true
+      //               this.$nextTick(() => {
+      //                 this.$refs.bindingWX.init(data.url)
+      //               })
+      //             } else {
+      //               this.$message({
+      //                 message: '获取失败！',
+      //                 type: 'error',
+      //                 duration: 1500
+      //               })
+      //             }
+      //           }
+      //         })
+      //       }
+      //     }
+      //   })
+      // }
     }
   }
 </script>

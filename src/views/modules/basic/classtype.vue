@@ -2,18 +2,17 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.nickname" placeholder="昵称" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('wechat:member:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-<!--        <el-button v-if="isAuth('wechat:member:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
+        <el-button v-if="isAuth('basic:classtype:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('basic:classtype:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
       :data="dataList"
       border
-      stripe
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       style="width: 100%;">
@@ -28,60 +27,32 @@
         header-align="center"
         align="center"
         width="80"
-        label="成员ID">
+        label="id">
       </el-table-column>
       <el-table-column
-        prop="nickname"
+        prop="name"
         header-align="center"
         align="center"
-        label="昵称">
-      </el-table-column>
-      <el-table-column
-        prop="sex"
-        header-align="center"
-        align="center"
-        label="性别">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.sex === 0" size="small" type="danger">女</el-tag>
-          <el-tag v-if="scope.row.sex === 1" size="small" type="danger">男</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="mobile"
-        header-align="center"
-        align="center"
-        label="手机号码">
-      </el-table-column>
-      <el-table-column
-        prop="email"
-        header-align="center"
-        align="center"
-        label="邮箱地址">
-      </el-table-column>
-      <el-table-column
-        prop="bdOrgId"
-        header-align="center"
-        align="center"
-        :formatter="formatOrg"
-        label="部门">
-      </el-table-column>
-      <el-table-column
-        prop="status"
-        header-align="center"
-        align="center"
-        label="成员状态">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" size="small" type="danger">未知</el-tag>
-          <el-tag v-if="scope.row.status === 1" size="small">在职</el-tag>
-          <el-tag v-if="scope.row.status === 2" size="small" type="warning">离职</el-tag>
-          <el-tag v-if="scope.row.status === 9" size="small" type="warning">其它</el-tag>
-        </template>
+        label="名称">
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
         label="创建时间">
+      </el-table-column>
+      <el-table-column
+        prop="remark"
+        header-align="center"
+        align="center"
+        label="备注">
+      </el-table-column>
+      <el-table-column
+        prop="bdOrgId"
+        header-align="center"
+        align="center"
+        :formatter="formatOrg"
+        label="机构">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -91,7 +62,7 @@
         label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-<!--          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>-->
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -110,15 +81,14 @@
 </template>
 
 <script>
-  import AddOrUpdate from './member-add-or-update'
+  import AddOrUpdate from './classtype-add-or-update'
   export default {
     data () {
       return {
         dataForm: {
-          nickname: ''
+          key: ''
         },
         dataList: [],
-        orgList: [],
         pageIndex: 1,
         pageSize: 10,
         totalPage: 0,
@@ -131,21 +101,21 @@
       AddOrUpdate
     },
     activated () {
-      this.getOrgList()
       this.getDataList()
+      this.getOrgList()
     },
     methods: {
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/wechat/member/list'),
+          url: this.$http.adornUrl('/basic/classtype/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'nickname': this.dataForm.nickname,
-            'id': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+            'key': this.dataForm.key,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -161,11 +131,11 @@
       // 获取机构（部门）ID
       getOrgList () {
         this.$http({
-          url: this.$http.adornUrl('/business/org/list'),
+          url: this.$http.adornUrl('/business/org/select'),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          this.orgList = data
+          this.orgList = data.orgList
         })
       },
       // 每页数
@@ -201,7 +171,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/wechat/member/delete'),
+            url: this.$http.adornUrl('/basic/classtype/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -222,11 +192,13 @@
       },
       formatOrg: function (row, column) {
         let orgName = '未知'
-        for (let i = 0; i < this.orgList.length; i++) {
-          let item = this.orgList[i]
-          if (item.id === row.bdOrgId) {
-            orgName = item.name
-            break
+        if (this.orgList != null) {
+          for (let i = 0; i < this.orgList.length; i++) {
+            let item = this.orgList[i]
+            if (item.id === row.bdOrgId) {
+              orgName = item.name
+              break
+            }
           }
         }
         return orgName

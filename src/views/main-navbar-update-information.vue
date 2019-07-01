@@ -92,16 +92,15 @@
         this.dataForm.sysUserId = sysUserId
         this.$http({
           // url: this.$http.adornUrl(`/sys/user/info/${this.dataForm.id}`),
-          url: this.$http.adornUrl(`/wechat/member/infoByUserId`),
+          url: this.$http.adornUrl(`/business/student/infoByUserId`),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          if (data && data.member && data.code === 0) {
-            this.dataForm.id = data.member.id
-            this.dataForm.sex = data.member.sex
-            this.dataForm.nickname = data.member.nickname
-            this.dataForm.email = data.member.email
-            this.dataForm.mobile = data.member.mobile
+          if (data && data.student && data.code === 0) {
+            this.dataForm.id = data.student.id
+            this.dataForm.sex = data.student.sex
+            this.dataForm.email = data.student.email
+            this.dataForm.mobile = data.student.mobile
           }
         }).then(() => {
           this.visible = true

@@ -82,22 +82,23 @@
             this.userName = data.user.username
             this.bdOrgId = data.user.bdOrgId
           }
-        }).then(() => {
-          this.$http({
-            url: this.$http.adornUrl('/wechat/member/infoByUserId'),
-            method: 'get',
-            params: this.$http.adornParams()
-          }).then(({data}) => {
-            if (data && data.member && data.code === 0) {
-              this.loading = false
-              this.userName = data.member.nickname ? data.member.nickname : this.userName
-              this.headImgUrl = data.member.headImgUrl ? data.member.headImgUrl : 'src/assets/img/avatar.png'
-            } else {
-              this.loading = false
-              this.headImgUrl = 'src/assets/img/avatar.png'
-            }
-          })
         })
+        //   .then(() => {
+        //   this.$http({
+        //     url: this.$http.adornUrl('/business/student/infoByUserId'),
+        //     method: 'get',
+        //     params: this.$http.adornParams()
+        //   }).then(({data}) => {
+        //     if (data && data.student && data.code === 0) {
+        //       this.loading = false
+        //       this.userName = data.student.nickname ? data.student.nickname : this.userName
+        //       this.headImgUrl = data.student.headImgUrl ? data.student.headImgUrl : 'src/assets/img/avatar.png'
+        //     } else {
+        //       this.loading = false
+        //       this.headImgUrl = 'src/assets/img/avatar.png'
+        //     }
+        //   })
+        // })
       }
     }
   }

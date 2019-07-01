@@ -25,7 +25,6 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="身份" prop="identity">
-<!--        <el-input v-model="dataForm.identity" placeholder="身份，0-未知，1-管理员，2-教师，3-学生，9-其它"></el-input>-->
         <el-select v-model="dataForm.identity" placeholder="请选择">
           <el-option
             v-for="item in identities"

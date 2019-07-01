@@ -134,18 +134,18 @@
           } else {
             // 修改
             this.$http({
-              url: this.$http.adornUrl(`/wechat/member/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/business/student/info/${this.dataForm.id}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.nickname = data.member.nickname
-                this.dataForm.sex = data.member.sex
-                this.dataForm.mobile = data.member.mobile
-                this.dataForm.email = data.member.email
-                this.dataForm.bdOrgId = data.member.bdOrgId
-                this.dataForm.status = data.member.status
-                this.dataForm.createTime = data.member.createTime
+                this.dataForm.nickname = data.student.nickname
+                this.dataForm.sex = data.student.sex
+                this.dataForm.mobile = data.student.mobile
+                this.dataForm.email = data.student.email
+                this.dataForm.bdOrgId = data.student.bdOrgId
+                this.dataForm.status = data.student.status
+                this.dataForm.createTime = data.student.createTime
                 this.orgListTreeSetCurrentNode()
               }
             })
@@ -167,7 +167,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/wechat/member/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/business/student/${!this.dataForm.id ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
@@ -175,7 +175,7 @@
                 'sex': this.dataForm.sex,
                 'mobile': this.dataForm.mobile,
                 'email': this.dataForm.email,
-                'bdOrgId': this.dataForm.bdOrgId,
+                'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
                 'status': this.dataForm.status,
                 'createTime': this.dataForm.createTime
               })
