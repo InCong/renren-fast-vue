@@ -2,7 +2,27 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.nickname" placeholder="昵称" clearable></el-input>
+        <el-input v-model="dataForm.nickname" placeholder="名称" clearable></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="dataForm.bdAreaId" clearable placeholder="所属区域">
+          <el-option
+            v-for="item in areaList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="dataForm.bdStudentLevelId" clearable placeholder="学历水平">
+          <el-option
+            v-for="item in studentLevelList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -27,14 +47,20 @@
         prop="id"
         header-align="center"
         align="center"
-        width="80"
-        label="成员ID">
+        width="50"
+        label="ID">
       </el-table-column>
       <el-table-column
         prop="nickname"
         header-align="center"
         align="center"
-        label="昵称">
+        label="名称">
+      </el-table-column>
+      <el-table-column
+        prop="age"
+        header-align="center"
+        align="center"
+        label="年龄">
       </el-table-column>
       <el-table-column
         prop="sex"
@@ -42,8 +68,8 @@
         align="center"
         label="性别">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.sex === 0" size="small" type="danger">女</el-tag>
-          <el-tag v-if="scope.row.sex === 1" size="small" type="danger">男</el-tag>
+          <el-tag v-if="scope.row.sex === 0" size="small">女</el-tag>
+          <el-tag v-if="scope.row.sex === 1" size="small">男</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -62,19 +88,27 @@
         prop="status"
         header-align="center"
         align="center"
-        label="成员状态">
+        label="学员状态">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 0" size="small" type="danger">未知</el-tag>
-          <el-tag v-if="scope.row.status === 1" size="small">在职</el-tag>
-          <el-tag v-if="scope.row.status === 2" size="small" type="warning">离职</el-tag>
+          <el-tag v-if="scope.row.status === 1" size="small">已缴费</el-tag>
+          <el-tag v-if="scope.row.status === 2" size="small" type="warning">未续费</el-tag>
           <el-tag v-if="scope.row.status === 9" size="small" type="warning">其它</el-tag>
         </template>
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="bdAreaId"
         header-align="center"
         align="center"
-        label="创建时间">
+        :formatter="formatArea"
+        label="所在地区">
+      </el-table-column>
+      <el-table-column
+        prop="bdStudentLevelId"
+        header-align="center"
+        align="center"
+        :formatter="formatStudentLevel"
+        label="学习水平">
       </el-table-column>
       <el-table-column
         prop="bdOrgId"
@@ -92,6 +126,7 @@
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="bindingWechat(scope.row.id)">绑定微信</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -106,33 +141,44 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 弹窗, 绑定微信 -->
+    <studentBindingWechat v-if="studentBindingWechatVisible" ref="studentBindingWechat"></studentBindingWechat>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './student-add-or-update'
+  import StudentBindingWechat from './student-binding-wechat'
   export default {
     data () {
       return {
         dataForm: {
-          nickname: ''
+          nickname: '',
+          bdAreaId: '',
+          bdStudentLevelId: ''
         },
         dataList: [],
         orgList: [],
+        areaList: [],
+        studentLevelList: [],
         pageIndex: 1,
         pageSize: 10,
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        studentBindingWechatVisible: false
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      StudentBindingWechat
     },
     activated () {
       this.getOrgList()
       this.getDataList()
+      this.getAreaList()
+      this.getStudentLevelList()
     },
     methods: {
       // 获取数据列表
@@ -145,6 +191,8 @@
             'page': this.pageIndex,
             'limit': this.pageSize,
             'nickname': this.dataForm.nickname,
+            'bdAreaId': this.dataForm.bdAreaId,
+            'bdStudentLevelId': this.dataForm.bdStudentLevelId,
             'id': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
@@ -166,6 +214,34 @@
           params: this.$http.adornParams()
         }).then(({data}) => {
           this.orgList = data.orgList
+        })
+      },
+      // 获取地区ID
+      getAreaList () {
+        this.$http({
+          url: this.$http.adornUrl('/basic/area/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 0,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.areaList = data.page.list
+        })
+      },
+      // 获取学员水平ID
+      getStudentLevelList () {
+        this.$http({
+          url: this.$http.adornUrl('/basic/studentLevel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 0,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.studentLevelList = data.page.list
         })
       },
       // 每页数
@@ -222,14 +298,70 @@
       },
       formatOrg: function (row, column) {
         let orgName = '未知'
-        for (let i = 0; i < this.orgList.length; i++) {
-          let item = this.orgList[i]
-          if (item.id === row.bdOrgId) {
-            orgName = item.name
-            break
+        if (this.orgList != null) {
+          for (let i = 0; i < this.orgList.length; i++) {
+            let item = this.orgList[i]
+            if (item.id === row.bdOrgId) {
+              orgName = item.name
+              break
+            }
           }
         }
         return orgName
+      },
+      formatArea: function (row, column) {
+        let areaName = '未知'
+        if (this.areaList != null) {
+          for (let i = 0; i < this.areaList.length; i++) {
+            let item = this.areaList[i]
+            if (item.id === row.bdAreaId) {
+              areaName = item.name
+              break
+            }
+          }
+        }
+        return areaName
+      },
+      formatStudentLevel: function (row, column) {
+        let studentLevelName = '未知'
+        if (this.studentLevelList != null) {
+          for (let i = 0; i < this.studentLevelList.length; i++) {
+            let item = this.studentLevelList[i]
+            if (item.id === row.bdStudentLevelId) {
+              studentLevelName = item.name
+              break
+            }
+          }
+        }
+        return studentLevelName
+      },
+      bindingWechat: function (studentId) {
+        console.log('对学员：' + studentId + ' 进行微信绑定')
+        this.$http({
+          url: this.$http.adornUrl(`/business/student/getQrCodeUrl/${studentId}`),
+          method: 'post',
+          data: this.$http.adornData()
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            if (data.url) {
+              this.$message({
+                message: '成功获取微信二维码Url！',
+                type: 'sucess',
+                duration: 1500
+              })
+              this.studentBindingWechatVisible = true
+              this.$nextTick(() => {
+                this.$refs.studentBindingWechat.init(data.url)
+              })
+            } else {
+              this.$message({
+                message: '获取失败！',
+                type: 'error',
+                duration: 1500
+              })
+            }
+          }
+        })
       }
     }
   }

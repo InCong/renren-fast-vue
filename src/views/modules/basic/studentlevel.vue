@@ -109,7 +109,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/basic/studentlevel/list'),
+          url: this.$http.adornUrl('/basic/studentLevel/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -171,7 +171,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/basic/studentlevel/delete'),
+            url: this.$http.adornUrl('/basic/studentLevel/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
