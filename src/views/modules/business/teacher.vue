@@ -69,7 +69,7 @@
         align="center"
         label="是否全职">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.isFullTime === 0" size="small">否</el-tag>
+          <el-tag v-if="scope.row.isFullTime === 0" size="small" type="warning">否</el-tag>
           <el-tag v-if="scope.row.isFullTime === 1" size="small">是</el-tag>
         </template>
       </el-table-column>
@@ -89,6 +89,7 @@
         prop="remark"
         header-align="center"
         align="center"
+        show-overflow-tooltip="true"
         label="备注">
       </el-table-column>
       <el-table-column
@@ -105,9 +106,9 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
-          <el-button type="text" size="small" @click="bindingWechat(scope.row.id)">绑定微信</el-button>
+          <el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button size="mini" type="primary" @click="bindingWechat(scope.row.id)">绑定微信</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -54,11 +54,11 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.name = data.classtype.name
-                this.dataForm.bdOrgId = data.classtype.bdOrgId
-                this.dataForm.createUserId = data.classtype.createUserId
-                this.dataForm.createTime = data.classtype.createTime
-                this.dataForm.remark = data.classtype.remark
+                this.dataForm.name = data.classType.name
+                this.dataForm.bdOrgId = data.classType.bdOrgId
+                this.dataForm.createUserId = data.classType.createUserId
+                this.dataForm.createTime = data.classType.createTime
+                this.dataForm.remark = data.classType.remark
               }
             })
           }

@@ -56,7 +56,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间" :disabled="true"></el-input>
+      <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -100,7 +100,6 @@
           status: '',
           createTime: ''
         },
-        orgList: [],
         areaList: [],
         studentLevelList: [],
         statusList: [{
@@ -221,8 +220,7 @@
                 'bdAreaId': this.dataForm.bdAreaId,
                 'bdStudentLevelId': this.dataForm.bdStudentLevelId,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
-                'status': this.dataForm.status,
-                'createTime': this.dataForm.createTime
+                'status': this.dataForm.status
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
