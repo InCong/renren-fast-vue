@@ -10,7 +10,7 @@
     center>
     <span slot="title"><h1 id = "title">绑定微信</h1></span>
     <div class="marginCenter">
-      <img id="qrImg" :src="qrCodeUrl"/>
+      <img id="qrImg" :src="qrCodeUrl" alt="qrCodeUrl"/>
     </div>
   </el-dialog>
 </template>
@@ -20,21 +20,7 @@
     data () {
       return {
         visible: false,
-        name: 'test',
         qrCodeUrl: ''
-      }
-    },
-    created () { // 页面创建生命周期函数
-      // this.initWebSocket()
-    },
-    destroyed: function () { // 离开页面生命周期函数
-      // console.log('关闭了websocket')
-      // this.websocketclose()
-    },
-    computed: {
-      headImgUrl: {
-        get () { return this.$store.state.user.headImgUrl },
-        set (val) { this.$store.commit('user/updateHeadImgUrl', val) }
       }
     },
     methods: {
@@ -81,9 +67,14 @@
             type: 'error',
             duration: 4500
           })
-        } else if (e.data.indexOf('http') !== -1) {
+        } else if (e.data === 'is_subscribed') {
+          this.visible = false
           console.log(e.data)
-          this.headImgUrl = e.data // 获取头像地址
+          this.$message({
+            message: '已绑定，无需再次绑定！！！',
+            type: 'warning',
+            duration: 4500
+          })
         } else {
           this.$message({
             message: '绑定失败！未知情况，请联系管理员！！！',
