@@ -11,18 +11,36 @@
     <el-row :gutter="20">
       <el-col :span="8" v-for="item in dataList" :key=item.id style="margin-bottom:40px" >
         <el-card :body-style="{ padding: '0px'}">
-          <el-row>
-            <el-col :span="14"><img src="https://github.githubassets.com/images/modules/site/home-illo-team.svg" class="image" style="background: #a2e1da"></el-col>
-            <el-col :span="10" style="background: #0BB2D4">
-              <h2>{{item.name}}</h2>
+          <el-row :gutter="10">
+            <el-col :span="12"><img src="~@/assets/img/avatar.png" class="image" width="250px" height="250px"></el-col>
+            <el-col :span="12">
               <el-row>
-                <el-col :span="24" style="margin-bottom:10px"><label>手机：{{item.mobile}}</label></el-col>
+                <el-col :span="12">
+                  <h1>
+                    {{item.name}}
+                  </h1>
+                </el-col>
+                <el-col :span="12">
+                  <h1>
+                    <el-button type="primary" icon="el-icon-view" size="mini"></el-button>
+                  </h1>
+                </el-col>
               </el-row>
               <el-row>
-                <el-col :span="24" style="margin-bottom:10px"><label>邮箱：{{item.email}}</label></el-col>
+                <el-col :span="24" style="margin-bottom:15px"><i class="el-icon-phone"></i><label class="label-content">{{item.mobile}}</label></el-col>
               </el-row>
               <el-row>
-                <el-col :span="24" style="margin-bottom:10px"><label>介绍：{{item.remark}}</label></el-col>
+                <el-col :span="24" style="margin-bottom:15px"><i class="el-icon-message"></i><label class="label-content">{{item.email}}</label></el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="24" style="margin-bottom:15px"><label>课程：</label><label class="label-content">7门</label></el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="24" style="margin-bottom:0px">
+                  <label>科目：</label>
+                  <el-tag type="danger">钢琴</el-tag>
+                  <el-tag type="danger">跳舞</el-tag>
+                </el-col>
               </el-row>
             </el-col>
           </el-row>
@@ -98,5 +116,20 @@
 </script>
 
 <style>
-
+  i.el-icon-message {
+    font-size: 20px;
+    padding-right: 10px;
+  }
+  i.el-icon-phone {
+    font-size: 20px;
+    padding-right: 10px;
+  }
+  label {
+    font-size: 16px;
+    font-family: "PingFang SC",sans-serif;
+  }
+  label.label-content {
+    color: gray;
+    font-size: 14px;
+  }
 </style>
