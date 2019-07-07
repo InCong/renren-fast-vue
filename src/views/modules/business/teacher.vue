@@ -39,6 +39,7 @@
         prop="sex"
         header-align="center"
         align="center"
+        width="80"
         label="性别">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.sex === 0" size="small">女</el-tag>
@@ -49,6 +50,7 @@
         prop="age"
         header-align="center"
         align="center"
+        width="80"
         label="年龄">
       </el-table-column>
       <el-table-column
@@ -67,6 +69,7 @@
         prop="isFullTime"
         header-align="center"
         align="center"
+        width="80"
         label="是否全职">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.isFullTime === 0" size="small" type="warning">否</el-tag>
@@ -77,6 +80,7 @@
         prop="status"
         header-align="center"
         align="center"
+        width="80"
         label="状态">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === 0" size="small" type="danger">未知</el-tag>
@@ -89,7 +93,7 @@
         prop="remark"
         header-align="center"
         align="center"
-        show-overflow-tooltip="true"
+        show-overflow-tooltip
         label="备注">
       </el-table-column>
       <el-table-column
@@ -102,13 +106,17 @@
       <el-table-column
         fixed="right"
         header-align="center"
-        align="center"
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button>
-          <el-button size="mini" type="primary" @click="bindingWechat(scope.row.id)">绑定微信</el-button>
+          <el-row style="margin-bottom:10px">
+            <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button></el-col>
+            <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
+            <el-col :span="12"><el-button size="mini" @click="uploadMultimedia(scope.row.id)">多媒体</el-button></el-col>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>
@@ -125,12 +133,15 @@
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     <!-- 弹窗, 绑定微信 -->
     <teacherBindingWechat v-if="teacherBindingWechatVisible" ref="teacherBindingWechat"></teacherBindingWechat>
+    <!-- 弹窗，上传图片与视频 -->
+    <teacherUploadMultimedia v-if="teacherUploadMultimediaVisible" ref="teacherUploadMultimedia"></teacherUploadMultimedia>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './teacher-add-or-update'
   import TeacherBindingWechat from './binding-wechat'
+  import TeacherUploadMultimedia from './teacher-multimedia-add-or-delete'
   export default {
     data () {
       return {
@@ -145,12 +156,14 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        teacherBindingWechatVisible: false
+        teacherBindingWechatVisible: false,
+        teacherUploadMultimediaVisible: false
       }
     },
     components: {
       AddOrUpdate,
-      TeacherBindingWechat
+      TeacherBindingWechat,
+      TeacherUploadMultimedia
     },
     activated () {
       this.getDataList()
@@ -276,6 +289,13 @@
               })
             }
           }
+        })
+      },
+      uploadMultimedia: function (teacherId) {
+        console.log('对教师：' + teacherId + ' 进行图片与视频上传')
+        this.teacherUploadMultimediaVisible = true
+        this.$nextTick(() => {
+          this.$refs.teacherUploadMultimedia.init(teacherId)
         })
       }
     }

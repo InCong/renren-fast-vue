@@ -4,24 +4,28 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="dataForm.name" placeholder="名称"></el-input>
-    </el-form-item>
-    <el-form-item label="性别" prop="sex">
-      <el-radio-group v-model="dataForm.sex" placeholder="性别，1-男，0-女">
-        <el-radio :label="1">男</el-radio>
-        <el-radio :label="0">女</el-radio>
-      </el-radio-group>
-    </el-form-item>
-    <el-form-item label="年龄" prop="age">
-      <el-input v-model="dataForm.age" placeholder="年龄"></el-input>
-    </el-form-item>
-    <el-form-item label="联系电话" prop="mobile">
-      <el-input v-model="dataForm.mobile" placeholder="联系电话"></el-input>
-    </el-form-item>
-    <el-form-item label="邮箱" prop="email">
-      <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
-    </el-form-item>
+    <el-row>
+      <el-col :span="16">
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="dataForm.name" placeholder="名称"></el-input>
+        </el-form-item>
+        <el-form-item label="性别" prop="sex">
+          <el-radio-group v-model="dataForm.sex" placeholder="性别，1-男，0-女">
+            <el-radio :label="1">男</el-radio>
+            <el-radio :label="0">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="年龄" prop="age">
+          <el-input v-model="dataForm.age" placeholder="年龄"></el-input>
+        </el-form-item>
+        <el-form-item label="联系电话" prop="mobile">
+          <el-input v-model="dataForm.mobile" placeholder="联系电话"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
     <el-form-item label="是否全职" prop="isFullTime">
       <el-radio-group v-model="dataForm.isFullTime" placeholder="是否全职，1-是，0-否">
         <el-radio :label="1">是</el-radio>
@@ -72,6 +76,8 @@
       }
       return {
         visible: false,
+        imgFlag: false,
+        percent: 0,
         dataForm: {
           id: 0,
           name: '',
@@ -81,6 +87,7 @@
           email: '',
           isFullTime: '',
           status: '',
+          descImgUrl: '',
           bdOrgId: '',
           createUserId: '',
           createTime: '',
@@ -140,6 +147,7 @@
                 this.dataForm.email = data.teacher.email
                 this.dataForm.isFullTime = data.teacher.isFullTime
                 this.dataForm.status = data.teacher.status
+                this.dataForm.descImgUrl = data.teacher.descImgUrl
                 this.dataForm.bdOrgId = data.teacher.bdOrgId
                 this.dataForm.createTime = data.teacher.createTime
                 this.dataForm.remark = data.teacher.remark
@@ -164,6 +172,7 @@
                 'email': this.dataForm.email,
                 'isFullTime': this.dataForm.isFullTime,
                 'status': this.dataForm.status,
+                'descImgUrl': this.dataForm.descImgUrl,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
                 'createUserId': this.dataForm.createUserId,
                 'remark': this.dataForm.remark
@@ -189,3 +198,7 @@
     }
   }
 </script>
+
+<style>
+
+</style>
