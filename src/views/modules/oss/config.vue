@@ -1,8 +1,6 @@
 <template>
-  <el-dialog
-    title="云存储配置"
-    :close-on-click-modal="false"
-    :visible.sync="visible">
+  <div>
+    <el-button type="primary" @click="dataFormSubmit()" style="margin-bottom: 40px">保存</el-button>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
       <el-form-item size="mini" label="存储类型">
         <el-radio-group v-model="dataForm.type">
@@ -75,27 +73,24 @@
         </el-form-item>
       </template>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
-    </span>
-  </el-dialog>
+  </div>
 </template>
 
 <script>
   export default {
     data () {
       return {
-        visible: false,
         dataForm: {},
         dataRule: {}
       }
     },
+    activated () {
+      this.init()
+    },
     methods: {
-      init (id) {
-        this.visible = true
+      init () {
         this.$http({
-          url: this.$http.adornUrl('/sys/oss/config'),
+          url: this.$http.adornUrl(`/sys/oss/config/${this.$store.state.user.bdOrgId}`),
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
@@ -116,10 +111,7 @@
                 this.$message({
                   message: '操作成功',
                   type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                  }
+                  duration: 1500
                 })
               } else {
                 this.$message.error(data.msg)
@@ -132,3 +124,6 @@
   }
 </script>
 
+<style scoped>
+
+</style>

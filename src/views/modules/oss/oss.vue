@@ -2,7 +2,7 @@
   <div class="mod-oss">
     <el-form :inline="true" :model="dataForm">
       <el-form-item>
-        <el-button type="primary" @click="configHandle()">云存储配置</el-button>
+<!--        <el-button type="primary" @click="configHandle()">云存储配置</el-button>-->
         <el-button type="primary" @click="uploadHandle()">上传文件</el-button>
         <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
@@ -99,7 +99,8 @@
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
-            'limit': this.pageSize
+            'limit': this.pageSize,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -138,7 +139,7 @@
       uploadHandle () {
         this.uploadVisible = true
         this.$nextTick(() => {
-          this.$refs.upload.init()
+          this.$refs.upload.init(this.$store.state.user.bdOrgId)
         })
       },
       // 删除

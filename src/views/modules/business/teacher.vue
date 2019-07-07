@@ -295,7 +295,7 @@
         console.log('对教师：' + teacherId + ' 进行图片与视频上传')
         this.teacherUploadMultimediaVisible = true
         this.$nextTick(() => {
-          this.$refs.teacherUploadMultimedia.init(teacherId)
+          this.$refs.teacherUploadMultimedia.init(this.$store.state.user.bdOrgId, teacherId)
         })
       }
     }
