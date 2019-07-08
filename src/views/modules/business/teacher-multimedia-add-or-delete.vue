@@ -2,7 +2,8 @@
   <el-dialog
     :close-on-click-modal="false"
     width="60%"
-    :visible.sync="visible">
+    :visible.sync="visible"
+    @close="closeDialog">
     <el-tabs v-model="activeName" @tab-click="handleTabClick" type="border-card" v-loading="dataListLoading">
       <el-tab-pane label="图片上传" name="pictureUpload">
         <el-upload
@@ -22,7 +23,6 @@
         </el-upload>
         <el-dialog :visible.sync="previewDialogVisible" append-to-body>
           <img width="100%" :src="previewDialogImageUrl" alt="">
-          <label>{{previewDialogImageUrl}}</label>
         </el-dialog>
         <el-table
           :data="pictureFileList"
@@ -41,6 +41,18 @@
             align="center"
             width="80"
             label="ID">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            header-align="center"
+            align="center"
+            label="图片名称">
+          </el-table-column>
+          <el-table-column
+            prop="createTime"
+            header-align="center"
+            align="center"
+            label="上传时间">
           </el-table-column>
         </el-table>
       </el-tab-pane>
@@ -61,21 +73,26 @@
         url: '',
         visible: false,
         dataListLoading: false,
-        previewDialogImageUrl: '',
-        previewDialogVisible: false,
-        pictureFileList: [],
         pageIndex: 1,
         pageSize: 1000,
         totalPage: 0,
         num: 0,
         successNum: 0,
+        bdOrgId: 0,
+        teacherId: 0,
+        // 以下是图片相关的参数
         activeName: 'pictureUpload',
+        previewDialogImageUrl: '',
+        previewDialogVisible: false,
+        pictureFileList: []
       }
     },
     methods: {
       init (bdOrgId, teacherId) {
         this.visible = true
-        this.url = this.$http.adornUrl(`/sys/oss/upload/${bdOrgId}?token=${this.$cookie.get('token')}`)
+        this.bdOrgId = bdOrgId
+        this.teacherId = teacherId
+        this.url = this.$http.adornUrl(`/business/teachermultimedia/upload?token=${this.$cookie.get('token')}&teacherId=${teacherId}&bdOrgId=${bdOrgId}&typeId=${1}`)
         this.dataListLoading = true
         this.$http({
           url: this.$http.adornUrl('/business/teachermultimedia/list'),
@@ -84,7 +101,8 @@
             'page': this.pageIndex,
             'limit': this.pageSize,
             'teacherId': teacherId,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : bdOrgId // 超级管理员可以获取全部机构部门的列表
+            'bdOrgId': this.$store.state.user.id === 1 ? null : bdOrgId, // 超级管理员可以获取全部机构部门的列表
+            'typeId': 1 // 只查看图片的信息
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -96,6 +114,11 @@
           }
           this.dataListLoading = false
         })
+
+        // 组件看不见时调用，清空数组
+        this.over = () => {
+          this.pictureFileList = []
+        }
       },
       handleTabClick (tab, event) {
         console.log(tab, event)
@@ -103,6 +126,26 @@
       handlePictureRemove (file, fileList) {
         if (file.status === 'success') {
           console.log(file, fileList)
+          this.$http({
+            url: this.$http.adornUrl('/business/teachermultimedia/deleteFromOss'),
+            method: 'post',
+            params: this.$http.adornParams({
+              'id': file.id,
+              'name': file.name,
+              'bdOrgId': this.bdOrgId
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '成功删除',
+                type: 'success',
+                duration: 1500
+              })
+              this.init(this.bdOrgId, this.teacherId) // 删除成功，刷新列表
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
         }
       },
       handlePictureCardPreview (file) {
@@ -134,6 +177,8 @@
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
+            }).then(() => {
+              this.init(this.bdOrgId, this.teacherId) // 点击确定后，刷新列表
             }).catch(() => {
               this.visible = false
             })
@@ -146,7 +191,10 @@
         this.$message.error(err)
       },
       handlePictureExceed (files, fileList) {
-        this.$message.warning("上传不能超过1个！")
+        this.$message.warning('上传不能超过5个！')
+      },
+      closeDialog () {
+        this.over()
       }
     }
   }
