@@ -24,7 +24,7 @@
           <el-dialog :visible.sync="previewDialogVisible" append-to-body>
             <img width="100%" :src="previewDialogImageUrl" alt="">
           </el-dialog>
-          <div style="margin-bottom: 10px"><label style="color: gray">注意！图片顺序与列表顺序一致！</label></div>
+          <div class="el-upload__tip" slot="tip" style="margin-bottom: 10px">注意！图片顺序与列表顺序一致！图片大小不超过2mb！</div>
           <el-table
             :data="fileList"
             border
@@ -41,13 +41,34 @@
               prop="name"
               header-align="center"
               align="center"
+              width="400"
               label="图片名称">
+            </el-table-column>
+            <el-table-column
+              prop="flag"
+              header-align="center"
+              align="center"
+              label="类型">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.flag === 11" size="small" type="success">教师封面</el-tag>
+                <el-tag v-else size="small" type="warning">其它</el-tag>
+              </template>
             </el-table-column>
             <el-table-column
               prop="createTime"
               header-align="center"
               align="center"
               label="上传时间">
+            </el-table-column>
+            <el-table-column
+              fixed="right"
+              header-align="center"
+              align="center"
+              width="150"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button type="text" size="small" @click="changePictureFlag(scope.row.id)">设置为教师封面</el-button>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -56,17 +77,18 @@
         <div v-if="isVideoUploadShow">
           <el-upload
             :action="url"
-            multiple
             :limit="5"
-            list-type="picture-card"
+            drag
             :file-list="fileList"
+            :show-file-list = "true"
             :before-upload="beforeVideoUpload"
             :on-exceed="handleVideoExceed"
             :on-success="handleVideoSuccess"
             :on-error="handleVideoError"
-            :on-remove="handleVideoRemove"
-            :on-preview="handleVideoCardPreview">
-            <i class="el-icon-plus"></i>
+            :on-remove="handleVideoRemove">
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip" slot="tip">只能上传mp4、flv、avi、rmvb文件，且不超过10mb</div>
           </el-upload>
         </div>
       </el-tab-pane>
@@ -134,19 +156,19 @@
         // 组件看不见时调用，清空数组
         this.over = () => {
           this.fileList = []
-          this.activeName = "pictureUpload"
+          this.activeName = 'pictureUpload'
           this.isPictureUploadShow = true
           this.isVideoUploadShow = false
         }
       },
       handleTabClick (tab, event) {
-        if (tab.name === "pictureUpload"){
+        if (tab.name === 'pictureUpload') {
           this.isPictureUploadShow = true
           this.isVideoUploadShow = false
           this.num = 0
           this.successNum = 0
           this.init(this.bdOrgId, this.teacherId, 1)
-        } else if (tab.name === "videoUpload") {
+        } else if (tab.name === 'videoUpload') {
           this.isPictureUploadShow = false
           this.isVideoUploadShow = true
           this.num = 0
@@ -224,9 +246,38 @@
       handlePictureExceed (files, fileList) {
         this.$message.warning('上传不能超过5个！')
       },
+      changePictureFlag (id) {
+        this.$http({
+          url: this.$http.adornUrl('/business/teachermultimedia/cleanFlag'),
+          method: 'post',
+          params: this.$http.adornParams({
+            'teacherId': this.teacherId
+          })
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/business/teachermultimedia/update'),
+            method: 'post',
+            data: this.$http.adornData({
+              'id': id,
+              'flag': 11
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '修改成功',
+                type: 'success',
+                duration: 1500
+              })
+              this.init(this.bdOrgId, this.teacherId, 1) // 更新完毕，刷新列表
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+        })
+      },
       // 视频上传的相关事件
       beforeVideoUpload (file) {
-        const isVideo = ['video.mp4', 'video/flv', 'video/avi', 'video/rmvb'].indexOf(file.type) >= 0
+        const isVideo = ['video/mp4', 'video/flv', 'video/avi', 'video/rmvb'].indexOf(file.type) >= 0
         const isLt10M = file.size / 1024 / 1024 < 10
 
         if (!isVideo) {
@@ -289,10 +340,6 @@
             }
           })
         }
-      },
-      handleVideoCardPreview (file) {
-        // this.previewDialogImageUrl = file.url
-        // this.previewDialogVisible = true
       },
       // 关闭时的逻辑
       closeDialog () {
