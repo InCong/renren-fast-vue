@@ -12,7 +12,7 @@
       <el-col :span="8" v-for="item in dataList" :key=item.id style="margin-bottom:40px" >
         <el-card :body-style="{ padding: '0px'}">
           <el-row :gutter="10">
-            <el-col :span="12"><img src="~@/assets/img/avatar.png" class="image" width="250px" height="250px"></el-col>
+            <el-col :span="12"><img :src="item.url ? item.url : 'src/assets/img/avatar.png'" class="image" width="250px" height="250px"></el-col>
             <el-col :span="12">
               <el-row>
                 <el-col :span="12">
@@ -80,8 +80,29 @@
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
+        // this.$http({
+        //   url: this.$http.adornUrl('/business/teacher/list'),
+        //   method: 'get',
+        //   params: this.$http.adornParams({
+        //     'page': this.pageIndex,
+        //     'limit': this.pageSize,
+        //     'name': this.dataForm.name,
+        //     'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+        //   })
+        // }).then(({data}) => {
+        //   console.log(data)
+        //   if (data && data.code === 0) {
+        //     this.dataList = data.page.list
+        //     this.totalPage = data.page.totalCount
+        //   } else {
+        //     this.dataList = []
+        //     this.totalPage = 0
+        //   }
+        //   this.dataListLoading = false
+        // })
+
         this.$http({
-          url: this.$http.adornUrl('/business/teacher/list'),
+          url: this.$http.adornUrl('/business/teacher/forShow'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -90,9 +111,10 @@
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
+          console.log(data)
           if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+            this.dataList = data.page.records
+            this.totalPage = data.page.total
           } else {
             this.dataList = []
             this.totalPage = 0
