@@ -2,12 +2,12 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="参数名" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('basic:classtype:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('basic:classtype:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('business:classes:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -26,43 +26,66 @@
         prop="id"
         header-align="center"
         align="center"
-        width="80"
+        width="50"
         label="id">
       </el-table-column>
       <el-table-column
         prop="name"
         header-align="center"
         align="center"
-        label="名称">
+        label="课程名称">
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="price"
         header-align="center"
         align="center"
-        label="创建时间">
+        width="150"
+        label="价格">
+      </el-table-column>
+      <el-table-column
+        prop="status"
+        header-align="center"
+        align="center"
+        width="150"
+        label="状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status === 0" type="danger">未知</el-tag>
+          <el-tag v-if="scope.row.status === 1">正常</el-tag>
+          <el-tag v-if="scope.row.status === 2" type="warning">暂停</el-tag>
+          <el-tag v-if="scope.row.status === 3" type="danger">撤销</el-tag>
+          <el-tag v-if="scope.row.status === 9" type="warning">其它</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="bdClassTypeId"
+        header-align="center"
+        align="center"
+        width="150"
+        :formatter="formatClassType"
+        label="课程种类">
       </el-table-column>
       <el-table-column
         prop="remark"
         header-align="center"
         align="center"
+        show-overflow-tooltip
         label="备注">
-      </el-table-column>
-      <el-table-column
-        prop="bdOrgId"
-        header-align="center"
-        align="center"
-        :formatter="formatOrg"
-        label="机构">
       </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
-        width="150"
+        width="250"
         label="操作">
         <template slot-scope="scope">
-          <el-button size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button size="small" @click="deleteHandle(scope.row.id)" type="danger">删除</el-button>
+          <el-row style="margin-bottom:10px">
+            <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button></el-col>
+            <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12"><el-button size="mini" type="primary" @click="classesTeacher(scope.row.id)">教师</el-button></el-col>
+            <el-col :span="12"><el-button size="mini" type="primary" @click="classesStudent(scope.row.id)">学员</el-button></el-col>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>
@@ -77,11 +100,17 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 弹窗, 与教师绑定 -->
+    <classes-teacher v-if="classesTeacherVisible" ref="classesTeacher"></classes-teacher>
+    <!-- 弹窗, 与教师绑定 -->
+    <classes-student v-if="classesStudentVisible" ref="classesStudent"></classes-student>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './classtype-add-or-update'
+  import AddOrUpdate from './classes-add-or-update'
+  import ClassesTeacher from './classesTeacher'
+  import ClassesStudent from './classesStudent'
   export default {
     data () {
       return {
@@ -95,28 +124,31 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        orgList: []
+        classTypeList: [],
+        classesTeacherVisible: false,
+        classesStudentVisible: false
       }
     },
     components: {
+      ClassesTeacher,
+      ClassesStudent,
       AddOrUpdate
     },
     activated () {
       this.getDataList()
-      this.getOrgList()
+      this.getClassTypeList()
     },
     methods: {
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/basic/classtype/list'),
+          url: this.$http.adornUrl('/business/classes/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'name': this.dataForm.name,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+            'name': this.dataForm.name
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -127,16 +159,6 @@
             this.totalPage = 0
           }
           this.dataListLoading = false
-        })
-      },
-      // 获取机构（部门）ID
-      getOrgList () {
-        this.$http({
-          url: this.$http.adornUrl('/business/org/select'),
-          method: 'get',
-          params: this.$http.adornParams()
-        }).then(({data}) => {
-          this.orgList = data.orgList
         })
       },
       // 每页数
@@ -172,7 +194,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/basic/classtype/delete'),
+            url: this.$http.adornUrl('/business/classes/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -191,18 +213,44 @@
           })
         })
       },
-      formatOrg: function (row, column) {
-        let orgName = '未知'
-        if (this.orgList != null) {
-          for (let i = 0; i < this.orgList.length; i++) {
-            let item = this.orgList[i]
-            if (item.id === row.bdOrgId) {
-              orgName = item.name
+      // 获取课程种类ID
+      getClassTypeList () {
+        this.$http({
+          url: this.$http.adornUrl('/basic/classtype/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 0,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.classTypeList = data.page.list
+        })
+      },
+      formatClassType: function (row, column) {
+        let classTypeName = '未知'
+        if (this.classTypeList != null) {
+          for (let i = 0; i < this.classTypeList.length; i++) {
+            let item = this.classTypeList[i]
+            if (item.id === row.bdClassTypeId) {
+              classTypeName = item.name
               break
             }
           }
         }
-        return orgName
+        return classTypeName
+      },
+      classesTeacher: function (id) {
+        this.classesTeacherVisible = true
+        this.$nextTick(() => {
+          this.$refs.classesTeacher.init(id)
+        })
+      },
+      classesStudent: function (id) {
+        this.classesStudentVisible = true
+        this.$nextTick(() => {
+          this.$refs.classesStudent.init(id)
+        })
       }
     }
   }

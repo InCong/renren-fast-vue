@@ -2,7 +2,7 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="参数名" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -61,8 +61,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button size="small" @click="deleteHandle(scope.row.id)" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -86,7 +86,7 @@
     data () {
       return {
         dataForm: {
-          key: ''
+          name: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -94,7 +94,8 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        orgList: []
       }
     },
     components: {
@@ -114,7 +115,7 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'key': this.dataForm.key,
+            'name': this.dataForm.name,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {

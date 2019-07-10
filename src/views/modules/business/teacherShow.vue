@@ -22,7 +22,7 @@
                 </el-col>
                 <el-col :span="12">
                   <h1>
-                    <el-button type="primary" icon="el-icon-view" size="mini"></el-button>
+                    <el-button type="primary" icon="el-icon-view" size="mini" @click="showTeacherVideo(item.id)"></el-button>
                   </h1>
                 </el-col>
               </el-row>
@@ -56,11 +56,15 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
+    <!-- 弹窗，查看该教师的视频 -->
+    <teacher-video v-if="teacherVideoVisible" ref="teacherVideo"></teacher-video>
   </div>
 </template>
 
 <script>
+  import TeacherVideo from './teacherVideo'
   export default {
+    components: {TeacherVideo},
     data () {
       return {
         dataForm: {
@@ -70,7 +74,8 @@
         pageIndex: 1,
         pageSize: 10,
         totalPage: 0,
-        dataListLoading: false
+        dataListLoading: false,
+        teacherVideoVisible: false
       }
     },
     activated () {
@@ -80,27 +85,6 @@
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
-        // this.$http({
-        //   url: this.$http.adornUrl('/business/teacher/list'),
-        //   method: 'get',
-        //   params: this.$http.adornParams({
-        //     'page': this.pageIndex,
-        //     'limit': this.pageSize,
-        //     'name': this.dataForm.name,
-        //     'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
-        //   })
-        // }).then(({data}) => {
-        //   console.log(data)
-        //   if (data && data.code === 0) {
-        //     this.dataList = data.page.list
-        //     this.totalPage = data.page.totalCount
-        //   } else {
-        //     this.dataList = []
-        //     this.totalPage = 0
-        //   }
-        //   this.dataListLoading = false
-        // })
-
         this.$http({
           url: this.$http.adornUrl('/business/teacher/forShow'),
           method: 'get',
@@ -108,10 +92,9 @@
             'page': this.pageIndex,
             'limit': this.pageSize,
             'name': this.dataForm.name,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部列表
           })
         }).then(({data}) => {
-          console.log(data)
           if (data && data.code === 0) {
             this.dataList = data.page.records
             this.totalPage = data.page.total
@@ -132,6 +115,13 @@
       currentChangeHandle (val) {
         this.pageIndex = val
         this.getDataList()
+      },
+      // 显示该教师的视频
+      showTeacherVideo (id) {
+        this.teacherVideoVisible = true
+        this.$nextTick(() => {
+          this.$refs.teacherVideo.init(id)
+        })
       }
     }
   }

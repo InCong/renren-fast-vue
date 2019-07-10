@@ -60,12 +60,14 @@
         prop="age"
         header-align="center"
         align="center"
+        width="80"
         label="年龄">
       </el-table-column>
       <el-table-column
         prop="sex"
         header-align="center"
         align="center"
+        width="80"
         label="性别">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.sex === 0" size="small">女</el-tag>
@@ -124,9 +126,13 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
-          <el-button type="text" size="small" @click="bindingWechat(scope.row.id)">绑定微信</el-button>
+          <el-row style="margin-bottom:10px">
+            <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button></el-col>
+            <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>

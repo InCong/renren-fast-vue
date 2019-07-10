@@ -140,7 +140,7 @@
             'limit': this.pageSize,
             'teacherId': teacherId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : bdOrgId, // 超级管理员可以获取全部机构部门的列表
-            'typeId': typeId // 只查看图片的信息
+            'typeId': typeId // 1-图片，2-视频
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
