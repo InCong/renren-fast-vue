@@ -1,10 +1,11 @@
 <template>
   <el-dialog
     :close-on-click-modal="false"
-    :visible.sync="visible">
+    :visible.sync="visible"
+    @close="closeDialog">
     <div style="text-align: center">
       <el-transfer
-        v-model="value"
+        v-model="currentValue"
         :titles="['待选','已选']"
         :data="teacherList"
         :filterable="true"
@@ -26,10 +27,11 @@
         visible: false,
         classId: 0,
         teacherList: [],
-        value: [],
+        preValue: [],
+        currentValue: [],
         pageIndex: 1,
         pageSize: 1000,
-        totalPage: 0,
+        totalPage: 0
       }
     },
     methods: {
@@ -52,15 +54,81 @@
             this.teacherList = []
             this.totalPage = 0
           }
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/business/classesteacher/listTeacherId'),
+            method: 'get',
+            params: this.$http.adornParams({
+              'classId': this.classId
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.preValue = data.list
+              this.currentValue = data.list
+            } else {
+              this.preValue = []
+              this.currentValue = []
+            }
+          })
         })
+        // 组件看不见时调用，清空数组
+        this.over = () => {
+          this.preValue = []
+          this.currentValue = []
+          this.teacherList = []
+        }
       },
       submit () {
-        console.log('保存课程与教师关系')
+        if (this.preValue === this.currentValue) {
+          this.$message({
+            message: '未发生变化，无需保存！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else {
+          this.$http({
+            url: this.$http.adornUrl('/business/classesteacher/saveTeacherId'),
+            method: 'post',
+            data: this.$http.adornData({
+              'preValue': this.preValue,
+              'currentValue': this.currentValue,
+              'classId': this.classId
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.preValue = this.currentValue
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500
+              })
+            } else {
+              this.$message({
+                message: '保存出错！',
+                type: 'error',
+                duration: 1500
+              })
+            }
+          })
+        }
+      },
+      // 关闭时的逻辑
+      closeDialog () {
+        this.over()
       }
     }
   }
 </script>
 
-<style scoped>
-
+<style>
+  .el-transfer-panel {
+    height: 400px;
+    width: 400px;
+  }
+  .el-transfer-panel__list.is-filterable {
+    height: 400px;
+  }
+  .el-checkbox__label {
+    font-size: 16px;
+  }
 </style>
