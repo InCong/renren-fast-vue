@@ -132,6 +132,7 @@
           </el-row>
           <el-row>
             <el-col :span="12"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
+            <el-col :span="12"><el-button size="mini" type="primary" @click="StudentClassesQuery(scope.row.id)">课时</el-button></el-col>
           </el-row>
         </template>
       </el-table-column>
@@ -149,12 +150,15 @@
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     <!-- 弹窗, 绑定微信 -->
     <studentBindingWechat v-if="studentBindingWechatVisible" ref="studentBindingWechat"></studentBindingWechat>
+    <!-- 弹窗，查看指定学员的课时情况 -->
+    <studentClassesQuery v-if="studentClassesQueryVisible" ref="studentClassesQuery"></studentClassesQuery>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './student-add-or-update'
   import StudentBindingWechat from './binding-wechat'
+  import StudentClassesQuery from './student-classes-query'
   export default {
     data () {
       return {
@@ -173,12 +177,14 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        studentBindingWechatVisible: false
+        studentBindingWechatVisible: false,
+        studentClassesQueryVisible: false
       }
     },
     components: {
       AddOrUpdate,
-      StudentBindingWechat
+      StudentBindingWechat,
+      StudentClassesQuery
     },
     activated () {
       this.getOrgList()
@@ -362,6 +368,12 @@
               })
             }
           }
+        })
+      },
+      StudentClassesQuery: function (studentId) {
+        this.studentClassesQueryVisible = true
+        this.$nextTick(() => {
+          this.$refs.studentClassesQuery.init(studentId)
         })
       }
     }

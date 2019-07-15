@@ -1,14 +1,25 @@
 <template>
-  <div class="block">
-    <el-slider
-      v-model="value"
-      range
-      show-stops
-      :step="0.5"
-      :marks="marks"
-      :min="9"
-      :max="12.5">
-    </el-slider>
+  <div class="mod-config">
+    <div style="text-align: center">
+      <el-date-picker
+        v-model="date"
+        type="daterange"
+        align="right"
+        unlink-panels
+        range-separator="——"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions">
+      </el-date-picker>
+    </div>
+    <el-row :gutter="10" style="padding-top: 10px">
+      <el-col :span="4">
+        <div style="background: #0BB2D4;height: 1000px">111</div>
+      </el-col>
+      <el-col :span="20">
+        <div style="background: gainsboro;height: 1000px">2222</div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -16,20 +27,23 @@
   export default {
     data () {
       return {
-        value: [9, 10],
-        marks: {
-          9: '9:00',
-          9.5: '9:30',
-          10: '10:00',
-          11: '11:00',
-          12: '12:00',
-          13: '13:00',
-          14: '14:00',
-          15: '15:00',
-          16: '16:00',
-          17: '17:00',
-          18: '18:00',
-          19: '19:00'
+        date: [Date.now(), Date.now() + 7 * 24 * 3600 * 1000],
+        choiceDate: '',
+        pickerOptions: {
+          onPick: ({ maxDate, minDate }) => {
+            this.choiceDate = minDate.getTime()
+            if (maxDate) {
+              this.choiceDate = ''
+            }
+          },
+          disabledDate: (time) => {
+            if (this.choiceDate != null && this.choiceDate !== '') {
+              const one = 7 * 24 * 3600 * 1000
+              const minTime = this.choiceDate - one
+              const maxTime = this.choiceDate + one
+              return time.getTime() < minTime || time.getTime() > maxTime
+            }
+          }
         }
       }
     }

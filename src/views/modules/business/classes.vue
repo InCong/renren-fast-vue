@@ -84,7 +84,7 @@
           </el-row>
           <el-row>
             <el-col :span="12"><el-button size="mini" type="primary" @click="classesTeacher(scope.row.id)">教师</el-button></el-col>
-            <el-col :span="12"><el-button size="mini" type="primary" @click="classesStudent(scope.row.id)">学员</el-button></el-col>
+<!--            <el-col :span="12"><el-button size="mini" type="primary" @click="classesStudent(scope.row.id)">学员</el-button></el-col>-->
           </el-row>
         </template>
       </el-table-column>
