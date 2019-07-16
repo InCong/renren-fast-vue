@@ -20,6 +20,16 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="上课方式" prop="bdClassWayId">
+        <el-select v-model="dataForm.bdClassWayId" clearable placeholder="请选择">
+          <el-option
+            v-for="item in classWayList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="课程种类" prop="bdClassTypeId">
         <el-select v-model="dataForm.bdClassTypeId" clearable placeholder="请选择">
           <el-option
@@ -50,6 +60,7 @@
       return {
         visible: false,
         classTypeList: [],
+        classWayList: [],
         statusList: [{
           id: 0,
           name: '未知'
@@ -71,6 +82,7 @@
           name: '',
           price: '',
           status: 0,
+          bdClassWayId: '',
           bdClassTypeId: '',
           bdOrgId: '',
           createUserId: '',
@@ -86,6 +98,9 @@
           ],
           bdClassTypeId: [
             { required: true, message: '课程种类不能为空', trigger: 'blur' }
+          ],
+          bdClassWayId: [
+            { required: true, message: '上课方式不能为空', trigger: 'blur' }
           ]
         }
       }
@@ -95,6 +110,7 @@
         this.dataForm.id = id || 0
         this.visible = true
         this.getClassTypeList()
+        this.getClassWyList()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -107,6 +123,7 @@
                 this.dataForm.name = data.classes.name
                 this.dataForm.price = data.classes.price
                 this.dataForm.status = data.classes.status
+                this.dataForm.bdClassWayId = data.classes.bdClassWayId
                 this.dataForm.bdClassTypeId = data.classes.bdClassTypeId
                 this.dataForm.bdOrgId = data.classes.bdOrgId
                 this.dataForm.createTime = data.classes.createTime
@@ -128,6 +145,7 @@
                 'name': this.dataForm.name,
                 'price': this.dataForm.price,
                 'status': this.dataForm.status,
+                'bdClassWayId': this.dataForm.bdClassWayId,
                 'bdClassTypeId': this.dataForm.bdClassTypeId,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
                 'remark': this.dataForm.remark
@@ -162,6 +180,20 @@
           })
         }).then(({data}) => {
           this.classTypeList = data.page.list
+        })
+      },
+      // 获取上课方式ID
+      getClassWyList () {
+        this.$http({
+          url: this.$http.adornUrl('/basic/classway/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 0,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.classWayList = data.page.list
         })
       }
     }

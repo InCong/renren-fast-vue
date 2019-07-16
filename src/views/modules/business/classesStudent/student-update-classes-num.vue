@@ -128,7 +128,8 @@
         } else if (this.dataForm.num > this.originalRemainNum && this.dataForm.num < this.originalRemainNum + this.diffNum) {
           this.dataForm.remainNum = this.originalRemainNum
         // 如果变更为原来的课时，则剩余课时也变更为原来的数值
-        } else if(this.dataForm.num == 9) {
+          // eslint-disable-next-line eqeqeq
+        } else if (this.dataForm.num == 9) {
           this.dataForm.remainNum = this.originalRemainNum
         } else {
           this.dataForm.remainNum = this.dataForm.num

@@ -57,6 +57,14 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="bdClassWayId"
+        header-align="center"
+        align="center"
+        width="150"
+        :formatter="formatClassWay"
+        label="上课方式">
+      </el-table-column>
+      <el-table-column
         prop="bdClassTypeId"
         header-align="center"
         align="center"
@@ -125,6 +133,7 @@
         dataListSelections: [],
         addOrUpdateVisible: false,
         classTypeList: [],
+        classWayList: [],
         classesTeacherVisible: false,
         classesStudentVisible: false
       }
@@ -137,6 +146,7 @@
     activated () {
       this.getDataList()
       this.getClassTypeList()
+      this.getClassWyList()
     },
     methods: {
       // 获取数据列表
@@ -227,6 +237,20 @@
           this.classTypeList = data.page.list
         })
       },
+      // 获取上课方式ID
+      getClassWyList () {
+        this.$http({
+          url: this.$http.adornUrl('/basic/classway/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 0,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.classWayList = data.page.list
+        })
+      },
       formatClassType: function (row, column) {
         let classTypeName = '未知'
         if (this.classTypeList != null) {
@@ -239,6 +263,19 @@
           }
         }
         return classTypeName
+      },
+      formatClassWay: function (row, column) {
+        let classWayName = '未知'
+        if (this.classWayList != null) {
+          for (let i = 0; i < this.classWayList.length; i++) {
+            let item = this.classWayList[i]
+            if (item.id === row.bdClassWayId) {
+              classWayName = item.name
+              break
+            }
+          }
+        }
+        return classWayName
       },
       classesTeacher: function (id) {
         this.classesTeacherVisible = true

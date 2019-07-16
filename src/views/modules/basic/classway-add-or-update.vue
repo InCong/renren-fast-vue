@@ -7,6 +7,16 @@
     <el-form-item label="名称" prop="name">
       <el-input v-model="dataForm.name" placeholder="名称"></el-input>
     </el-form-item>
+      <el-form-item label="类型" prop="type">
+        <el-select v-model="dataForm.type" placeholder="请选择">
+          <el-option
+            v-for="item in typeList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
     <el-form-item label="创建时间" prop="createTime">
       <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
     </el-form-item>
@@ -29,6 +39,7 @@
         dataForm: {
           id: 0,
           name: '',
+          type: '',
           bdOrgId: 0,
           createUserId: '',
           createTime: '',
@@ -37,8 +48,21 @@
         dataRule: {
           name: [
             { required: true, message: '名称不能为空', trigger: 'blur' }
+          ],
+          type: [
+            { required: true, message: '类型不能为空', trigger: 'blur' }
           ]
-        }
+        },
+        typeList: [{
+          value: 1,
+          label: '一对一'
+        }, {
+          value: 2,
+          label: '一对多'
+        }, {
+          value: 3,
+          label: '多对多'
+        }]
       }
     },
     methods: {
@@ -55,6 +79,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.dataForm.name = data.classWay.name
+                this.dataForm.type = data.classWay.type
                 this.dataForm.bdOrgId = data.classWay.bdOrgId
                 this.dataForm.createUserId = data.classWay.createUserId
                 this.dataForm.createTime = data.classWay.createTime
@@ -74,6 +99,7 @@
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
                 'name': this.dataForm.name,
+                'type': this.dataForm.type,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
                 'createUserId': this.dataForm.createUserId || this.$store.state.user.id,
                 'remark': this.dataForm.remark

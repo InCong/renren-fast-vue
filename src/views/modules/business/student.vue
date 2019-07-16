@@ -25,6 +25,16 @@
         </el-select>
       </el-form-item>
       <el-form-item>
+        <el-select v-model="dataForm.bdClassesId" clearable placeholder="课程">
+          <el-option
+            v-for="item in classList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('business:student:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button v-if="isAuth('business:student:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
@@ -99,6 +109,13 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="className"
+        header-align="center"
+        align="center"
+        show-overflow-tooltip
+        label="拥有课程">
+      </el-table-column>
+      <el-table-column
         prop="bdAreaId"
         header-align="center"
         align="center"
@@ -165,12 +182,14 @@
         dataForm: {
           nickname: '',
           bdAreaId: '',
-          bdStudentLevelId: ''
+          bdStudentLevelId: '',
+          bdClassesId: ''
         },
         dataList: [],
         orgList: [],
         areaList: [],
         studentLevelList: [],
+        classList: [],
         pageIndex: 1,
         pageSize: 10,
         totalPage: 0,
@@ -191,26 +210,28 @@
       this.getDataList()
       this.getAreaList()
       this.getStudentLevelList()
+      this.getClassList()
     },
     methods: {
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/business/student/list'),
-          method: 'get',
-          params: this.$http.adornParams({
+          url: this.$http.adornUrl('/business/student/listStudent'),
+          method: 'post',
+          data: this.$http.adornData({
             'page': this.pageIndex,
             'limit': this.pageSize,
             'nickname': this.dataForm.nickname,
-            'bdAreaId': this.dataForm.bdAreaId,
-            'bdStudentLevelId': this.dataForm.bdStudentLevelId,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+            'bdAreaId': this.dataForm.bdAreaId !== '' ? this.dataForm.bdAreaId : 0,
+            'bdStudentLevelId': this.dataForm.bdStudentLevelId !== '' ? this.dataForm.bdStudentLevelId : 0,
+            'bdClassesId': this.dataForm.bdClassesId !== '' ? this.dataForm.bdClassesId : 0,
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+            this.dataList = data.page.records
+            this.totalPage = data.page.total
           } else {
             this.dataList = []
             this.totalPage = 0
@@ -254,6 +275,20 @@
           })
         }).then(({data}) => {
           this.studentLevelList = data.page.list
+        })
+      },
+      // 获取课程ID
+      getClassList () {
+        this.$http({
+          url: this.$http.adornUrl('/business/classes/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 0,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.classList = data.page.list
         })
       },
       // 每页数

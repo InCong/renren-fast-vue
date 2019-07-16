@@ -36,6 +36,17 @@
         label="名称">
       </el-table-column>
       <el-table-column
+        prop="type"
+        header-align="center"
+        align="center"
+        label="类型">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.type === 1" size="small">一对一</el-tag>
+          <el-tag v-if="scope.row.type === 2" size="small">一对多</el-tag>
+          <el-tag v-if="scope.row.type === 3" size="small">多对多</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
