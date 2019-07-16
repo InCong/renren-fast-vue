@@ -62,6 +62,13 @@
           label="创建时间">
         </el-table-column>
         <el-table-column
+          prop="remark"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+          label="备注">
+        </el-table-column>
+        <el-table-column
           fixed="right"
           header-align="center"
           align="center"
@@ -69,7 +76,7 @@
           label="操作">
           <template slot-scope="scope">
             <el-row style="margin-bottom:10px">
-              <el-col :span="12"><el-button size="mini" @click="">修改</el-button></el-col>
+              <el-col :span="12"><el-button size="mini" @click="updateClass(scope.row.id, scope.row.teacherName, scope.row.className)">修改</el-button></el-col>
               <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
             </el-row>
           </template>
@@ -86,15 +93,18 @@
         style="margin-top: 10px;text-align: right">
       </el-pagination>
       <!-- 弹窗，购买课时 -->
-      <student-buy-classes v-if="studentBuyClassesVisible" ref="studentBuyClasses"></student-buy-classes>
+      <student-buy-classes v-if="studentBuyClassesVisible" ref="studentBuyClasses" @refreshDataList="init(studentId)"></student-buy-classes>
+      <!-- 弹窗，修改课时 -->
+      <student-update-classes-num v-if="studentUpdateClassesNumVisible" ref="studentUpdateClassesNum" @refreshDataList="init(studentId)"></student-update-classes-num>
     </div>
   </el-dialog>
 </template>
 
 <script>
   import StudentBuyClasses from './student-buy-classes'
+  import StudentUpdateClassesNum from './student-update-classes-num'
   export default {
-    components: {StudentBuyClasses},
+    components: {StudentBuyClasses, StudentUpdateClassesNum},
     data () {
       return {
         studentId: 0,
@@ -104,7 +114,8 @@
         pageIndex: 1,
         pageSize: 100,
         totalPage: 0,
-        studentBuyClassesVisible: false
+        studentBuyClassesVisible: false,
+        studentUpdateClassesNumVisible: false
       }
     },
     methods: {
@@ -175,6 +186,13 @@
         this.studentBuyClassesVisible = true
         this.$nextTick(() => {
           this.$refs.studentBuyClasses.init(this.studentId)
+        })
+      },
+      // 更新课时
+      updateClass: function (id, teacherName, className) {
+        this.studentUpdateClassesNumVisible = true
+        this.$nextTick(() => {
+          this.$refs.studentUpdateClassesNum.init(id, teacherName, className)
         })
       }
     }

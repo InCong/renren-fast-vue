@@ -6,7 +6,7 @@
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <el-form-item label="教师" prop="bdTeacherId">
-        <el-select v-model="dataForm.bdTeacherId" clearable placeholder="先选择教师，再选择课程" @change="handleITeacherChange">
+        <el-select v-model="dataForm.bdTeacherId" clearable placeholder="先选择教师，再选择课程" filterable @change="handleITeacherChange">
           <el-option
             v-for="item in teacherList"
             :key="item.id"
@@ -15,8 +15,8 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="课程" prop="bdClassId">
-        <el-select v-model="dataForm.bdClassId" clearable placeholder="请选择课程" :disabled="classSelectVisible">
+      <el-form-item label="课程" prop="bdClassesId">
+        <el-select v-model="dataForm.bdClassesId" clearable placeholder="请选择课程" :disabled="classSelectVisible">
           <el-option
             v-for="item in classList"
             :key="item.bdClassesId"
@@ -56,15 +56,14 @@
         studentId: 0,
         visible: false,
         dataForm: {
-          id: 0,
-          bdClassId: '',
+          bdClassesId: '',
           bdTeacherId: '',
           num: 0,
           remainNum: 0,
           remark: ''
         },
         dataRule: {
-          bdClassId: [
+          bdClassesId: [
             { required: true, message: '课程不能为空', trigger: 'blur' }
           ],
           num: [
@@ -104,7 +103,31 @@
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
-            console.log('保存成功！')
+            this.$http({
+              url: this.$http.adornUrl('/business/classesstudent/save'),
+              method: 'post',
+              data: this.$http.adornData({
+                'bdStudentId': this.studentId,
+                'bdClassesId': this.dataForm.bdClassesId,
+                'num': this.dataForm.num,
+                'remainNum': this.dataForm.remainNum,
+                'remark': this.dataForm.remark
+              })
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.$message({
+                  message: '购买成功',
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.visible = false
+                    this.$emit('refreshDataList')
+                  }
+                })
+              } else {
+                this.$message.error(data.msg)
+              }
+            })
           }
         })
       },
