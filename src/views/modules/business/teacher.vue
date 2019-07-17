@@ -90,6 +90,20 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="classCount"
+        header-align="center"
+        align="center"
+        width="80"
+        label="拥有课程">
+      </el-table-column>
+      <el-table-column
+        prop="studentCount"
+        header-align="center"
+        align="center"
+        width="80"
+        label="拥有学生">
+      </el-table-column>
+      <el-table-column
         prop="remark"
         header-align="center"
         align="center"
@@ -106,7 +120,7 @@
       <el-table-column
         fixed="right"
         header-align="center"
-        width="150"
+        width="250"
         label="操作">
         <template slot-scope="scope">
           <el-row style="margin-bottom:10px">
@@ -114,8 +128,9 @@
             <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
           </el-row>
           <el-row>
-            <el-col :span="12"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
-            <el-col :span="12"><el-button size="mini" @click="uploadMultimedia(scope.row.id)">多媒体</el-button></el-col>
+            <el-col :span="8"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
+            <el-col :span="8"><el-button size="mini" type="primary" @click="uploadMultimedia(scope.row.id)">多媒体</el-button></el-col>
+            <el-col :span="8"><el-button size="mini" type="primary" @click="classSettlement(scope.row.id)">结算</el-button></el-col>
           </el-row>
         </template>
       </el-table-column>
@@ -135,6 +150,8 @@
     <teacherBindingWechat v-if="teacherBindingWechatVisible" ref="teacherBindingWechat"></teacherBindingWechat>
     <!-- 弹窗，上传图片与视频 -->
     <teacherUploadMultimedia v-if="teacherUploadMultimediaVisible" ref="teacherUploadMultimedia"></teacherUploadMultimedia>
+    <!-- 弹窗，课程结算 -->
+    <teacher-class-settlement v-if="teacherClassSettlementVisible" ref="teacherClassSettlement"></teacher-class-settlement>
   </div>
 </template>
 
@@ -142,6 +159,7 @@
   import AddOrUpdate from './teacher-add-or-update'
   import TeacherBindingWechat from './binding-wechat'
   import TeacherUploadMultimedia from './teacher-multimedia-add-or-delete'
+  import TeacherClassSettlement from './teacher-class-settlement'
   export default {
     data () {
       return {
@@ -157,13 +175,15 @@
         dataListSelections: [],
         addOrUpdateVisible: false,
         teacherBindingWechatVisible: false,
-        teacherUploadMultimediaVisible: false
+        teacherUploadMultimediaVisible: false,
+        teacherClassSettlementVisible: false
       }
     },
     components: {
       AddOrUpdate,
       TeacherBindingWechat,
-      TeacherUploadMultimedia
+      TeacherUploadMultimedia,
+      TeacherClassSettlement
     },
     activated () {
       this.getDataList()
@@ -174,17 +194,17 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/business/teacher/list'),
-          method: 'get',
-          params: this.$http.adornParams({
+          url: this.$http.adornUrl('/business/teacher/listTeacher'),
+          method: 'post',
+          data: this.$http.adornData({
             'page': this.pageIndex,
             'limit': this.pageSize,
             'name': this.dataForm.name,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.dataList = data.page.list
+            this.dataList = data.page.records
             this.totalPage = data.page.totalCount
           } else {
             this.dataList = []
@@ -296,6 +316,12 @@
         this.teacherUploadMultimediaVisible = true
         this.$nextTick(() => {
           this.$refs.teacherUploadMultimedia.init(this.$store.state.user.bdOrgId, teacherId, 1)
+        })
+      },
+      classSettlement: function (teacherId) {
+        this.teacherClassSettlementVisible = true
+        this.$nextTick(() => {
+          this.$refs.teacherClassSettlement.init(teacherId)
         })
       }
     }

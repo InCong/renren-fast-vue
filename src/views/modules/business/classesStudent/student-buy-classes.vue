@@ -148,7 +148,6 @@
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.classList = data.list
-              console.log(data)
             } else {
               this.classList = []
             }
