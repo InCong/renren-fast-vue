@@ -10,7 +10,7 @@
         </el-radio-group>
       </div>
       <div style="text-align: right;margin-bottom: 10px">
-        <el-button v-if="dataForm.isSettlement===0" type="primary" @click="" :disabled="dataListSelections.length <= 0">批量结算</el-button>
+        <el-button type="primary" @click="setSettlement()" :disabled="dataListSelections.length <= 0">{{multiButtonText}}</el-button>
       </div>
       <div>
         <el-table
@@ -67,13 +67,12 @@
             label="结算时间">
           </el-table-column>
           <el-table-column
-            v-if="modifyTimeColVisible"
             fixed="right"
             header-align="center"
             width="150"
             label="操作">
             <template slot-scope="scope">
-              <div style="text-align: center"><el-button size="mini" type="primary" @click="">结算</el-button></div>
+              <div style="text-align: center"><el-button size="mini" type="primary" @click="setSettlement(scope.row.id)">{{buttonText}}</el-button></div>
             </template>
           </el-table-column>
         </el-table>
@@ -111,7 +110,9 @@
         pageSize: 10,
         totalPage: 0,
         dataListSelections: [],
-        modifyTimeColVisible: true
+        modifyTimeColVisible: true,
+        multiButtonText: '批量结算',
+        buttonText: '结算'
       }
     },
     methods: {
@@ -156,6 +157,14 @@
       },
       radioChange () {
         this.modifyTimeColVisible = this.dataForm.isSettlement === 0
+        if (this.dataForm.isSettlement === 0) {
+          this.multiButtonText = '批量结算'
+          this.buttonText = '结算'
+        } else {
+          this.multiButtonText = '批量取消结算'
+          this.buttonText = '取消结算'
+        }
+        this.init(this.teacherId)
       },
       getSummaries (param) {
         const { columns, data } = param
@@ -182,6 +191,37 @@
           }
         })
         return sums
+      },
+      // 设置结算或取消结算
+      setSettlement (id) {
+        var ids = id ? [id] : this.dataListSelections.map(item => {
+          return item.id
+        })
+        this.$confirm(`确定对[id=${ids.join(',')}]进行[ ${id ? this.buttonText : this.multiButtonText} ]操作?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/business/teacherclasssettlement/updateSettlement'),
+            method: 'post',
+            data: this.$http.adornData({
+              'ids': ids,
+              'isSettlement': this.dataForm.isSettlement === 0 ? 1 : 0
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '操作成功',
+                type: 'success',
+                duration: 1500
+              })
+              this.init(this.teacherId)
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+        })
       }
     }
   }
