@@ -2,77 +2,131 @@
   <div class="mod-config">
     <div style="text-align: center">
       <el-date-picker
-        v-model="date"
+        v-model="rangeDate"
         type="daterange"
         align="right"
         unlink-panels
         range-separator="——"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        :picker-options="pickerOptions">
+        value-format="yyyy-MM-dd"
+        :default-time="['00:00:00', '23:59:59']"
+        :picker-options="pickerOptions"
+        @change="changeRangeDate">
       </el-date-picker>
     </div>
     <el-row :gutter="10" style="padding-top: 10px">
       <el-col :span="4">
-        <el-row>
-          <el-col :span="12">
-            <el-table
-              :data="teacherList"
-              border
-              highlight-current-row
-              max-height="1000px"
-              :header-cell-style="tableHeaderColor"
-              :row-style="tableRowStyle"
-              @row-click="teacherRowClick">
-              <el-table-column
-                prop="name"
-                header-align="center"
-                align="center"
-                label="教师">
-              </el-table-column>
-            </el-table>
-          </el-col>
-          <el-col :span="12">
-            <el-table
-              :data="studentList"
-              border
-              highlight-current-row
-              max-height="1000px"
-              :header-cell-style="tableHeaderColor"
-              :row-style="tableRowStyle"
-              @row-click="studentRowClick">
-              <el-table-column
-                prop="studentName"
-                header-align="center"
-                align="center"
-                label="学员">
-              </el-table-column>
-            </el-table>
-          </el-col>
-        </el-row>
+        <el-card shadow="always">
+          <el-row>
+            <el-col :span="12">
+              <el-table
+                :data="teacherList"
+                border
+                highlight-current-row
+                max-height="1000px"
+                :header-cell-style="tableHeaderColor"
+                :row-style="tableRowStyle"
+                @row-click="teacherRowClick">
+                <el-table-column
+                  prop="name"
+                  header-align="center"
+                  align="center"
+                  label="教师">
+                </el-table-column>
+              </el-table>
+            </el-col>
+            <el-col :span="12">
+              <el-table
+                :data="studentList"
+                border
+                highlight-current-row
+                max-height="1000px"
+                :header-cell-style="tableHeaderColor"
+                :row-style="tableRowStyle"
+                @row-click="studentRowClick">
+                <el-table-column
+                  prop="studentName"
+                  header-align="center"
+                  align="center"
+                  label="学员">
+                </el-table-column>
+              </el-table>
+            </el-col>
+          </el-row>
+        </el-card>
       </el-col>
       <el-col :span="20">
-        <el-row>
-          <el-col :span="2">测试</el-col>
-          <el-col :span="3">周一</el-col>
-          <el-col :span="3">周二</el-col>
-          <el-col :span="3">周三</el-col>
-          <el-col :span="3">周四</el-col>
-          <el-col :span="3">周五</el-col>
-          <el-col :span="3">周六</el-col>
-          <el-col :span="3">周日</el-col>
-        </el-row>
+        <el-card shadow="always">
+          <el-row>
+            <el-col :span="2" style="text-align: center;height: 37px"><div style="position: relative;top: 50%;transform: translateY(-50%);font-size: 16px">时间</div></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day1}}</el-row><el-row>{{day1}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day2}}</el-row><el-row>{{day2}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day3}}</el-row><el-row>{{day3}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day4}}</el-row><el-row>{{day4}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day5}}</el-row><el-row>{{day5}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day6}}</el-row><el-row>{{day6}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day7}}</el-row><el-row>{{day7}}</el-row></el-col>
+          </el-row>
+        </el-card>
+        <el-card shadow="always" class="timeSheet">
+          <el-row>
+            <el-col :span="2" style="text-align: center">
+              <el-row class="timeRow">6:00</el-row>
+              <el-row class="timeRow">7:00</el-row>
+              <el-row class="timeRow">8:00</el-row>
+              <el-row class="timeRow">9:00</el-row>
+              <el-row class="timeRow">10:00</el-row>
+              <el-row class="timeRow">11:00</el-row>
+              <el-row class="timeRow">12:00</el-row>
+              <el-row class="timeRow">13:00</el-row>
+              <el-row class="timeRow">14:00</el-row>
+              <el-row class="timeRow">15:00</el-row>
+              <el-row class="timeRow">16:00</el-row>
+              <el-row class="timeRow">17:00</el-row>
+              <el-row class="timeRow">18:00</el-row>
+              <el-row class="timeRow">19:00</el-row>
+              <el-row class="timeRow">20:00</el-row>
+              <el-row class="timeRow">21:00</el-row>
+              <el-row class="timeRow">22:00</el-row>
+              <el-row class="timeRow">23:00</el-row>
+            </el-col>
+            <el-col :span="3" style="text-align: center">
+              <el-row><div style="background: lightskyblue;height: 80px;margin-top: 50px"></div></el-row>
+            </el-col>
+            <el-col :span="3" style="text-align: center">
+
+            </el-col>
+            <el-col :span="3" style="text-align: center">
+
+            </el-col>
+            <el-col :span="3" style="text-align: center">
+
+            </el-col>
+            <el-col :span="3" style="text-align: center">
+
+            </el-col>
+            <el-col :span="3" style="text-align: center">
+
+            </el-col>
+            <el-col :span="3" style="text-align: center">
+
+            </el-col>
+          </el-row>
+        </el-card>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     data () {
       return {
         // 以下几个都是范围日期控件的参数
-        date: [Date.now(), Date.now() + 7 * 24 * 3600 * 1000],
+        rangeDate: [moment().format('YYYY-MM-D'), moment().add(6, 'days').format('YYYY-MM-D')],
+        // rangeDate: ['2019-07-18', '2019-07-24'],
         choiceDate: '',
         pickerOptions: {
           onPick: ({ maxDate, minDate }) => {
@@ -83,20 +137,29 @@
           },
           disabledDate: (time) => {
             if (this.choiceDate != null && this.choiceDate !== '') {
-              const one = 7 * 24 * 3600 * 1000
+              const one = 6 * 24 * 3600 * 1000
               const minTime = this.choiceDate - one
               const maxTime = this.choiceDate + one
               return time.getTime() < minTime || time.getTime() > maxTime
             }
           }
         },
-        // 以下是基本用的
+        // 以下是基本用的数据数组
         teacherList: [],
-        studentList: []
+        studentList: [],
+        // 以下是日期相关的变量
+        day1: '',
+        day2: '',
+        day3: '',
+        day4: '',
+        day5: '',
+        day6: '',
+        day7: ''
       }
     },
     activated () {
       this.getTeacherList()
+      this.initHeader()
     },
     methods: {
       // 修改教师与学员表格列头样式
@@ -106,7 +169,7 @@
         }
       },
       // 修改行的样式
-      tableRowStyle({row, rowIndex}) {
+      tableRowStyle ({row, rowIndex}) {
         return 'height: 60px;font-size: 16px'
       },
       getTeacherList () {
@@ -146,7 +209,56 @@
       },
       // 点击指定学员时，显示该学员的排课情况
       studentRowClick (row, column, event) {
-        console.log(row, column, event)
+        console.log(moment(this.rangeDate[0]).format('ddd'))
+      },
+      // 选择完日期之后，自动填充列头
+      changeRangeDate () {
+        this.initHeader()
+      },
+      // 第一次初始化列头
+      initHeader () {
+        if (this.rangeDate != null) {
+          let count = (moment(this.rangeDate[1]) - moment(this.rangeDate[0])) / 1000 / 3600 / 24 + 1
+          for (var i = 1; i <= 7; i++) {
+            if (i === 1 && i <= count) {
+              this.day1 = moment(this.rangeDate[0]).format('MM-D')
+            } else if (i === 2 && i <= count) {
+              this.day2 = moment(this.rangeDate[0]).add(1, 'days').format('MM-D')
+            } else if (i === 3 && i <= count) {
+              this.day3 = moment(this.rangeDate[0]).add(2, 'days').format('MM-D')
+            } else if (i === 4 && i <= count) {
+              this.day4 = moment(this.rangeDate[0]).add(3, 'days').format('MM-D')
+            } else if (i === 5 && i <= count) {
+              this.day5 = moment(this.rangeDate[0]).add(4, 'days').format('MM-D')
+            } else if (i === 6 && i <= count) {
+              this.day6 = moment(this.rangeDate[0]).add(5, 'days').format('MM-D')
+            } else if (i === 7 && i <= count) {
+              this.day7 = moment(this.rangeDate[1]).format('MM-D')
+            } else if (i === 1 && i > count) {
+              this.day1 = '无'
+            } else if (i === 2 && i > count) {
+              this.day2 = '无'
+            } else if (i === 3 && i > count) {
+              this.day3 = '无'
+            } else if (i === 4 && i > count) {
+              this.day4 = '无'
+            } else if (i === 5 && i > count) {
+              this.day5 = '无'
+            } else if (i === 6 && i > count) {
+              this.day6 = '无'
+            } else if (i === 7 && i > count) {
+              this.day7 = '无'
+            }
+          }
+        } else {
+          this.day1 = '无'
+          this.day2 = '无'
+          this.day3 = '无'
+          this.day4 = '无'
+          this.day5 = '无'
+          this.day6 = '无'
+          this.day7 = '无'
+        }
       }
     }
   }
@@ -156,5 +268,14 @@
   .el-table__body tr.current-row>td{
     background-color: #f57878 !important;
     color: wheat;
+  }
+  .timeRow {
+    margin-bottom: 20px;
+    height: 20px;
+    font-size: 18px;
+    /*background: #a2e1da;*/
+  }
+  .timeSheet .el-card__body{
+    padding-top: 30px;
   }
 </style>
