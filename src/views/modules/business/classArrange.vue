@@ -60,13 +60,13 @@
         <el-card shadow="always">
           <el-row>
             <el-col :span="2" style="text-align: center;height: 37px"><div style="position: relative;top: 50%;transform: translateY(-50%);font-size: 16px">时间</div></el-col>
-            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day1}}</el-row><el-row>{{day1}}</el-row></el-col>
-            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day2}}</el-row><el-row>{{day2}}</el-row></el-col>
-            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day3}}</el-row><el-row>{{day3}}</el-row></el-col>
-            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day4}}</el-row><el-row>{{day4}}</el-row></el-col>
-            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day5}}</el-row><el-row>{{day5}}</el-row></el-col>
-            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day6}}</el-row><el-row>{{day6}}</el-row></el-col>
-            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{day7}}</el-row><el-row>{{day7}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week1}}</el-row><el-row>{{day1}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week2}}</el-row><el-row>{{day2}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week3}}</el-row><el-row>{{day3}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week4}}</el-row><el-row>{{day4}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week5}}</el-row><el-row>{{day5}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week6}}</el-row><el-row>{{day6}}</el-row></el-col>
+            <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week7}}</el-row><el-row>{{day7}}</el-row></el-col>
           </el-row>
         </el-card>
         <el-card shadow="always" class="timeSheet">
@@ -121,6 +121,7 @@
 
 <script>
   import moment from 'moment'
+  import 'moment/locale/zh-cn'
   export default {
     data () {
       return {
@@ -154,7 +155,14 @@
         day4: '',
         day5: '',
         day6: '',
-        day7: ''
+        day7: '',
+        week1: '',
+        week2: '',
+        week3: '',
+        week4: '',
+        week5: '',
+        week6: '',
+        week7: ''
       }
     },
     activated () {
@@ -222,32 +230,46 @@
           for (var i = 1; i <= 7; i++) {
             if (i === 1 && i <= count) {
               this.day1 = moment(this.rangeDate[0]).format('MM-D')
+              this.week1 = moment(this.rangeDate[0]).format('ddd')
             } else if (i === 2 && i <= count) {
               this.day2 = moment(this.rangeDate[0]).add(1, 'days').format('MM-D')
+              this.week2 = moment(this.rangeDate[0]).add(1, 'days').format('ddd')
             } else if (i === 3 && i <= count) {
               this.day3 = moment(this.rangeDate[0]).add(2, 'days').format('MM-D')
+              this.week3 = moment(this.rangeDate[0]).add(2, 'days').format('ddd')
             } else if (i === 4 && i <= count) {
               this.day4 = moment(this.rangeDate[0]).add(3, 'days').format('MM-D')
+              this.week4 = moment(this.rangeDate[0]).add(3, 'days').format('ddd')
             } else if (i === 5 && i <= count) {
               this.day5 = moment(this.rangeDate[0]).add(4, 'days').format('MM-D')
+              this.week5 = moment(this.rangeDate[0]).add(4, 'days').format('ddd')
             } else if (i === 6 && i <= count) {
               this.day6 = moment(this.rangeDate[0]).add(5, 'days').format('MM-D')
+              this.week6 = moment(this.rangeDate[0]).add(5, 'days').format('ddd')
             } else if (i === 7 && i <= count) {
               this.day7 = moment(this.rangeDate[1]).format('MM-D')
+              this.week7 = moment(this.rangeDate[1]).format('ddd')
             } else if (i === 1 && i > count) {
               this.day1 = '无'
+              this.week1 = ''
             } else if (i === 2 && i > count) {
               this.day2 = '无'
+              this.week2 = ''
             } else if (i === 3 && i > count) {
               this.day3 = '无'
+              this.week3 = ''
             } else if (i === 4 && i > count) {
               this.day4 = '无'
+              this.week4 = ''
             } else if (i === 5 && i > count) {
               this.day5 = '无'
+              this.week5 = ''
             } else if (i === 6 && i > count) {
               this.day6 = '无'
+              this.week6 = ''
             } else if (i === 7 && i > count) {
               this.day7 = '无'
+              this.week7 = ''
             }
           }
         } else {
