@@ -11,6 +11,7 @@ import Vue from 'vue'
 import {
   Pagination,
   Dialog,
+  Divider,
   Autocomplete,
   Dropdown,
   DropdownMenu,
@@ -80,6 +81,7 @@ import {
 
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Divider)
 Vue.use(Autocomplete)
 Vue.use(Dropdown)
 Vue.use(DropdownMenu)
