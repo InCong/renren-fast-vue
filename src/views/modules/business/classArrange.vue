@@ -503,7 +503,6 @@
             duration: 1500
           })
         } else {
-          console.log('教师排课')
           this.classArrangeAddVisible = true
           this.$nextTick(() => {
             this.$refs.classArrangeAdd.init(this.bdTeacherId, null, this.teacherName,
@@ -520,7 +519,6 @@
             duration: 1500
           })
         } else {
-          console.log('学员排课')
           this.classArrangeAddVisible = true
           this.$nextTick(() => {
             this.$refs.classArrangeAdd.init(this.bdTeacherId, this.bdStudentId, this.studentName)
