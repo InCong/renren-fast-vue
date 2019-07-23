@@ -19,7 +19,7 @@
               start: '06:00',
               step: '00:15',
               end: '23:00',
-              maxTime: this.dataForm.endTime
+              maxTime: dataForm.endTime
             }">
         </el-time-select>
         <span style="margin-left: 10px;margin-right: 20px">至</span>
@@ -30,7 +30,7 @@
               start: '06:00',
               step: '00:15',
               end: '23:00',
-              minTime: this.dataForm.startTime
+              minTime: dataForm.startTime
             }">
         </el-time-select>
       </div>
@@ -127,6 +127,8 @@
           this.dataForm.endTime = ''
           this.dataForm.bdClassesStudentId = ''
           this.radioClassWay = ''
+          this.visible = false
+          this.$emit('refreshClassArrange')
         }
       },
       dataFormSubmit: function () {

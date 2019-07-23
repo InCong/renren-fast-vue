@@ -73,7 +73,7 @@
             <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week7}}</el-row><el-row>{{day7.substring(5)}}</el-row></el-col>
           </el-row>
         </el-card>
-        <el-card shadow="always" class="timeSheet">
+        <el-card shadow="always" class="timeSheet" v-loading="classArrangeListLoading">
           <el-row>
             <div style="position: absolute;margin-left: 110px;width: 1183px;height: 720px">
               <el-row class="timeRow"><el-divider></el-divider></el-row>
@@ -127,7 +127,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -148,7 +148,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -169,7 +169,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -190,7 +190,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -211,7 +211,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -232,7 +232,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -253,7 +253,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -272,6 +272,8 @@
     </el-row>
     <!-- 弹窗，教师或学员增加排课 -->
     <class-arrange-add v-if="classArrangeAddVisible" ref="classArrangeAdd" @refreshClassArrange="getClassArrange"></class-arrange-add>
+    <!-- 弹窗，显示课程操作界面 -->
+    <class-arrange-opera v-if="classArrangeOperaVisible" ref="classArrangeOpera" @refreshClassArrange="getClassArrange"></class-arrange-opera>
   </div>
 </template>
 
@@ -279,8 +281,12 @@
   import moment from 'moment'
   import 'moment/locale/zh-cn'
   import ClassArrangeAdd from './classArrangeAdd'
+  import ClassArrangeOpera from './classArrangeOpera'
   export default {
-    components: {ClassArrangeAdd},
+    components: {
+      ClassArrangeAdd,
+      ClassArrangeOpera
+    },
     data () {
       return {
         // 以下几个都是范围日期控件的参数
@@ -330,12 +336,13 @@
         week6: '',
         week7: '',
         // 以下是基本使用的变量
-        dataListLoading: false,
+        classArrangeListLoading: false,
         bdTeacherId: 0,
         bdStudentId: 0,
         teacherName: '',
         studentName: '',
-        classArrangeAddVisible: false
+        classArrangeAddVisible: false,
+        classArrangeOperaVisible: false
       }
     },
     activated () {
@@ -467,7 +474,7 @@
       getClassArrange () {
         let dateList = [this.day1, this.day2, this.day3, this.day4, this.day5, this.day6, this.day7]
 
-        this.dataListLoading = true
+        this.classArrangeListLoading = true
         this.$http({
           url: this.$http.adornUrl('/business/studentclassarrange/listClassArrange'),
           method: 'post',
@@ -488,7 +495,7 @@
           } else {
             console.log('error!', data)
           }
-          this.dataListLoading = false
+          this.classArrangeListLoading = false
         })
       },
       // 教师排课按钮点击
@@ -524,8 +531,12 @@
         }
       },
       // 课程点击
-      classClick (id) {
-        console.log('课程安排ID：' + id)
+      classClick (id, className, startTime, endTime, arrangeDate) {
+        console.log(id, className, startTime, endTime)
+        this.classArrangeOperaVisible = true
+        this.$nextTick(() => {
+          this.$refs.classArrangeOpera.init(id, this.bdTeacherId, this.bdStudentId, className, startTime, endTime, arrangeDate)
+        })
       }
     }
   }
