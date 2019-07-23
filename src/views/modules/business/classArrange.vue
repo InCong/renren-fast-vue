@@ -50,7 +50,7 @@
                 :row-style="tableRowStyle"
                 @row-click="studentRowClick">
                 <el-table-column
-                  prop="studentName"
+                  prop="nickname"
                   header-align="center"
                   align="center"
                   label="学员">
@@ -377,17 +377,14 @@
         this.studentName = ''
         // 先获取学员列表
         this.$http({
-          url: this.$http.adornUrl('/business/teacherclasssettlement/listTeacherClassSettlement'),
+          url: this.$http.adornUrl('/business/student/listTeacherStudent'),
           method: 'post',
           data: this.$http.adornData({
-            'page': 1,
-            'limit': 1000,
-            'bdTeacherId': row.id,
-            'isSettlement': -1
+            'bdTeacherId': row.id
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.studentList = data.page.records
+            this.studentList = data.list
           } else {
             this.studentList = []
           }
@@ -398,7 +395,7 @@
       // 点击指定学员时，显示该学员的排课情况
       studentRowClick (row, column, event) {
         this.bdStudentId = row.id
-        this.studentName = row.studentName
+        this.studentName = row.nickname
 
         // 在显示该学员的排课情况
         this.getClassArrange()
@@ -521,7 +518,8 @@
         } else {
           this.classArrangeAddVisible = true
           this.$nextTick(() => {
-            this.$refs.classArrangeAdd.init(this.bdTeacherId, this.bdStudentId, this.studentName)
+            this.$refs.classArrangeAdd.init(this.bdTeacherId, this.bdStudentId, this.studentName,
+              [this.day1, this.day2, this.day3, this.day4, this.day5, this.day6, this.day7])
           })
         }
       },
