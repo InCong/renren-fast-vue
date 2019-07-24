@@ -4,6 +4,14 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     append-to-body>
+    <div style="text-align: center;margin-bottom: 30px">
+      <el-date-picker
+        v-model="arrangeDate"
+        value-format="yyyy-MM-dd"
+        type="date"
+        placeholder="选择排课日期">
+      </el-date-picker>
+    </div>
     <div style="text-align: center">
       <el-time-select
         placeholder="起始时间"
@@ -42,19 +50,73 @@
         id: '',
         arrangeDate: '',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        bdTeacherId: ''
       }
     },
     methods: {
-      init (id, arrangeDate, startTime, endTime) {
+      init (id, arrangeDate, startTime, endTime, bdTeacherId, bdClassesStudentId) {
         this.visible = true
         this.id = id
+        this.bdClassesStudentId = bdClassesStudentId
         this.arrangeDate = arrangeDate
         this.startTime = startTime
         this.endTime = endTime
+        this.bdTeacherId = bdTeacherId
       },
       dataFormSubmit () {
-        console.log('保存！')
+        let num = this.endTime.substr(0, 2) - this.startTime.substr(0, 2) + (this.endTime.substr(3, 2) - this.startTime.substr(3, 2)) / 60
+        let remainNum = 0
+        this.$http({
+          url: this.$http.adornUrl(`/business/classesstudent/info/${this.bdClassesStudentId}`),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            remainNum = data.classesStudent.remainNum
+            if (remainNum < num) {
+              this.$message({
+                message: '当前剩余课时不足！最新剩余课时：' + remainNum,
+                type: 'warning',
+                duration: 3000
+              })
+            } else {
+              this.$http({
+                url: this.$http.adornUrl('/business/studentclassarrange/updateForOne'),
+                method: 'post',
+                data: this.$http.adornData({
+                  'id': this.id,
+                  'bdClassesStudentId': this.bdClassesStudentId,
+                  'arrangeDate': this.arrangeDate,
+                  'startTime': this.startTime,
+                  'endTime': this.endTime,
+                  'num': num,
+                  'bdTeacherId': this.bdTeacherId
+                })
+              }).then(({data}) => {
+                if (data && data.code === 0) {
+                  this.$message({
+                    message: '保存成功！',
+                    type: 'success',
+                    duration: 1500
+                  })
+                } else {
+                  this.$message({
+                    message: data.msg,
+                    type: 'error',
+                    duration: 5000
+                  })
+                }
+              })
+            }
+          } else {
+            this.$message({
+              message: '无法找到记录！请确认！',
+              type: 'warning',
+              duration: 3000
+            })
+          }
+        })
       }
     }
   }

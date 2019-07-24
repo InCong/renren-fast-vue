@@ -29,6 +29,7 @@
       return {
         visible: false,
         id: '',
+        bdClassesStudentId: '',
         bdTeacherId: '',
         bdStudentId: '',
         type: '',
@@ -41,9 +42,10 @@
       }
     },
     methods: {
-      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate) {
-        this.id = id
+      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId) {
         this.visible = true
+        this.id = id
+        this.bdClassesStudentId = bdClassesStudentId
         this.bdTeacherId = bdTeacherId
         this.bdStudentId = bdStudentId
         this.className = className
@@ -90,7 +92,7 @@
           this.isModify = true
           this.classArrangeModifyVisible = true
           this.$nextTick(() => {
-            this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime)
+            this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime, this.bdTeacherId, this.bdClassesStudentId)
           })
         }
       },
