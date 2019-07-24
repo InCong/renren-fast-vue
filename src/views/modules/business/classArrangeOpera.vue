@@ -13,6 +13,8 @@
 
       <!-- 弹窗，显示课程的时间段修改 -->
       <class-arrange-modify v-if="classArrangeModifyVisible" ref="classArrangeModify"></class-arrange-modify>
+      <!-- 弹窗，显示微信签到 -->
+      <class-arrange-wechat-sign v-if="classArrangeWechatSignVisible" ref="classArrangeWechatSign"></class-arrange-wechat-sign>
     </div>
   </el-dialog>
 </template>
@@ -21,9 +23,11 @@
   import moment from 'moment'
   import 'moment/locale/zh-cn'
   import ClassArrangeModify from './classArrangeModify'
+  import ClassArrangeWechatSign from './classArrangeWechatSign'
   export default {
     components: {
-      ClassArrangeModify
+      ClassArrangeModify,
+      ClassArrangeWechatSign
     },
     data () {
       return {
@@ -38,7 +42,8 @@
         startTime: '',
         endTime: '',
         arrangeDate: '',
-        classArrangeModifyVisible: false
+        classArrangeModifyVisible: false,
+        classArrangeWechatSignVisible: false
       }
     },
     methods: {
@@ -73,6 +78,28 @@
       // 微信签到
       signButtonClick () {
         this.type = 'sign'
+        this.$http({
+          url: this.$http.adornUrl('/business/studentclassarrange/getQrCodeUrl'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdStudentClassArrangeId': this.id
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            if (data.url) {
+              this.classArrangeWechatSignVisible = true
+              this.$nextTick(() => {
+                this.$refs.classArrangeWechatSign.init(data.url)
+              })
+            } else {
+              this.$message({
+                message: '获取失败！',
+                type: 'error',
+                duration: 1500
+              })
+            }
+          }
+        })
       },
       // 微信通知
       noticeButtonClick () {
