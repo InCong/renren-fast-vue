@@ -72,13 +72,13 @@
               }).then(({data}) => {
                 if (data && data.code === 0) {
                   this.$message({
-                    message: '微信消息推送成功！',
+                    message: '签到消息推送成功！',
                     type: 'success',
                     duration: 3000
                   })
                 } else {
                   this.$message({
-                    message: '微信消息推送失败！',
+                    message: '签到消息推送失败！请联系管理员！',
                     type: 'error',
                     duration: 3000
                   })

@@ -6,11 +6,25 @@
     width="30%"
     center>
     <div style="text-align: center">
-      <el-button type="success" @click="signButtonClick">微信签到</el-button>
-      <el-button type="success" @click="noticeButtonClick">微信通知</el-button>
-      <el-button type="primary" @click="modifyButtonClick">课程修改</el-button>
-      <el-button type="danger" @click="deleteButtonClick">删除课程</el-button>
-
+      <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">相关操作</span></el-divider>
+      <div style="margin-top: 30px;margin-bottom: 30px">
+        <el-button type="success" @click="signButtonClick">微信签到</el-button>
+        <el-button type="primary" @click="modifyButtonClick">课程修改</el-button>
+        <el-button type="danger" @click="deleteButtonClick">删除课程</el-button>
+      </div>
+      <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">发送通知</span></el-divider>
+      <div style="margin-top: 30px;margin-bottom: 30px">
+        <el-input
+          type="textarea"
+          :rows="3"
+          placeholder="请输入通知内容"
+          v-model="noticeText"
+          maxlength="50"
+          show-word-limit
+          style="margin-bottom: 20px">
+        </el-input>
+        <el-button type="success" @click="noticeButtonClick">微信通知</el-button>
+      </div>
       <!-- 弹窗，显示课程的时间段修改 -->
       <class-arrange-modify v-if="classArrangeModifyVisible" ref="classArrangeModify"></class-arrange-modify>
       <!-- 弹窗，显示微信签到 -->
@@ -42,6 +56,7 @@
         startTime: '',
         endTime: '',
         arrangeDate: '',
+        noticeText: '',
         classArrangeModifyVisible: false,
         classArrangeWechatSignVisible: false
       }
@@ -69,6 +84,7 @@
           this.bdStudentId = ''
           this.type = ''
           this.isModify = false
+          this.noticeText = ''
         }
       },
       // 关闭时的逻辑
@@ -104,6 +120,40 @@
       // 微信通知
       noticeButtonClick () {
         this.type = 'notice'
+        if (this.noticeText) {
+          this.$http({
+            url: this.$http.adornUrl('/business/studentclassarrange/sendWeChatNoticeToStudent'),
+            method: 'post',
+            data: this.$http.adornData({
+              'id': this.id,
+              'bdStudentId': this.bdStudentId,
+              'noticeText': this.noticeText
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '微信通知发送成功！',
+                type: 'success',
+                duration: 3000,
+                onClose: () => {
+                  this.noticeText = ''
+                }
+              })
+            } else {
+              this.$message({
+                message: '微信消息推送失败！',
+                type: 'error',
+                duration: 3000
+              })
+            }
+          })
+        } else {
+          this.$message({
+            message: '请填写通知内容！',
+            type: 'error',
+            duration: 2000
+          })
+        }
       },
       // 课程修改
       modifyButtonClick () {
