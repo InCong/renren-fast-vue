@@ -174,8 +174,8 @@
 
 <script>
   import AddOrUpdate from './student-add-or-update'
-  import StudentBindingWechat from './binding-wechat'
-  import StudentClassesQuery from './classesStudent/student-classes-query'
+  import StudentBindingWechat from '../binding-wechat'
+  import StudentClassesQuery from './student-classes-query'
   export default {
     data () {
       return {

@@ -157,7 +157,7 @@
 
 <script>
   import AddOrUpdate from './teacher-add-or-update'
-  import TeacherBindingWechat from './binding-wechat'
+  import TeacherBindingWechat from '../binding-wechat'
   import TeacherUploadMultimedia from './teacher-multimedia-add-or-delete'
   import TeacherClassSettlement from './teacher-class-settlement'
   export default {

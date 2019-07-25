@@ -118,7 +118,7 @@
 <script>
   import AddOrUpdate from './classes-add-or-update'
   import ClassesTeacher from './classesTeacher'
-  import ClassesStudent from './classesStudent/classesStudent'
+  import ClassesStudent from './classesStudent'
   export default {
     data () {
       return {
