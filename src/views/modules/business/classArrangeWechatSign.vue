@@ -19,14 +19,18 @@
     data () {
       return {
         visible: false,
-        qrCodeUrl: ''
+        qrCodeUrl: '',
+        bdStudentId: 0,
+        id: 0
       }
     },
     methods: {
       // 初始化
-      init (url) {
+      init (url, bdStudentId, id) {
         this.visible = true
         this.qrCodeUrl = url
+        this.bdStudentId = bdStudentId
+        this.id = id
         this.initWebSocket()
       },
       closeDialog () {
@@ -53,12 +57,36 @@
       webSocketOnMessage: function (e) {
         if (e.data === 'sign_success') {
           console.log(e.data)
-          this.visible = false
           this.$message({
             message: '已成功签到！',
             type: 'sucess',
-            duration: 3000
+            duration: 3000,
+            onClose: () => {
+              this.$http({
+                url: this.$http.adornUrl('/business/studentclassarrange/sendWeChatSignMsg'),
+                method: 'post',
+                data: this.$http.adornData({
+                  'id': this.id,
+                  'bdStudentId': this.bdStudentId
+                })
+              }).then(({data}) => {
+                if (data && data.code === 0) {
+                  this.$message({
+                    message: '微信消息推送成功！',
+                    type: 'success',
+                    duration: 3000
+                  })
+                } else {
+                  this.$message({
+                    message: '微信消息推送失败！',
+                    type: 'error',
+                    duration: 3000
+                  })
+                }
+              })
+            }
           })
+          this.visible = false
         } else if (e.data === 'sign_unbinding') {
           console.log(e.data)
           this.$message({

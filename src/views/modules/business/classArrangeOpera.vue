@@ -89,7 +89,7 @@
             if (data.url) {
               this.classArrangeWechatSignVisible = true
               this.$nextTick(() => {
-                this.$refs.classArrangeWechatSign.init(data.url)
+                this.$refs.classArrangeWechatSign.init(data.url, this.bdStudentId, this.id)
               })
             } else {
               this.$message({
