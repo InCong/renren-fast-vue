@@ -15,9 +15,6 @@
         @change="changeRangeDate">
       </el-date-picker>
     </div>
-    <div>
-      <el-button style="margin-left: 23px" @click="classArrangeClick" round type="primary">课程排课</el-button>
-    </div>
     <el-row :gutter="10" style="padding-top: 10px">
       <el-col :span="4">
         <el-card shadow="always">
@@ -125,7 +122,7 @@
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -144,7 +141,7 @@
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -163,7 +160,7 @@
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -182,7 +179,7 @@
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -201,7 +198,7 @@
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -220,7 +217,7 @@
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -239,7 +236,7 @@
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -256,13 +253,19 @@
         </el-card>
       </el-col>
     </el-row>
+    <!-- 弹窗，显示课程操作区域 -->
+    <class-query-opera v-if="classQueryOperaVisible" ref="classQueryOpera"></class-query-opera>
   </div>
 </template>
 
 <script>
   import moment from 'moment'
   import 'moment/locale/zh-cn'
+  import ClassQueryOpera from './classQueryOpera'
   export default {
+    components: {
+      ClassQueryOpera
+    },
     data () {
       return {
         // 以下几个都是范围日期控件的参数
@@ -381,7 +384,7 @@
       initHeader () {
         if (this.rangeDate != null) {
           let count = (moment(this.rangeDate[1]) - moment(this.rangeDate[0])) / 1000 / 3600 / 24 + 1
-          for (var i = 1; i <= 7; i++) {
+          for (let i = 1; i <= 7; i++) {
             if (i === 1 && i <= count) {
               this.day1 = moment(this.rangeDate[0]).format('YYYY-MM-D')
               this.week1 = moment(this.rangeDate[0]).format('ddd')
@@ -462,21 +465,12 @@
           this.classQueryListLoading = false
         })
       },
-      // 课程排课点击
-      classArrangeClick () {
-        if (this.bdClassesId === 0) {
-          this.$message({
-            message: '请选择课程',
-            type: 'warning',
-            duration: 1500
-          })
-        } else {
-          console.log('课程排课！')
-        }
-      },
       // 课程点击
-      classClick (bdClassesId, className, startTime, endTime, arrangeDate) {
-        console.log(bdClassesId, className, startTime, endTime, arrangeDate)
+      classClick (bdClassesId, className, startTime, endTime, arrangeDate, classWay) {
+        this.classQueryOperaVisible = true
+        this.$nextTick(() => {
+          this.$refs.classQueryOpera.init(bdClassesId, className, startTime, endTime, arrangeDate, classWay)
+        })
       }
     }
   }
