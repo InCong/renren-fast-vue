@@ -16,46 +16,46 @@
       </el-date-picker>
     </div>
     <div>
-      <el-button style="margin-left: 23px" @click="teacherArrangeClassClick" round type="primary">教师排课</el-button>
-      <el-button @click="studentArrangeClassClick" round type="primary">学员排课</el-button>
+      <el-button style="margin-left: 23px" @click="classArrangeClick" round type="primary">课程排课</el-button>
     </div>
     <el-row :gutter="10" style="padding-top: 10px">
       <el-col :span="4">
         <el-card shadow="always">
           <el-row>
-            <el-col :span="12">
+            <el-col :span="24">
+              <el-row :gutter="5" style="margin-bottom: 10px">
+                <el-col :span="16">
+                  <el-input v-model="queryName" placeholder="名称" clearable></el-input>
+                </el-col>
+                <el-col :span="4">
+                  <el-button @click="getClassesList">查询</el-button>
+                </el-col>
+              </el-row>
               <el-table
-                :data="teacherList"
+                :data="classesList"
                 border
                 highlight-current-row
                 max-height="1000px"
                 :header-cell-style="tableHeaderColor"
                 :row-style="tableRowStyle"
-                @row-click="teacherRowClick">
+                @row-click="classesRowClick">
                 <el-table-column
                   prop="name"
                   header-align="center"
                   align="center"
-                  label="教师">
+                  label="课程">
                 </el-table-column>
               </el-table>
-            </el-col>
-            <el-col :span="12">
-              <el-table
-                :data="studentList"
-                border
-                highlight-current-row
-                max-height="1000px"
-                :header-cell-style="tableHeaderColor"
-                :row-style="tableRowStyle"
-                @row-click="studentRowClick">
-                <el-table-column
-                  prop="nickname"
-                  header-align="center"
-                  align="center"
-                  label="学员">
-                </el-table-column>
-              </el-table>
+              <el-pagination
+                @size-change="sizeChangeHandle"
+                @current-change="currentChangeHandle"
+                :current-page="pageIndex"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="pageSize"
+                :total="totalPage"
+                hide-on-single-page
+                layout="total, prev, pager, next">
+              </el-pagination>
             </el-col>
           </el-row>
         </el-card>
@@ -73,7 +73,7 @@
             <el-col :span="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week7}}</el-row><el-row>{{day7.substring(5)}}</el-row></el-col>
           </el-row>
         </el-card>
-        <el-card shadow="always" class="timeSheet" v-loading="classArrangeListLoading">
+        <el-card shadow="always" class="timeSheet" v-loading="classQueryListLoading">
           <el-row>
             <div style="position: absolute;margin-left: 110px;width: 1183px;height: 720px">
               <el-row class="timeRow"><el-divider></el-divider></el-row>
@@ -121,17 +121,14 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList1" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
-                    <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
-                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
-                        {{item.studentName}}（{{item.className}}）
+                        {{item.className}}
                       </el-row>
                       <el-row style="color: lightcyan">
                         <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
@@ -143,17 +140,14 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList2" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
-                    <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
-                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
-                        {{item.studentName}}（{{item.className}}）
+                        {{item.className}}
                       </el-row>
                       <el-row style="color: lightcyan">
                         <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
@@ -165,17 +159,14 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList3" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
-                    <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
-                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
-                        {{item.studentName}}（{{item.className}}）
+                        {{item.className}}
                       </el-row>
                       <el-row style="color: lightcyan">
                         <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
@@ -187,17 +178,14 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList4" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
-                    <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
-                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
-                        {{item.studentName}}（{{item.className}}）
+                        {{item.className}}
                       </el-row>
                       <el-row style="color: lightcyan">
                         <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
@@ -209,17 +197,14 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList5" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
-                    <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
-                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
-                        {{item.studentName}}（{{item.className}}）
+                        {{item.className}}
                       </el-row>
                       <el-row style="color: lightcyan">
                         <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
@@ -231,17 +216,14 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList6" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
-                    <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
-                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
-                        {{item.studentName}}（{{item.className}}）
+                        {{item.className}}
                       </el-row>
                       <el-row style="color: lightcyan">
                         <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
@@ -253,17 +235,14 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList7" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
-                    <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
-                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
-                        {{item.studentName}}（{{item.className}}）
+                        {{item.className}}
                       </el-row>
                       <el-row style="color: lightcyan">
                         <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
@@ -277,23 +256,13 @@
         </el-card>
       </el-col>
     </el-row>
-    <!-- 弹窗，教师或学员增加排课 -->
-    <class-arrange-add v-if="classArrangeAddVisible" ref="classArrangeAdd" @refreshClassArrange="getClassArrange"></class-arrange-add>
-    <!-- 弹窗，显示课程操作界面 -->
-    <class-arrange-opera v-if="classArrangeOperaVisible" ref="classArrangeOpera" @refreshClassArrange="getClassArrange"></class-arrange-opera>
   </div>
 </template>
 
 <script>
   import moment from 'moment'
   import 'moment/locale/zh-cn'
-  import ClassArrangeAdd from './classArrangeAdd'
-  import ClassArrangeOpera from './classArrangeOpera'
   export default {
-    components: {
-      ClassArrangeAdd,
-      ClassArrangeOpera
-    },
     data () {
       return {
         // 以下几个都是范围日期控件的参数
@@ -316,8 +285,7 @@
           }
         },
         // 以下是基本用的数据数组
-        teacherList: [],
-        studentList: [],
+        classesList: [],
         // 以下是日期的相关数据数组
         dayList1: [],
         dayList2: [],
@@ -342,17 +310,18 @@
         week6: '',
         week7: '',
         // 以下是基本使用的变量
-        classArrangeListLoading: false,
-        bdTeacherId: 0,
-        bdStudentId: 0,
-        teacherName: '',
-        studentName: '',
-        classArrangeAddVisible: false,
-        classArrangeOperaVisible: false
+        pageIndex: 1,
+        pageSize: 20,
+        totalPage: 0,
+        classQueryListLoading: false,
+        classQueryOperaVisible: false,
+        bdClassesId: 0,
+        classesName: '',
+        queryName: ''
       }
     },
     activated () {
-      this.getTeacherList()
+      this.getClassesList()
       this.initHeader()
     },
     methods: {
@@ -366,53 +335,43 @@
       tableRowStyle ({row, rowIndex}) {
         return 'height: 60px;font-size: 16px'
       },
-      getTeacherList () {
+      getClassesList () {
         this.$http({
-          url: this.$http.adornUrl('/business/teacher/list'),
+          url: this.$http.adornUrl('/business/classes/list'),
           method: 'post',
-          data: this.$http.adornData({
-            'page': 1,
-            'limit': 1000,
+          params: this.$http.adornParams({
+            'page': this.pageIndex,
+            'limit': this.pageSize,
+            'name': this.queryName,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.teacherList = data.page.list
+            this.classesList = data.page.list
+            this.totalPage = data.page.totalCount
           } else {
-            this.teacherList = []
+            this.classesList = []
+            this.totalPage = 0
           }
         })
       },
-      // 点击指定教师时，显示该教师名下的学员清单，并显示该教师的排课情况
-      teacherRowClick (row, column, event) {
-        this.bdTeacherId = row.id
-        this.teacherName = row.name
-        this.bdStudentId = 0
-        this.studentName = ''
-        // 先获取学员列表
-        this.$http({
-          url: this.$http.adornUrl('/business/student/listTeacherStudent'),
-          method: 'post',
-          data: this.$http.adornData({
-            'bdTeacherId': row.id
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.studentList = data.list
-          } else {
-            this.studentList = []
-          }
-        })
-        // 在显示该教师的排课情况
-        this.getClassArrange()
+      // 每页数
+      sizeChangeHandle (val) {
+        this.pageSize = val
+        this.pageIndex = 1
+        this.getClassesList()
       },
-      // 点击指定学员时，显示该学员的排课情况
-      studentRowClick (row, column, event) {
-        this.bdStudentId = row.id
-        this.studentName = row.nickname
-
-        // 在显示该学员的排课情况
-        this.getClassArrange()
+      // 当前页
+      currentChangeHandle (val) {
+        this.pageIndex = val
+        this.getClassesList()
+      },
+      // 点击指定课程，显示该课程的排课情况
+      classesRowClick (row, column, event) {
+        this.bdClassesId = row.id
+        this.classesName = row.name
+        // 显示该课程的排课情况
+        this.getClassQuery()
       },
       // 选择完日期之后，自动填充列头
       changeRangeDate () {
@@ -478,15 +437,14 @@
         }
       },
       // 获取课程安排记录
-      getClassArrange () {
+      getClassQuery () {
         let dateList = [this.day1, this.day2, this.day3, this.day4, this.day5, this.day6, this.day7]
-        this.classArrangeListLoading = true
+        this.classQueryListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/business/studentclassarrange/listStudentClassArrange'),
+          url: this.$http.adornUrl('/business/studentclassarrange/listClassArrange'),
           method: 'post',
           data: this.$http.adornData({
-            'bdTeacherId': this.bdTeacherId,
-            'bdStudentId': this.bdStudentId,
+            'bdClassesId': this.bdClassesId,
             'arrangeDateList': dateList
           })
         }).then(({data}) => {
@@ -501,48 +459,24 @@
           } else {
             console.log('error!', data)
           }
-          this.classArrangeListLoading = false
+          this.classQueryListLoading = false
         })
       },
-      // 教师排课按钮点击
-      teacherArrangeClassClick () {
-        if (this.bdTeacherId === 0) {
+      // 课程排课点击
+      classArrangeClick () {
+        if (this.bdClassesId === 0) {
           this.$message({
-            message: '请选择教师',
+            message: '请选择课程',
             type: 'warning',
             duration: 1500
           })
         } else {
-          this.classArrangeAddVisible = true
-          this.$nextTick(() => {
-            this.$refs.classArrangeAdd.init(this.bdTeacherId, null, this.teacherName,
-              [this.day1, this.day2, this.day3, this.day4, this.day5, this.day6, this.day7])
-          })
-        }
-      },
-      // 学员排课按钮点击
-      studentArrangeClassClick () {
-        if (this.bdStudentId === 0) {
-          this.$message({
-            message: '请选择学员',
-            type: 'warning',
-            duration: 1500
-          })
-        } else {
-          this.classArrangeAddVisible = true
-          this.$nextTick(() => {
-            this.$refs.classArrangeAdd.init(this.bdTeacherId, this.bdStudentId, this.studentName,
-              [this.day1, this.day2, this.day3, this.day4, this.day5, this.day6, this.day7])
-          })
+          console.log('课程排课！')
         }
       },
       // 课程点击
-      classClick (id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId) {
-        console.log(id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId)
-        this.classArrangeOperaVisible = true
-        this.$nextTick(() => {
-          this.$refs.classArrangeOpera.init(id, this.bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId)
-        })
+      classClick (bdClassesId, className, startTime, endTime, arrangeDate) {
+        console.log(bdClassesId, className, startTime, endTime, arrangeDate)
       }
     }
   }

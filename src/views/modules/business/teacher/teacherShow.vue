@@ -33,13 +33,12 @@
                 <el-col :span="24" style="margin-bottom:15px"><i class="el-icon-message"></i><label class="label-content">{{item.email}}</label></el-col>
               </el-row>
               <el-row>
-                <el-col :span="24" style="margin-bottom:15px"><label>课程：</label><label class="label-content">7门</label></el-col>
+                <el-col :span="24" style="margin-bottom:15px"><label>课程：</label><label class="label-content">{{item.classCount}}  门</label></el-col>
               </el-row>
               <el-row>
                 <el-col :span="24" style="margin-bottom:0px">
                   <label>科目：</label>
-                  <el-tag type="danger">钢琴</el-tag>
-                  <el-tag type="danger">跳舞</el-tag>
+                  <el-tag type="danger" v-if="item.classTypeName">{{item.classTypeName}}</el-tag>
                 </el-col>
               </el-row>
             </el-col>
