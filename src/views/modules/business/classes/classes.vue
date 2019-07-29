@@ -43,6 +43,13 @@
         label="价格">
       </el-table-column>
       <el-table-column
+        prop="length"
+        header-align="center"
+        align="center"
+        width="150"
+        label="时长（分钟）">
+      </el-table-column>
+      <el-table-column
         prop="status"
         header-align="center"
         align="center"

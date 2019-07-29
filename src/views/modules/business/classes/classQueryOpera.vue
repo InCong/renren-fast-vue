@@ -10,10 +10,13 @@
           <span style="color: ghostwhite;font-weight: 900">课程信息</span>
         </div>
         <div style="text-align: left;margin-bottom: 20px">
-          <span>上课时间：{{this.arrangeDate}} {{this.startTime}} 至 {{this.endTime}}</span>
+          <span>上课时间：{{arrangeDate}} {{startTime}} 至 {{endTime}}</span>
+        </div>
+        <div style="text-align: left;margin-bottom: 20px">
+          <span>上课方式：{{classWay}}</span>
         </div>
         <div style="text-align: left">
-          <span>上课方式：{{this.classWay}}</span>
+          <span>学员：{{studentName}}</span>
         </div>
       </el-card>
     </div>
@@ -74,11 +77,12 @@
         endTime: '',
         arrangeDate: '',
         classWay: '',
+        studentName: '',
         studentList: []
       }
     },
     methods: {
-      init (bdClassesId, className, startTime, endTime, arrangeDate, classWay) {
+      init (bdClassesId, className, startTime, endTime, arrangeDate, classWay, studentName) {
         this.visible = true
         this.bdClassesId = bdClassesId
         this.className = className
@@ -86,6 +90,7 @@
         this.endTime = endTime
         this.arrangeDate = arrangeDate
         this.classWay = classWay
+        this.studentName = studentName
         this.$http({
           url: this.$http.adornUrl('/business/studentclassarrange/listStudent'),
           method: 'post',

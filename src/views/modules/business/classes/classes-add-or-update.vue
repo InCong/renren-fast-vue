@@ -10,6 +10,9 @@
       <el-form-item label="价格" prop="price">
         <el-input v-model="dataForm.price" placeholder="价格" type="decimal"></el-input>
       </el-form-item>
+      <el-form-item label="时长" prop="length">
+        <el-input-number v-model="dataForm.length" :step="15"></el-input-number>
+      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="dataForm.status" placeholder="请选择">
           <el-option
@@ -82,6 +85,7 @@
           name: '',
           price: '',
           status: 0,
+          length: 60,
           bdClassWayId: '',
           bdClassTypeId: '',
           bdOrgId: '',
@@ -95,6 +99,9 @@
           ],
           price: [
             { required: true, message: '价格不能为空', trigger: 'blur' }
+          ],
+          length: [
+            { required: true, message: '时长不能为空', trigger: 'blur' }
           ],
           bdClassTypeId: [
             { required: true, message: '课程种类不能为空', trigger: 'blur' }
@@ -122,6 +129,7 @@
               if (data && data.code === 0) {
                 this.dataForm.name = data.classes.name
                 this.dataForm.price = data.classes.price
+                this.dataForm.length = data.classes.length
                 this.dataForm.status = data.classes.status
                 this.dataForm.bdClassWayId = data.classes.bdClassWayId
                 this.dataForm.bdClassTypeId = data.classes.bdClassTypeId
@@ -144,6 +152,7 @@
                 'id': this.dataForm.id || undefined,
                 'name': this.dataForm.name,
                 'price': this.dataForm.price,
+                'length': this.dataForm.length,
                 'status': this.dataForm.status,
                 'bdClassWayId': this.dataForm.bdClassWayId,
                 'bdClassTypeId': this.dataForm.bdClassTypeId,

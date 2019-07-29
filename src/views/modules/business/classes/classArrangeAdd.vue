@@ -15,17 +15,20 @@
         <el-time-select
           placeholder="起始时间"
           v-model="dataForm.startTime"
+          @change="startTimeChange"
+          :clearable="false"
           :picker-options="{
               start: '06:00',
               step: '00:15',
-              end: '23:00',
-              maxTime: dataForm.endTime
+              end: '23:00'
             }">
         </el-time-select>
         <span style="margin-left: 10px;margin-right: 20px">至</span>
         <el-time-select
           placeholder="结束时间"
           v-model="dataForm.endTime"
+          :clearable="false"
+          :disabled="true"
           :picker-options="{
               start: '06:00',
               step: '00:15',
@@ -36,18 +39,19 @@
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9">课程</span></el-divider>
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
-        <el-radio-group v-model="radioClassWay" @change="classWayChange">
+        <el-radio-group v-model="radioClassWay" @change="classWayChange" :disabled="classDisabled">
           <el-radio-button v-for="item in classWayList" v-bind:key="item.id" :label="item.id" style="margin-right: 20px">{{item.name}}</el-radio-button>
         </el-radio-group>
       </div>
       <div style="text-align: center">
-        <el-radio-group v-model="dataForm.bdClassesStudentId" @change="">
+        <el-radio-group v-model="dataForm.bdClassesStudentId" @change="classChange">
           <el-tooltip v-for="item in classesList" v-bind:key="item.id" effect="light" placement="right">
             <div slot="content" style="text-align: left;font-size: 16px">
               <el-row style="margin-bottom: 10px"><span>剩余课时：</span>{{item.remainNum}}</el-row>
+              <el-row style="margin-bottom: 10px"><span>课程时长（分钟）：</span>{{item.length}}</el-row>
               <el-row><span>备注：</span>{{item.remark}}</el-row>
             </div>
-            <el-radio-button :label="item.id" style="margin-right: 20px">{{item.className}}</el-radio-button>
+            <el-radio-button :label="item.id + '_' + item.length" style="margin-right: 20px">{{item.className}}</el-radio-button>
           </el-tooltip>
         </el-radio-group>
       </div>
@@ -62,6 +66,8 @@
 </template>
 
 <script>
+  import moment from 'moment'
+  import 'moment/locale/zh-cn'
   export default {
     data () {
       return {
@@ -73,6 +79,8 @@
         dayList: [],
         classWayList: [],
         classesList: [],
+        classDisabled: true,
+        classLength: 0,
         // 以下是单选的变量
         radioClassWay: '',
         radioType: '1',
@@ -128,6 +136,8 @@
           this.dataForm.bdClassesStudentId = ''
           this.radioClassWay = ''
           this.visible = false
+          this.classDisabled = true
+          this.classLength = 0
           this.$emit('refreshClassArrange')
         }
       },
@@ -157,11 +167,12 @@
             duration: 1500
           })
         } else {
+          console.log(parseInt(this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_'))))
           // 先检查选定的学生课程所剩课时足不足够，若足够再保存
           let num = this.dataForm.endTime.substr(0, 2) - this.dataForm.startTime.substr(0, 2) + (this.dataForm.endTime.substr(3, 2) - this.dataForm.startTime.substr(3, 2)) / 60
           let remainNum = 0
           this.$http({
-            url: this.$http.adornUrl(`/business/classesstudent/info/${this.dataForm.bdClassesStudentId}`),
+            url: this.$http.adornUrl(`/business/classesstudent/info/${this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_'))}`),
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
@@ -179,7 +190,7 @@
                     url: this.$http.adornUrl('/business/studentclassarrange/saveForOne'),
                     method: 'post',
                     data: this.$http.adornData({
-                      'bdClassesStudentId': this.dataForm.bdClassesStudentId,
+                      'bdClassesStudentId': this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_')),
                       'arrangeDate': this.dataForm.arrangeDate,
                       'startTime': this.dataForm.startTime,
                       'endTime': this.dataForm.endTime,
@@ -200,6 +211,7 @@
                       this.dataForm.endTime = ''
                       this.dataForm.bdClassesStudentId = ''
                       this.radioClassWay = ''
+                      this.classDisabled = true
                     } else {
                       this.$message({
                         message: data.msg,
@@ -213,7 +225,7 @@
                     url: this.$http.adornUrl('/business/studentclassarrange/saveForCircle'),
                     method: 'post',
                     data: this.$http.adornData({
-                      'bdClassesStudentId': this.dataForm.bdClassesStudentId,
+                      'bdClassesStudentId': this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_')),
                       'arrangeDate': this.dataForm.arrangeDate,
                       'startTime': this.dataForm.startTime,
                       'endTime': this.dataForm.endTime,
@@ -261,6 +273,16 @@
           })
         }
       },
+      // 开始时间变更
+      startTimeChange () {
+        if (this.dataForm.startTime !== '') {
+          this.classDisabled = false
+        }
+        if (this.classLength > 0) {
+          let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
+          this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
+        }
+      },
       // 课程类型选择变更事件
       classWayChange () {
         this.$http({
@@ -274,6 +296,12 @@
         }).then(({data}) => {
           this.classesList = data.list
         })
+      },
+      // 课程选择变更事件
+      classChange (bdClassesStudentId) {
+        this.classLength = bdClassesStudentId.substring(bdClassesStudentId.indexOf('_') + 1)
+        let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
+        this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
       },
       // 关闭时的逻辑
       closeDialog () {
