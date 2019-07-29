@@ -128,7 +128,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -150,7 +150,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -172,7 +172,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -194,7 +194,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -216,7 +216,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -238,7 +238,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -260,7 +260,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -424,25 +424,25 @@
           let count = (moment(this.rangeDate[1]) - moment(this.rangeDate[0])) / 1000 / 3600 / 24 + 1
           for (var i = 1; i <= 7; i++) {
             if (i === 1 && i <= count) {
-              this.day1 = moment(this.rangeDate[0]).format('YYYY-MM-D')
+              this.day1 = moment(this.rangeDate[0]).format('YYYY-MM-DD')
               this.week1 = moment(this.rangeDate[0]).format('ddd')
             } else if (i === 2 && i <= count) {
-              this.day2 = moment(this.rangeDate[0]).add(1, 'days').format('YYYY-MM-D')
+              this.day2 = moment(this.rangeDate[0]).add(1, 'days').format('YYYY-MM-DD')
               this.week2 = moment(this.rangeDate[0]).add(1, 'days').format('ddd')
             } else if (i === 3 && i <= count) {
-              this.day3 = moment(this.rangeDate[0]).add(2, 'days').format('YYYY-MM-D')
+              this.day3 = moment(this.rangeDate[0]).add(2, 'days').format('YYYY-MM-DD')
               this.week3 = moment(this.rangeDate[0]).add(2, 'days').format('ddd')
             } else if (i === 4 && i <= count) {
-              this.day4 = moment(this.rangeDate[0]).add(3, 'days').format('YYYY-MM-D')
+              this.day4 = moment(this.rangeDate[0]).add(3, 'days').format('YYYY-MM-DD')
               this.week4 = moment(this.rangeDate[0]).add(3, 'days').format('ddd')
             } else if (i === 5 && i <= count) {
-              this.day5 = moment(this.rangeDate[0]).add(4, 'days').format('YYYY-MM-D')
+              this.day5 = moment(this.rangeDate[0]).add(4, 'days').format('YYYY-MM-DD')
               this.week5 = moment(this.rangeDate[0]).add(4, 'days').format('ddd')
             } else if (i === 6 && i <= count) {
-              this.day6 = moment(this.rangeDate[0]).add(5, 'days').format('YYYY-MM-D')
+              this.day6 = moment(this.rangeDate[0]).add(5, 'days').format('YYYY-MM-DD')
               this.week6 = moment(this.rangeDate[0]).add(5, 'days').format('ddd')
             } else if (i === 7 && i <= count) {
-              this.day7 = moment(this.rangeDate[1]).format('YYYY-MM-D')
+              this.day7 = moment(this.rangeDate[1]).format('YYYY-MM-DD')
               this.week7 = moment(this.rangeDate[1]).format('ddd')
             } else if (i === 1 && i > count) {
               this.day1 = '无'
@@ -543,6 +543,10 @@
         this.$nextTick(() => {
           this.$refs.classArrangeOpera.init(id, this.bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId)
         })
+      },
+      // 判断是否超时但未签到
+      isSignOver (arrangeDate, endTime) {
+        return moment() > moment(arrangeDate + ' ' + endTime)
       }
     }
   }
@@ -576,6 +580,11 @@
   }
   .contentBlockSign {
     background: mediumseagreen;
+    position: absolute;
+    min-width: 155px;
+  }
+  .contentBlockSignOver {
+    background: orange;
     position: absolute;
     min-width: 155px;
   }

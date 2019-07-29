@@ -25,24 +25,46 @@
                   <el-input v-model="queryName" placeholder="名称" clearable></el-input>
                 </el-col>
                 <el-col :span="4">
-                  <el-button @click="getClassesList">查询</el-button>
+                  <el-button @click="getTeacherList">查询</el-button>
                 </el-col>
               </el-row>
-              <el-table
-                :data="classesList"
-                border
-                highlight-current-row
-                max-height="1000px"
-                :header-cell-style="tableHeaderColor"
-                :row-style="tableRowStyle"
-                @row-click="classesRowClick">
-                <el-table-column
-                  prop="name"
-                  header-align="center"
-                  align="center"
-                  label="课程">
-                </el-table-column>
-              </el-table>
+              <el-row>
+                <el-col :span="12">
+                  <el-table
+                    :data="teacherList"
+                    border
+                    highlight-current-row
+                    max-height="1000px"
+                    :header-cell-style="tableHeaderColor"
+                    :row-style="tableRowStyle"
+                    @row-click="teacherRowClick">
+                    <el-table-column
+                      prop="name"
+                      header-align="center"
+                      align="center"
+                      label="教师">
+                    </el-table-column>
+                  </el-table>
+                </el-col>
+                <el-col :span="12">
+                  <el-table
+                    :data="classesList"
+                    border
+                    highlight-current-row
+                    max-height="1000px"
+                    :header-cell-style="tableHeaderColor"
+                    :row-style="tableRowStyle"
+                    @row-click="classesRowClick">
+                    <el-table-column
+                      prop="bdClassesName"
+                      header-align="center"
+                      align="center"
+                      :formatter="formatClassesName"
+                      label="课程">
+                    </el-table-column>
+                  </el-table>
+                </el-col>
+              </el-row>
               <el-pagination
                 @size-change="sizeChangeHandle"
                 @current-change="currentChangeHandle"
@@ -262,6 +284,7 @@
   import moment from 'moment'
   import 'moment/locale/zh-cn'
   import ClassQueryOpera from './classQueryOpera'
+
   export default {
     components: {
       ClassQueryOpera
@@ -289,6 +312,7 @@
         },
         // 以下是基本用的数据数组
         classesList: [],
+        teacherList: [],
         // 以下是日期的相关数据数组
         dayList1: [],
         dayList2: [],
@@ -318,13 +342,15 @@
         totalPage: 0,
         classQueryListLoading: false,
         classQueryOperaVisible: false,
+        bdTeacherId: 0,
+        teacherName: '',
         bdClassesId: 0,
         classesName: '',
         queryName: ''
       }
     },
     activated () {
-      this.getClassesList()
+      this.getTeacherList()
       this.initHeader()
     },
     methods: {
@@ -338,9 +364,9 @@
       tableRowStyle ({row, rowIndex}) {
         return 'height: 60px;font-size: 16px'
       },
-      getClassesList () {
+      getTeacherList () {
         this.$http({
-          url: this.$http.adornUrl('/business/classes/list'),
+          url: this.$http.adornUrl('/business/teacher/list'),
           method: 'post',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -350,10 +376,10 @@
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.classesList = data.page.list
+            this.teacherList = data.page.list
             this.totalPage = data.page.totalCount
           } else {
-            this.classesList = []
+            this.teacherList = []
             this.totalPage = 0
           }
         })
@@ -362,17 +388,38 @@
       sizeChangeHandle (val) {
         this.pageSize = val
         this.pageIndex = 1
-        this.getClassesList()
+        this.getTeacherList()
       },
       // 当前页
       currentChangeHandle (val) {
         this.pageIndex = val
-        this.getClassesList()
+        this.getTeacherList()
+      },
+      // 点击指定教师时，显示该教师名下的学员清单，并显示该教师的排课情况
+      teacherRowClick (row, column, event) {
+        this.bdTeacherId = row.id
+        this.teacherName = row.name
+        this.bdClassesId = 0
+        this.classesName = ''
+        // 先获取学员列表
+        this.$http({
+          url: this.$http.adornUrl('/business/classesteacher/listClassesByTeacherId'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdTeacherId': row.id
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.classesList = data.list
+          } else {
+            this.classesList = []
+          }
+        })
       },
       // 点击指定课程，显示该课程的排课情况
       classesRowClick (row, column, event) {
-        this.bdClassesId = row.id
-        this.classesName = row.name
+        this.bdClassesId = row.bdClassesId
+        this.classesName = row.bdClassesName
         // 显示该课程的排课情况
         this.getClassQuery()
       },
@@ -386,25 +433,25 @@
           let count = (moment(this.rangeDate[1]) - moment(this.rangeDate[0])) / 1000 / 3600 / 24 + 1
           for (let i = 1; i <= 7; i++) {
             if (i === 1 && i <= count) {
-              this.day1 = moment(this.rangeDate[0]).format('YYYY-MM-D')
+              this.day1 = moment(this.rangeDate[0]).format('YYYY-MM-DD')
               this.week1 = moment(this.rangeDate[0]).format('ddd')
             } else if (i === 2 && i <= count) {
-              this.day2 = moment(this.rangeDate[0]).add(1, 'days').format('YYYY-MM-D')
+              this.day2 = moment(this.rangeDate[0]).add(1, 'days').format('YYYY-MM-DD')
               this.week2 = moment(this.rangeDate[0]).add(1, 'days').format('ddd')
             } else if (i === 3 && i <= count) {
-              this.day3 = moment(this.rangeDate[0]).add(2, 'days').format('YYYY-MM-D')
+              this.day3 = moment(this.rangeDate[0]).add(2, 'days').format('YYYY-MM-DD')
               this.week3 = moment(this.rangeDate[0]).add(2, 'days').format('ddd')
             } else if (i === 4 && i <= count) {
-              this.day4 = moment(this.rangeDate[0]).add(3, 'days').format('YYYY-MM-D')
+              this.day4 = moment(this.rangeDate[0]).add(3, 'days').format('YYYY-MM-DD')
               this.week4 = moment(this.rangeDate[0]).add(3, 'days').format('ddd')
             } else if (i === 5 && i <= count) {
-              this.day5 = moment(this.rangeDate[0]).add(4, 'days').format('YYYY-MM-D')
+              this.day5 = moment(this.rangeDate[0]).add(4, 'days').format('YYYY-MM-DD')
               this.week5 = moment(this.rangeDate[0]).add(4, 'days').format('ddd')
             } else if (i === 6 && i <= count) {
-              this.day6 = moment(this.rangeDate[0]).add(5, 'days').format('YYYY-MM-D')
+              this.day6 = moment(this.rangeDate[0]).add(5, 'days').format('YYYY-MM-DD')
               this.week6 = moment(this.rangeDate[0]).add(5, 'days').format('ddd')
             } else if (i === 7 && i <= count) {
-              this.day7 = moment(this.rangeDate[1]).format('YYYY-MM-D')
+              this.day7 = moment(this.rangeDate[1]).format('YYYY-MM-DD')
               this.week7 = moment(this.rangeDate[1]).format('ddd')
             } else if (i === 1 && i > count) {
               this.day1 = '无'
@@ -471,6 +518,9 @@
         this.$nextTick(() => {
           this.$refs.classQueryOpera.init(bdClassesId, className, startTime, endTime, arrangeDate, classWay)
         })
+      },
+      formatClassesName: function (row, column) {
+        return row.bdClassesName.substring(0, row.bdClassesName.indexOf('('))
       }
     }
   }

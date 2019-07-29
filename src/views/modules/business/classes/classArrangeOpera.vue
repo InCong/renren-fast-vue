@@ -34,8 +34,6 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  import 'moment/locale/zh-cn'
   import ClassArrangeModify from './classArrangeModify'
   import ClassArrangeWechatSign from './classArrangeWechatSign'
   export default {
@@ -157,58 +155,40 @@
       },
       // 课程修改
       modifyButtonClick () {
-        // 判断是否超过当前时间
-        if (moment() > moment(this.arrangeDate + ' ' + this.endTime)) {
-          this.$message({
-            message: '当前日期时间已超过该排课的结束时间！无法修改！',
-            type: 'warning',
-            duration: 3000
-          })
-        } else {
-          this.type = 'modify'
-          this.isModify = true
-          this.classArrangeModifyVisible = true
-          this.$nextTick(() => {
-            this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime, this.bdTeacherId, this.bdClassesStudentId)
-          })
-        }
+        this.type = 'modify'
+        this.isModify = true
+        this.classArrangeModifyVisible = true
+        this.$nextTick(() => {
+          this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime, this.bdTeacherId, this.bdClassesStudentId)
+        })
       },
       // 删除课程
       deleteButtonClick () {
-        // 判断是否超过当前时间
-        if (moment() > moment(this.arrangeDate + ' ' + this.startTime)) {
-          this.$message({
-            message: '当前日期时间已超过该排课的开始时间！无法删除！',
-            type: 'warning',
-            duration: 3000
+        this.type = 'delete'
+        this.$confirm(`确定对该课程进行删除操作？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/business/studentclassarrange/delete'),
+            method: 'post',
+            data: this.$http.adornData([this.id], false)
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: '删除成功！',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.visible = false
+                }
+              })
+            } else {
+              this.$message.error(data.msg)
+            }
           })
-        } else {
-          this.type = 'delete'
-          this.$confirm(`确定对该课程进行删除操作？`, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$http({
-              url: this.$http.adornUrl('/business/studentclassarrange/delete'),
-              method: 'post',
-              data: this.$http.adornData([this.id], false)
-            }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.$message({
-                  message: '删除成功！',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                  }
-                })
-              } else {
-                this.$message.error(data.msg)
-              }
-            })
-          })
-        }
+        })
       }
     }
   }
