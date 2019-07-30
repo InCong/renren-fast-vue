@@ -6,10 +6,22 @@
       append-to-body
       @close="closeDialog">
       <div style="text-align: center;margin-bottom: 10px">
-        <el-radio-group v-model="dataForm.isSettlement" @change="radioChange">
+        <el-radio-group v-model="dataForm.isSettlement" @change="radioChange" style="margin-right: 20px">
           <el-radio :label="0">未结算</el-radio>
           <el-radio :label="1">已结算</el-radio>
         </el-radio-group>
+        <el-date-picker
+          v-model="dateRange"
+          type="daterange"
+          range-separator="——"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :clearable="false"
+          :editable="false"
+          :picker-options="pickerOptions"
+          style="margin-right: 20px">
+        </el-date-picker>
+        <el-button @click="getDataList" type="primary">查询</el-button>
       </div>
       <div style="text-align: right;margin-bottom: 10px">
         <el-button type="primary" @click="setSettlement()" :disabled="dataListSelections.length <= 0">{{multiButtonText}}</el-button>
@@ -95,6 +107,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     data () {
       return {
@@ -118,7 +131,25 @@
         dataListSelections: [],
         modifyTimeColVisible: true,
         multiButtonText: '批量结算',
-        isModify: false
+        isModify: false,
+        dateRange: [moment().startOf('month').format('YYYY-MM-DD'), moment().endOf('month').format('YYYY-MM-DD')],
+        choiceDate: '',
+        pickerOptions: {
+          onPick: ({maxDate, minDate}) => {
+            this.choiceDate = minDate.getTime()
+            if (maxDate) {
+              this.choiceDate = ''
+            }
+          },
+          disabledDate: (time) => {
+            if (this.choiceDate != null && this.choiceDate !== '') {
+              const one = 30 * 24 * 3600 * 1000
+              const minTime = this.choiceDate - one
+              const maxTime = this.choiceDate + one
+              return time.getTime() < minTime || time.getTime() > maxTime
+            }
+          }
+        }
       }
     },
     methods: {
@@ -145,7 +176,9 @@
             'limit': this.pageSize,
             'bdTeacherId': this.bdTeacherId,
             'bdClassesId': this.bdClassesId,
-            'isSettlement': this.dataForm.isSettlement
+            'isSettlement': this.dataForm.isSettlement,
+            'startDate': moment(this.dateRange[0]).format('YYYY-MM-DD'),
+            'endDate': moment(this.dateRange[1]).format('YYYY-MM-DD')
           })
         }).then(({data}) => {
           if (data && data.code === 0) {

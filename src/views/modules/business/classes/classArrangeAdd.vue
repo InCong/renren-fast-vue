@@ -43,6 +43,7 @@
         <el-radio-group v-model="radioClassWay" @change="classWayChange" :disabled="classDisabled">
           <el-radio-button v-for="item in classWayList" v-bind:key="item.id" :label="item.id" style="margin-right: 20px">{{item.name}}</el-radio-button>
         </el-radio-group>
+        <el-button type="primary" @click="">待定班课</el-button>
       </div>
       <div style="text-align: center">
         <el-radio-group v-model="dataForm.bdClassesStudentId" @change="classChange">
