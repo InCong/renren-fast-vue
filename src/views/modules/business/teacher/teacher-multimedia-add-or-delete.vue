@@ -113,7 +113,7 @@
         num: 0,
         successNum: 0,
         bdOrgId: 0,
-        teacherId: 0,
+        bdTeacherId: 0,
         typeId: 0,
         fileList: [],
         // 用于控制tab页的渲染
@@ -128,7 +128,7 @@
       init (bdOrgId, teacherId, typeId) {
         this.visible = true
         this.bdOrgId = bdOrgId
-        this.teacherId = teacherId
+        this.bdTeacherId = teacherId
         this.typeId = typeId
         this.url = this.$http.adornUrl(`/business/teachermultimedia/upload?token=${this.$cookie.get('token')}&teacherId=${teacherId}&bdOrgId=${bdOrgId}&typeId=${typeId}`)
         this.dataListLoading = true
@@ -138,7 +138,7 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'teacherId': teacherId,
+            'bdTeacherId': teacherId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : bdOrgId, // 超级管理员可以获取全部机构部门的列表
             'typeId': typeId // 1-图片，2-视频
           })
@@ -167,13 +167,13 @@
           this.isVideoUploadShow = false
           this.num = 0
           this.successNum = 0
-          this.init(this.bdOrgId, this.teacherId, 1)
+          this.init(this.bdOrgId, this.bdTeacherId, 1)
         } else if (tab.name === 'videoUpload') {
           this.isPictureUploadShow = false
           this.isVideoUploadShow = true
           this.num = 0
           this.successNum = 0
-          this.init(this.bdOrgId, this.teacherId, 2)
+          this.init(this.bdOrgId, this.bdTeacherId, 2)
         }
       },
       // 图片上传的相关事件
@@ -195,7 +195,7 @@
                 type: 'success',
                 duration: 1500
               })
-              this.init(this.bdOrgId, this.teacherId, 1) // 删除成功，刷新列表
+              this.init(this.bdOrgId, this.bdTeacherId, 1) // 删除成功，刷新列表
             } else {
               this.$message.error(data.msg)
             }
@@ -231,7 +231,7 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              this.init(this.bdOrgId, this.teacherId, 1) // 点击确定后，刷新列表
+              this.init(this.bdOrgId, this.bdTeacherId, 1) // 点击确定后，刷新列表
             }).catch(() => {
               this.visible = false
             })
@@ -251,7 +251,7 @@
           url: this.$http.adornUrl('/business/teachermultimedia/cleanFlag'),
           method: 'post',
           params: this.$http.adornParams({
-            'teacherId': this.teacherId
+            'bdTeacherId': this.bdTeacherId
           })
         }).then(() => {
           this.$http({
@@ -268,7 +268,7 @@
                 type: 'success',
                 duration: 1500
               })
-              this.init(this.bdOrgId, this.teacherId, 1) // 更新完毕，刷新列表
+              this.init(this.bdOrgId, this.bdTeacherId, 1) // 更新完毕，刷新列表
             } else {
               this.$message.error(data.msg)
             }
@@ -304,7 +304,7 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              this.init(this.bdOrgId, this.teacherId, 2) // 点击确定后，刷新列表
+              this.init(this.bdOrgId, this.bdTeacherId, 2) // 点击确定后，刷新列表
             }).catch(() => {
               this.visible = false
             })
@@ -334,7 +334,7 @@
                 type: 'success',
                 duration: 1500
               })
-              this.init(this.bdOrgId, this.teacherId, 2) // 删除成功，刷新列表
+              this.init(this.bdOrgId, this.bdTeacherId, 2) // 删除成功，刷新列表
             } else {
               this.$message.error(data.msg)
             }

@@ -150,8 +150,8 @@
     <teacherBindingWechat v-if="teacherBindingWechatVisible" ref="teacherBindingWechat"></teacherBindingWechat>
     <!-- 弹窗，上传图片与视频 -->
     <teacherUploadMultimedia v-if="teacherUploadMultimediaVisible" ref="teacherUploadMultimedia"></teacherUploadMultimedia>
-    <!-- 弹窗，课程结算 -->
-    <teacher-class-settlement v-if="teacherClassSettlementVisible" ref="teacherClassSettlement"></teacher-class-settlement>
+    <!-- 弹窗，课程结算汇总 -->
+    <teacher-class-settlement-sum v-if="teacherClassSettlementVisibleSum" ref="teacherClassSettlementSum"></teacher-class-settlement-sum>
   </div>
 </template>
 
@@ -159,7 +159,7 @@
   import AddOrUpdate from './teacher-add-or-update'
   import TeacherBindingWechat from '../binding-wechat'
   import TeacherUploadMultimedia from './teacher-multimedia-add-or-delete'
-  import TeacherClassSettlement from './teacher-class-settlement'
+  import TeacherClassSettlementSum from './teacher-class-settlement-sum'
   export default {
     data () {
       return {
@@ -176,14 +176,14 @@
         addOrUpdateVisible: false,
         teacherBindingWechatVisible: false,
         teacherUploadMultimediaVisible: false,
-        teacherClassSettlementVisible: false
+        teacherClassSettlementVisibleSum: false
       }
     },
     components: {
       AddOrUpdate,
       TeacherBindingWechat,
       TeacherUploadMultimedia,
-      TeacherClassSettlement
+      TeacherClassSettlementSum
     },
     activated () {
       this.getDataList()
@@ -319,9 +319,9 @@
         })
       },
       classSettlement: function (teacherId) {
-        this.teacherClassSettlementVisible = true
+        this.teacherClassSettlementVisibleSum = true
         this.$nextTick(() => {
-          this.$refs.teacherClassSettlement.init(teacherId)
+          this.$refs.teacherClassSettlementSum.init(teacherId)
         })
       }
     }

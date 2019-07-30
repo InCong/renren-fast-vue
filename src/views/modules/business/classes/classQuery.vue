@@ -68,6 +68,7 @@
               <el-pagination
                 @size-change="sizeChangeHandle"
                 @current-change="currentChangeHandle"
+                :hide-on-single-page="true"
                 :current-page="pageIndex"
                 :page-sizes="[10, 20, 50, 100]"
                 :page-size="pageSize"

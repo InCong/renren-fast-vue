@@ -61,7 +61,7 @@
   export default {
     data () {
       return {
-        teacherId: 0,
+        bdTeacherId: 0,
         visible: false,
         videoVisible: false,
         dataList: [],
@@ -75,19 +75,19 @@
     methods: {
       init (id) {
         this.visible = true
-        this.teacherId = id
-        this.getDataList(this.teacherId)
+        this.bdTeacherId = id
+        this.getDataList(this.bdTeacherId)
       },
       // 每页数
       sizeChangeHandle (val) {
         this.pageSize = val
         this.pageIndex = 1
-        this.getDataList(this.teacherId)
+        this.getDataList(this.bdTeacherId)
       },
       // 当前页
       currentChangeHandle (val) {
         this.pageIndex = val
-        this.getDataList(this.teacherId)
+        this.getDataList(this.bdTeacherId)
       },
       getDataList (teacherId) {
         this.$http({
@@ -96,7 +96,7 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'teacherId': teacherId,
+            'bdTeacherId': teacherId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId, // 超级管理员可以获取全部机构部门的列表
             'typeId': 2 // 1-图片，2-视频
           })

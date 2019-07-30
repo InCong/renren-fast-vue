@@ -2,7 +2,9 @@
     <el-dialog
       title="课程结算"
       :close-on-click-modal="false"
-      :visible.sync="visible">
+      :visible.sync="visible"
+      append-to-body
+      @close="closeDialog">
       <div style="text-align: center;margin-bottom: 10px">
         <el-radio-group v-model="dataForm.isSettlement" @change="radioChange">
           <el-radio :label="0">未结算</el-radio>
@@ -17,8 +19,6 @@
           :data="dataList"
           border
           stripe
-          show-summary
-          :summary-method="getSummaries"
           @selection-change="selectionChangeHandle"
           v-loading="dataListLoading"
           style="width: 100%;">
@@ -26,7 +26,7 @@
             type="selection"
             header-align="center"
             align="center"
-            width="80">
+            width="50">
           </el-table-column>
           <el-table-column
             prop="id"
@@ -48,16 +48,28 @@
             label="学员">
           </el-table-column>
           <el-table-column
-            prop="num"
+            prop="arrangeDate"
             header-align="center"
             align="center"
-            label="课时">
+            label="排课日期">
           </el-table-column>
           <el-table-column
-            prop="remainNum"
+            prop="startTime"
             header-align="center"
             align="center"
-            label="剩余课时">
+            label="开始时间">
+          </el-table-column>
+          <el-table-column
+            prop="endTime"
+            header-align="center"
+            align="center"
+            label="结束时间">
+          </el-table-column>
+          <el-table-column
+            prop="signTime"
+            header-align="center"
+            align="center"
+            label="签到时间">
           </el-table-column>
           <el-table-column
             v-if="!modifyTimeColVisible"
@@ -66,25 +78,18 @@
             align="center"
             label="结算时间">
           </el-table-column>
-          <el-table-column
-            fixed="right"
-            header-align="center"
-            width="150"
-            label="操作">
-            <template slot-scope="scope">
-              <div style="text-align: center"><el-button size="mini" type="primary" @click="setSettlement(scope.row.id)">{{buttonText}}</el-button></div>
-            </template>
-          </el-table-column>
         </el-table>
-        <el-pagination
-          @size-change="sizeChangeHandle"
-          @current-change="currentChangeHandle"
-          :current-page="pageIndex"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          :total="totalPage"
-          layout="total, sizes, prev, pager, next, jumper">
-        </el-pagination>
+        <div style="text-align: right;margin-top: 20px">
+          <el-pagination
+            @size-change="sizeChangeHandle"
+            @current-change="currentChangeHandle"
+            :current-page="pageIndex"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            :total="totalPage"
+            layout="total, sizes, prev, pager, next, jumper">
+          </el-pagination>
+        </div>
       </div>
     </el-dialog>
 </template>
@@ -103,7 +108,8 @@
           modifyTime: ''
         },
         visible: false,
-        teacherId: 0,
+        bdTeacherId: 0,
+        bdClassesId: 0,
         dataList: [],
         dataListLoading: false,
         pageIndex: 1,
@@ -112,13 +118,24 @@
         dataListSelections: [],
         modifyTimeColVisible: true,
         multiButtonText: '批量结算',
-        buttonText: '结算'
+        isModify: false
       }
     },
     methods: {
-      init (id) {
-        this.teacherId = id
+      init (bdClassesId, bdTeacherId) {
         this.visible = true
+        this.bdTeacherId = bdTeacherId
+        this.bdClassesId = bdClassesId
+        this.getDataList()
+        // 组件看不见时调用，刷新汇总数据
+        this.over = () => {
+          if (this.isModify) {
+            this.isModify = false
+            this.$emit('refreshList')
+          }
+        }
+      },
+      getDataList () {
         this.dataListLoading = true
         this.$http({
           url: this.$http.adornUrl('/business/teacherclasssettlement/listTeacherClassSettlement'),
@@ -126,7 +143,8 @@
           data: this.$http.adornData({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'bdTeacherId': this.teacherId,
+            'bdTeacherId': this.bdTeacherId,
+            'bdClassesId': this.bdClassesId,
             'isSettlement': this.dataForm.isSettlement
           })
         }).then(({data}) => {
@@ -158,46 +176,18 @@
       radioChange () {
         this.modifyTimeColVisible = this.dataForm.isSettlement === 0
         if (this.dataForm.isSettlement === 0) {
-          this.multiButtonText = '批量结算'
-          this.buttonText = '结算'
+          this.multiButtonText = '结算'
         } else {
-          this.multiButtonText = '批量取消结算'
-          this.buttonText = '取消结算'
+          this.multiButtonText = '取消结算'
         }
-        this.init(this.teacherId)
-      },
-      getSummaries (param) {
-        const { columns, data } = param
-        const sums = []
-        columns.forEach((column, index) => {
-          if (index === 0) {
-            sums[index] = '总计'
-          } else if (index === 4 || index === 5) {
-            const values = data.map(item => Number(item[column.property]))
-            if (!values.every(value => isNaN(value))) {
-              sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr)
-                if (!isNaN(value)) {
-                  return prev + curr
-                } else {
-                  return prev
-                }
-              }, 0)
-            } else {
-              sums[index] = 'N/A'
-            }
-          } else {
-            sums[index] = ''
-          }
-        })
-        return sums
+        this.init(this.bdClassesId, this.bdTeacherId)
       },
       // 设置结算或取消结算
       setSettlement (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[ ${id ? this.buttonText : this.multiButtonText} ]操作?`, '提示', {
+        this.$confirm(`确定进行[ ${this.multiButtonText} ]操作?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -216,12 +206,17 @@
                 type: 'success',
                 duration: 1500
               })
-              this.init(this.teacherId)
+              this.init(this.bdClassesId, this.bdTeacherId)
+              this.isModify = true
             } else {
               this.$message.error(data.msg)
             }
           })
         })
+      },
+      // 关闭时的逻辑
+      closeDialog () {
+        this.over()
       }
     }
   }
