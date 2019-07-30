@@ -49,6 +49,7 @@
         bdTeacherId: '',
         bdStudentId: '',
         type: '',
+        length: 0,
         isModify: false,
         className: '',
         startTime: '',
@@ -60,7 +61,7 @@
       }
     },
     methods: {
-      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId) {
+      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length) {
         this.visible = true
         this.id = id
         this.bdClassesStudentId = bdClassesStudentId
@@ -70,6 +71,7 @@
         this.startTime = startTime
         this.endTime = endTime
         this.arrangeDate = arrangeDate
+        this.length = length
         // 组件看不见时调用，清空数组
         this.over = () => {
           this.visible = false
@@ -159,7 +161,7 @@
         this.isModify = true
         this.classArrangeModifyVisible = true
         this.$nextTick(() => {
-          this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime, this.bdTeacherId, this.bdClassesStudentId)
+          this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime, this.bdTeacherId, this.bdClassesStudentId, this.length)
         })
       },
       // 删除课程

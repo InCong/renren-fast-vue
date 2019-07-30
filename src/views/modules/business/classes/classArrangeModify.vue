@@ -16,17 +16,21 @@
       <el-time-select
         placeholder="起始时间"
         v-model="startTime"
+        @change="startTimeChange"
+        :editable="false"
+        :clearable="false"
         :picker-options="{
             start: '06:00',
             step: '00:15',
-            end: '23:00',
-            maxTime: endTime
+            end: '23:00'
           }">
       </el-time-select>
       <span style="margin-left: 10px;margin-right: 20px">至</span>
       <el-time-select
         placeholder="结束时间"
         v-model="endTime"
+        :clearable="false"
+        :disabled="true"
         :picker-options="{
             start: '06:00',
             step: '00:15',
@@ -43,6 +47,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     data () {
       return {
@@ -51,11 +56,12 @@
         arrangeDate: '',
         startTime: '',
         endTime: '',
-        bdTeacherId: ''
+        bdTeacherId: '',
+        length: 0
       }
     },
     methods: {
-      init (id, arrangeDate, startTime, endTime, bdTeacherId, bdClassesStudentId) {
+      init (id, arrangeDate, startTime, endTime, bdTeacherId, bdClassesStudentId, length) {
         this.visible = true
         this.id = id
         this.bdClassesStudentId = bdClassesStudentId
@@ -63,6 +69,7 @@
         this.startTime = startTime
         this.endTime = endTime
         this.bdTeacherId = bdTeacherId
+        this.length = length
       },
       dataFormSubmit () {
         let num = this.endTime.substr(0, 2) - this.startTime.substr(0, 2) + (this.endTime.substr(3, 2) - this.startTime.substr(3, 2)) / 60
@@ -117,6 +124,12 @@
             })
           }
         })
+      },
+      startTimeChange () {
+        if (this.length > 0) {
+          let date = moment(this.arrangeDate + ' ' + this.startTime)
+          this.endTime = date.add(this.length, 'minutes').format('HH:mm')
+        }
       }
     }
   }

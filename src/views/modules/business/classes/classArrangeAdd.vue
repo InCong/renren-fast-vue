@@ -16,6 +16,7 @@
           placeholder="起始时间"
           v-model="dataForm.startTime"
           @change="startTimeChange"
+          :editable="false"
           :clearable="false"
           :picker-options="{
               start: '06:00',
