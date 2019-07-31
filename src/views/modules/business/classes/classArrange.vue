@@ -538,7 +538,6 @@
       },
       // 课程点击
       classClick (id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId, length) {
-        console.log(id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId, length)
         this.classArrangeOperaVisible = true
         this.$nextTick(() => {
           this.$refs.classArrangeOpera.init(id, this.bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length)

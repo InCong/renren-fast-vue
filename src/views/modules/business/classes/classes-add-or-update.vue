@@ -188,7 +188,11 @@
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
-          this.classTypeList = data.page.list
+          if (data && data.code === 0) {
+            this.classTypeList = data.page.list
+          } else {
+            this.classTypeList = []
+          }
         })
       },
       // 获取上课方式ID
@@ -202,7 +206,11 @@
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
-          this.classWayList = data.page.list
+          if (data && data.code === 0) {
+            this.classWayList = data.page.list
+          } else {
+            this.classWayList = []
+          }
         })
       }
     }

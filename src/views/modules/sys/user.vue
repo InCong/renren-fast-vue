@@ -165,7 +165,11 @@
           method: 'get',
           params: this.$http.adornParams()
         }).then(({data}) => {
-          this.orgList = data.orgList
+          if (data && data.code === 0) {
+            this.orgList = data.orgList
+          } else {
+            this.orgList = []
+          }
         })
       },
       // 每页数

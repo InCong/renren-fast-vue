@@ -43,7 +43,7 @@
         <el-radio-group v-model="radioClassWay" @change="classWayChange" :disabled="classDisabled">
           <el-radio-button v-for="item in classWayList" v-bind:key="item.id" :label="item.id" style="margin-right: 20px">{{item.name}}</el-radio-button>
         </el-radio-group>
-        <el-button type="primary" @click="">待定班课</el-button>
+        <el-button type="success" @click="specialClassClick">待定班课</el-button>
       </div>
       <div style="text-align: center">
         <el-radio-group v-model="dataForm.bdClassesStudentId" @change="classChange">
@@ -64,13 +64,18 @@
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
+    <select-reference-class v-if="selectReferenceClassVisible" ref="selectReferenceClass" @getReferenceTime="getReferenceTime" @referenceTimeClose="referenceTimeClose"></select-reference-class>
   </el-dialog>
 </template>
 
 <script>
   import moment from 'moment'
   import 'moment/locale/zh-cn'
+  import SelectReferenceClass from './selectReferenceClass'
   export default {
+    components: {
+      SelectReferenceClass
+    },
     data () {
       return {
         // 以下是基本变量
@@ -83,6 +88,8 @@
         classesList: [],
         classDisabled: true,
         classLength: 0,
+        isSpecialClassClick: false,
+        selectReferenceClassVisible: false,
         // 以下是单选的变量
         radioClassWay: '',
         radioType: '1',
@@ -126,7 +133,11 @@
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
-          this.classWayList = data.page.list
+          if (data && data.code === 0) {
+            this.classWayList = data.page.list
+          } else {
+            this.classWayList = []
+          }
         })
 
         // 组件看不见时调用，清空数组
@@ -140,6 +151,7 @@
           this.visible = false
           this.classDisabled = true
           this.classLength = 0
+          this.isSpecialClassClick = false
           this.$emit('refreshClassArrange')
         }
       },
@@ -296,14 +308,60 @@
             'bdClassWayId': this.radioClassWay
           })
         }).then(({data}) => {
-          this.classesList = data.list
+          if (data && data.code === 0) {
+            this.classesList = data.list
+          } else {
+            this.classesList = []
+          }
         })
+        this.isSpecialClassClick = false
       },
       // 课程选择变更事件
       classChange (bdClassesStudentId) {
-        this.classLength = bdClassesStudentId.substring(bdClassesStudentId.indexOf('_') + 1)
-        let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
-        this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
+        if (!this.isSpecialClassClick) {
+          this.classLength = bdClassesStudentId.substring(bdClassesStudentId.indexOf('_') + 1)
+          let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
+          this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
+        } else {
+          this.selectReferenceClassVisible = true
+          this.$nextTick(() => {
+            this.$refs.selectReferenceClass.init(bdClassesStudentId.substring(0, bdClassesStudentId.indexOf('_')))
+          })
+        }
+      },
+      // 获取作为参考的班课开始、结束时间
+      getReferenceTime (startTime, endTime, length) {
+        this.dataForm.startTime = startTime
+        this.dataForm.endTime = endTime
+        this.classLength = length
+      },
+      // 取消选择参考班课的对话框
+      referenceTimeClose () {
+        this.dataForm.bdClassesStudentId = ''
+      },
+      // 待定班课点击
+      specialClassClick () {
+        this.dataForm.startTime = ''
+        this.dataForm.endTime = ''
+        this.dataForm.bdClassesStudentId = ''
+        this.radioClassWay = ''
+        this.classLength = 0
+        this.classDisabled = true
+        this.$http({
+          url: this.$http.adornUrl('/business/studentclassarrange/targetClassArrange'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdTeacherId': this.bdTeacherId,
+            'bdStudentId': this.bdStudentId
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.classesList = data.list
+          } else {
+            this.classesList = []
+          }
+        })
+        this.isSpecialClassClick = true
       },
       // 关闭时的逻辑
       closeDialog () {
