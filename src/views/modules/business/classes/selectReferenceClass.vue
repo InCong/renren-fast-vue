@@ -6,7 +6,9 @@
     <el-table
       :data="dataList"
       highlight-current-row
-      @current-change="handleCurrentChange"
+      border
+      stripe
+      @current-change="handleCurrentChange"s
       style="width: 100%">
       <el-table-column
         prop="id"
@@ -59,6 +61,9 @@
       return {
         visible: false,
         id: '',
+        bdClassesId: '',
+        startDate: '',
+        endDate: '',
         startTime: '',
         endTime: '',
         length: 0,
@@ -67,15 +72,41 @@
       }
     },
     methods: {
-      init (id) {
+      init (id, startDate, endDate) {
         this.visible = true
         this.id = id
-        console.log(this.id)
+        this.startDate = startDate
+        this.endDate = endDate
+        this.$http({
+          url: this.$http.adornUrl(`/business/classesstudent/info/${this.id}`),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.bdClassesId = data.classesStudent.bdClassesId
+            this.$http({
+              url: this.$http.adornUrl('/business/studentclassarrange/listReferenceClasses'),
+              method: 'post',
+              data: this.$http.adornData({
+                'bdClassesId': this.bdClassesId,
+                'startDate': this.startDate,
+                'endDate': this.endDate,
+                'bdClassesStudentId': this.id
+              })
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.dataList = data.list
+              } else {
+                this.dataList = []
+              }
+            })
+          }
+        })
       },
       dataFormSubmit () {
-        console.log('提交')
         this.visible = false
-        this.$emit('getReferenceTime', '06:00', '07:00', 60)
+        console.log(this.arrangeDate, this.startTime, this.endTime, this.length)
+        this.$emit('getReferenceTime', this.arrangeDate, this.startTime, this.endTime, this.length)
       },
       cancelClick () {
         this.visible = false
@@ -83,6 +114,12 @@
       },
       handleCurrentChange (val) {
         this.currentRow = val
+        if (this.currentRow != null) {
+          this.arrangeDate = this.currentRow.arrangeDate
+          this.startTime = this.currentRow.startTime
+          this.endTime = this.currentRow.endTime
+          this.length = this.currentRow.length
+        }
       }
     }
   }

@@ -325,12 +325,23 @@
         } else {
           this.selectReferenceClassVisible = true
           this.$nextTick(() => {
-            this.$refs.selectReferenceClass.init(bdClassesStudentId.substring(0, bdClassesStudentId.indexOf('_')))
+            let endDate = ''
+            for (var i = 0; i < 7; i++) {
+              if (this.dayList[i] === null) {
+                endDate = this.dayList[i - 1]
+                break
+              }
+              if (i === 6) {
+                endDate = this.dayList[i]
+              }
+            }
+            this.$refs.selectReferenceClass.init(bdClassesStudentId.substring(0, bdClassesStudentId.indexOf('_')), this.dayList[0], endDate)
           })
         }
       },
       // 获取作为参考的班课开始、结束时间
-      getReferenceTime (startTime, endTime, length) {
+      getReferenceTime (arrangeDate, startTime, endTime, length) {
+        this.dataForm.arrangeDate = arrangeDate
         this.dataForm.startTime = startTime
         this.dataForm.endTime = endTime
         this.classLength = length
