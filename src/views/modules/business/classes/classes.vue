@@ -237,7 +237,7 @@
           url: this.$http.adornUrl('/basic/classtype/list'),
           method: 'get',
           params: this.$http.adornParams({
-            'page': 0,
+            'page': 1,
             'limit': 1000,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
@@ -255,7 +255,7 @@
           url: this.$http.adornUrl('/basic/classway/list'),
           method: 'get',
           params: this.$http.adornParams({
-            'page': 0,
+            'page': 1,
             'limit': 1000,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
