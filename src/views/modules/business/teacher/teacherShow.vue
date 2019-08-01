@@ -20,9 +20,14 @@
                     {{item.name}}
                   </h1>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="6">
                   <h1>
-                    <el-button type="primary" icon="el-icon-view" size="mini" @click="showTeacherVideo(item.id)"></el-button>
+                    <el-button type="primary" size="mini" @click="showTeacherVideo(item.id)"><icon-svg name="video" style="font-size: 16px"></icon-svg></el-button>
+                  </h1>
+                </el-col>
+                <el-col :span="6">
+                  <h1>
+                    <el-button type="success" size="mini" @click="pushTeacherInfo(item.name, item.url, item.mobile, item.classTypeName)"><icon-svg name="wechat" style="font-size: 16px" class="wechatIcon"></icon-svg></el-button>
                   </h1>
                 </el-col>
               </el-row>
@@ -57,13 +62,19 @@
     </el-pagination>
     <!-- 弹窗，查看该教师的视频 -->
     <teacher-video v-if="teacherVideoVisible" ref="teacherVideo"></teacher-video>
+    <!-- 弹窗，选择需要推送的学员 -->
+    <push-teacher-info v-if="pushTeacherInfoVisible" ref="pushTeacherInfo"></push-teacher-info>
   </div>
 </template>
 
 <script>
   import TeacherVideo from './teacherVideo'
+  import PushTeacherInfo from './pushTeacherInfo'
   export default {
-    components: {TeacherVideo},
+    components: {
+      TeacherVideo,
+      PushTeacherInfo
+    },
     data () {
       return {
         dataForm: {
@@ -74,7 +85,8 @@
         pageSize: 10,
         totalPage: 0,
         dataListLoading: false,
-        teacherVideoVisible: false
+        teacherVideoVisible: false,
+        pushTeacherInfoVisible: false
       }
     },
     activated () {
@@ -120,6 +132,13 @@
         this.teacherVideoVisible = true
         this.$nextTick(() => {
           this.$refs.teacherVideo.init(id)
+        })
+      },
+      // 选择需要推送教师信息的学员
+      pushTeacherInfo (name, url, mobile, classTypeName) {
+        this.pushTeacherInfoVisible = true
+        this.$nextTick(() => {
+          this.$refs.pushTeacherInfo.init(name, url, mobile, classTypeName)
         })
       }
     }

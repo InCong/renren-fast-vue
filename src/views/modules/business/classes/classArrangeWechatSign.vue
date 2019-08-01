@@ -59,7 +59,7 @@
           console.log(e.data)
           this.$message({
             message: '已成功签到！',
-            type: 'sucess',
+            type: 'success',
             duration: 3000,
             onClose: () => {
               this.$http({

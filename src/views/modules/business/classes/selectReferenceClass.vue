@@ -8,7 +8,7 @@
       highlight-current-row
       border
       stripe
-      @current-change="handleCurrentChange"s
+      @current-change="handleCurrentChange"
       style="width: 100%">
       <el-table-column
         prop="id"
