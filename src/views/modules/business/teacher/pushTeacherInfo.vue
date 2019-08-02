@@ -172,11 +172,19 @@
             type: 'error',
             duration: 4500
           })
+        } else if (e.data === 'sendArticle_all_fail') {
+          this.visible = false
+          console.log(e.data)
+          this.$message({
+            message: '该学员绑定的微信用户长时间未与公众号交互，因此无法推送消息给这些微信用户！！！',
+            type: 'warning',
+            duration: 4500
+          })
         } else if (e.data === 'sendArticle_someone_fail') {
           this.visible = false
           console.log(e.data)
           this.$message({
-            message: '由于有个别微信用户很久没与公众号交互，因此个别微信用户推送失败！！！',
+            message: '该学员绑定的个别微信用户长时间未与公众号交互，因此无法推送消息给这些微信用户！！！',
             type: 'warning',
             duration: 4500
           })
