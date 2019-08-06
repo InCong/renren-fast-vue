@@ -9,6 +9,7 @@
       :data="dataList"
       border
       stripe
+      :default-sort = "{prop: 'orderNum', order: 'ascending'}"
       style="width: 100%;">
       <el-table-column
         prop="menuId"
@@ -54,6 +55,7 @@
         prop="orderNum"
         header-align="center"
         align="center"
+        sortable
         label="排序号">
       </el-table-column>
       <el-table-column

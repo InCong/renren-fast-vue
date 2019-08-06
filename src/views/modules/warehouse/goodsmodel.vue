@@ -5,7 +5,7 @@
         <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.bdResourceTypeId" clearable placeholder="类型">
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型">
           <el-option
             v-for="item in typeList"
             :key="item.id"
@@ -16,8 +16,8 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('basic:resource:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('basic:resource:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('warehouse:goodsmodel:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('warehouse:goodsmodel:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -36,8 +36,8 @@
         prop="id"
         header-align="center"
         align="center"
-        label="id"
-        width="50">
+        width="50"
+        label="id">
       </el-table-column>
       <el-table-column
         prop="name"
@@ -46,17 +46,11 @@
         label="名称">
       </el-table-column>
       <el-table-column
-        prop="num"
-        header-align="center"
-        align="center"
-        label="使用人数">
-      </el-table-column>
-      <el-table-column
-        prop="bdResourceTypeId"
+        prop="wdGoodsTypeId"
         header-align="center"
         align="center"
         :formatter="formatType"
-        label="资源类型">
+        label="商品类型">
       </el-table-column>
       <el-table-column
         prop="remark"
@@ -65,17 +59,17 @@
         label="备注">
       </el-table-column>
       <el-table-column
+        prop="createTime"
+        header-align="center"
+        align="center"
+        label="创建时间">
+      </el-table-column>
+      <el-table-column
         prop="bdOrgId"
         header-align="center"
         align="center"
         :formatter="formatOrg"
         label="机构">
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        header-align="center"
-        align="center"
-        label="创建时间">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -104,13 +98,13 @@
 </template>
 
 <script>
-  import AddOrUpdate from './resource-add-or-update'
+  import AddOrUpdate from './goodsmodel-add-or-update'
   export default {
     data () {
       return {
         dataForm: {
           name: '',
-          bdResourceTypeId: ''
+          wdGoodsTypeId: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -136,13 +130,13 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/basic/resource/list'),
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
             'name': this.dataForm.name,
-            'bdResourceTypeId': this.dataForm.bdResourceTypeId,
+            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
@@ -170,10 +164,10 @@
           }
         })
       },
-      // 获取资源类型ID
+      // 获取商品类型ID
       getTypeList () {
         this.$http({
-          url: this.$http.adornUrl('/basic/resourcetype/list'),
+          url: this.$http.adornUrl('/warehouse/goodstype/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': 1,
@@ -217,7 +211,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/basic/resource/delete'),
+            url: this.$http.adornUrl('/warehouse/goodsmodel/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -254,7 +248,7 @@
         if (this.typeList != null) {
           for (let i = 0; i < this.typeList.length; i++) {
             let item = this.typeList[i]
-            if (item.id === row.bdResourceTypeId) {
+            if (item.id === row.wdGoodsTypeId) {
               typeName = item.name
               break
             }

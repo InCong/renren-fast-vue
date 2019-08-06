@@ -5,7 +5,7 @@
         <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.bdResourceTypeId" clearable placeholder="类型">
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型">
           <el-option
             v-for="item in typeList"
             :key="item.id"
@@ -16,8 +16,8 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('basic:resource:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('basic:resource:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('warehouse:goods:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('warehouse:goods:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -36,8 +36,7 @@
         prop="id"
         header-align="center"
         align="center"
-        label="id"
-        width="50">
+        label="id">
       </el-table-column>
       <el-table-column
         prop="name"
@@ -46,23 +45,43 @@
         label="名称">
       </el-table-column>
       <el-table-column
-        prop="num"
+        prop="price"
         header-align="center"
         align="center"
-        label="使用人数">
+        label="参考单价">
       </el-table-column>
       <el-table-column
-        prop="bdResourceTypeId"
+        prop="code"
+        header-align="center"
+        align="center"
+        label="编号">
+      </el-table-column>
+      <el-table-column
+        prop="wdGoodsTypeId"
         header-align="center"
         align="center"
         :formatter="formatType"
-        label="资源类型">
+        label="商品类型">
+      </el-table-column>
+      <el-table-column
+        prop="wdGoodsModelId"
+        header-align="center"
+        align="center"
+        :formatter="formatModel"
+        label="商品型号">
       </el-table-column>
       <el-table-column
         prop="remark"
         header-align="center"
         align="center"
+        show-overflow-tooltip
         label="备注">
+      </el-table-column>
+      <el-table-column
+        prop="createTime"
+        header-align="center"
+        align="center"
+        label="创建时间">
       </el-table-column>
       <el-table-column
         prop="bdOrgId"
@@ -70,12 +89,6 @@
         align="center"
         :formatter="formatOrg"
         label="机构">
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        header-align="center"
-        align="center"
-        label="创建时间">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -104,13 +117,13 @@
 </template>
 
 <script>
-  import AddOrUpdate from './resource-add-or-update'
+  import AddOrUpdate from './goods-add-or-update'
   export default {
     data () {
       return {
         dataForm: {
           name: '',
-          bdResourceTypeId: ''
+          wdGoodsTypeId: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -120,7 +133,8 @@
         dataListSelections: [],
         addOrUpdateVisible: false,
         orgList: [],
-        typeList: []
+        typeList: [],
+        modelList: []
       }
     },
     components: {
@@ -130,19 +144,20 @@
       this.getDataList()
       this.getOrgList()
       this.getTypeList()
+      this.getModelList()
     },
     methods: {
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/basic/resource/list'),
+          url: this.$http.adornUrl('/warehouse/goods/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
             'name': this.dataForm.name,
-            'bdResourceTypeId': this.dataForm.bdResourceTypeId,
+            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
@@ -170,10 +185,10 @@
           }
         })
       },
-      // 获取资源类型ID
+      // 获取商品类型ID
       getTypeList () {
         this.$http({
-          url: this.$http.adornUrl('/basic/resourcetype/list'),
+          url: this.$http.adornUrl('/warehouse/goodstype/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': 1,
@@ -182,6 +197,20 @@
           })
         }).then(({data}) => {
           this.typeList = data.page.list
+        })
+      },
+      // 获取商品型号ID
+      getModelList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.modelList = data.page.list
         })
       },
       // 每页数
@@ -217,7 +246,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/basic/resource/delete'),
+            url: this.$http.adornUrl('/warehouse/goods/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -254,13 +283,26 @@
         if (this.typeList != null) {
           for (let i = 0; i < this.typeList.length; i++) {
             let item = this.typeList[i]
-            if (item.id === row.bdResourceTypeId) {
+            if (item.id === row.wdGoodsTypeId) {
               typeName = item.name
               break
             }
           }
         }
         return typeName
+      },
+      formatModel: function (row, column) {
+        let modelName = '未知'
+        if (this.modelList != null) {
+          for (let i = 0; i < this.modelList.length; i++) {
+            let item = this.modelList[i]
+            if (item.id === row.wdGoodsModelId) {
+              modelName = item.name
+              break
+            }
+          }
+        }
+        return modelName
       }
     }
   }
