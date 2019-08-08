@@ -12,7 +12,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型">
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型" @change="typeChange">
           <el-option
             v-for="item in typeList"
             :key="item.id"
@@ -22,9 +22,19 @@
         </el-select>
       </el-form-item>
       <el-form-item>
+        <el-select v-model="dataForm.wdGoodsModelId" clearable placeholder="商品型号" :disabled="modelDisable">
+          <el-option
+            v-for="item in modelListForSelect"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('warehouse:buydetail:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('warehouse:buydetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+<!--        <el-button v-if="isAuth('warehouse:buydetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
@@ -33,12 +43,12 @@
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       style="width: 100%;">
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
-      </el-table-column>
+<!--      <el-table-column-->
+<!--        type="selection"-->
+<!--        header-align="center"-->
+<!--        align="center"-->
+<!--        width="50">-->
+<!--      </el-table-column>-->
       <el-table-column
         prop="id"
         header-align="center"
@@ -61,6 +71,13 @@
         label="商品类型">
       </el-table-column>
       <el-table-column
+        prop="wdGoodsModelId"
+        header-align="center"
+        align="center"
+        :formatter="formatModel"
+        label="商品型号">
+      </el-table-column>
+      <el-table-column
         prop="wdSupplierId"
         header-align="center"
         align="center"
@@ -77,13 +94,13 @@
         prop="price"
         header-align="center"
         align="center"
-        label="进货单价">
+        label="进货单价（元）">
       </el-table-column>
       <el-table-column
         prop="totalPrice"
         header-align="center"
         align="center"
-        label="总价">
+        label="总价（元）">
       </el-table-column>
       <el-table-column
         prop="createTime"
@@ -98,8 +115,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button size="small" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.createTime)">修改</el-button>
+          <el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.wdGoodsId, scope.row.createTime)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,12 +136,14 @@
 
 <script>
   import AddOrUpdate from './buydetail-add-or-update'
+  import moment from 'moment'
   export default {
     data () {
       return {
         dataForm: {
           wdGoodsId: '',
-          wdGoodsTypeId: ''
+          wdGoodsTypeId: '',
+          wdGoodsModelId: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -135,7 +154,10 @@
         addOrUpdateVisible: false,
         goodsList: [],
         typeList: [],
-        supplierList: []
+        modelList: [],
+        modelListForSelect: [],
+        supplierList: [],
+        modelDisable: true
       }
     },
     components: {
@@ -145,6 +167,7 @@
       this.getDataList()
       this.getGoodsList()
       this.getTypeList()
+      this.getModelList()
       this.getSupplierList()
     },
     methods: {
@@ -159,6 +182,7 @@
             'limit': this.pageSize,
             'wdGoodsId': this.dataForm.wdGoodsId,
             'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
+            'wdGoodsModelId': this.dataForm.wdGoodsModelId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
@@ -188,41 +212,71 @@
         this.dataListSelections = val
       },
       // 新增 / 修改
-      addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
-        })
+      addOrUpdateHandle (id, createTime) {
+        if (moment(createTime).add(30, 'days') < moment()) {
+          this.$message({
+            message: '已超过30天，不允许修改！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else {
+          this.addOrUpdateVisible = true
+          this.$nextTick(() => {
+            this.$refs.addOrUpdate.init(id)
+          })
+        }
       },
       // 删除
-      deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.id
+      deleteHandle (id, wdGoodsId, createTime) {
+        let isLock = 0
+        this.$http({
+          url: this.$http.adornUrl(`/warehouse/goodsbook/info/${wdGoodsId}`),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          isLock = data.goodsBook.isLock
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$http({
-            url: this.$http.adornUrl('/warehouse/buydetail/delete'),
-            method: 'post',
-            data: this.$http.adornData(ids, false)
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getDataList()
-                }
-              })
-            } else {
-              this.$message.error(data.msg)
-            }
+        if (moment(createTime).add(30, 'days') < moment()) {
+          this.$message({
+            message: '已超过30天，不允许删除！',
+            type: 'warning',
+            duration: 1500
           })
-        })
+        } else if (isLock > 0) {
+          this.$message({
+            message: '由于该商品正在进行盘点，已被锁定，无法删除！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else {
+          var ids = id ? [id] : this.dataListSelections.map(item => {
+            return item.id
+          })
+          this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$http({
+              url: this.$http.adornUrl('/warehouse/buydetail/delete'),
+              method: 'post',
+              data: this.$http.adornData(ids, false)
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.$message({
+                  message: '操作成功',
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.getDataList()
+                  }
+                })
+              } else {
+                this.$message.error(data.msg)
+              }
+            })
+          })
+        }
       },
       getGoodsList () {
         this.$http({
@@ -249,6 +303,35 @@
           })
         }).then(({data}) => {
           this.typeList = data.page.list
+        })
+      },
+      // 获取商品型号ID
+      getModelList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.modelList = data.page.list
+        })
+      },
+      // 获取商品型号ID
+      getModelListForSelect () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.modelListForSelect = data.page.list
         })
       },
       getSupplierList () {
@@ -290,6 +373,19 @@
         }
         return typeName
       },
+      formatModel: function (row, column) {
+        let modelName = '未知'
+        if (this.modelList != null) {
+          for (let i = 0; i < this.modelList.length; i++) {
+            let item = this.modelList[i]
+            if (item.id === row.wdGoodsModelId) {
+              modelName = item.name
+              break
+            }
+          }
+        }
+        return modelName
+      },
       formatSupplier: function (row, column) {
         let supplierName = '未知'
         if (this.supplierList != null) {
@@ -302,6 +398,17 @@
           }
         }
         return supplierName
+      },
+      // 商品类型变更
+      typeChange () {
+        this.dataForm.wdGoodsModelId = ''
+        if (this.dataForm.wdGoodsTypeId) {
+          this.modelDisable = false
+          this.getModelListForSelect()
+        } else {
+          this.modelDisable = true
+          this.modelListForSelect = []
+        }
       }
     }
   }

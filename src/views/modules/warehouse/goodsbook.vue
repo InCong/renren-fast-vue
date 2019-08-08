@@ -29,6 +29,12 @@
         label="商品ID">
       </el-table-column>
       <el-table-column
+        prop="wdGoodsTypeId"
+        header-align="center"
+        align="center"
+        label="商品类型">
+      </el-table-column>
+      <el-table-column
         prop="inPrice"
         header-align="center"
         align="center"
