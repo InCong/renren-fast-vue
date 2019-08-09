@@ -2,12 +2,39 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品">
+          <el-option
+            v-for="item in goodsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型" @change="typeChange">
+          <el-option
+            v-for="item in typeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="dataForm.wdGoodsModelId" clearable placeholder="商品型号" :disabled="modelDisable">
+          <el-option
+            v-for="item in modelListForSelect"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('warehouse:goodsbook:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('warehouse:goodsbook:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+<!--        <el-button v-if="isAuth('warehouse:goodsbook:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>-->
+<!--        <el-button v-if="isAuth('warehouse:goodsbook:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
@@ -16,35 +43,44 @@
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       style="width: 100%;">
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
-      </el-table-column>
+<!--      <el-table-column-->
+<!--        type="selection"-->
+<!--        header-align="center"-->
+<!--        align="center"-->
+<!--        width="50">-->
+<!--      </el-table-column>-->
       <el-table-column
         prop="wdGoodsId"
         header-align="center"
         align="center"
-        label="商品ID">
+        :formatter="formatGoods"
+        label="商品">
       </el-table-column>
       <el-table-column
         prop="wdGoodsTypeId"
         header-align="center"
         align="center"
+        :formatter="formatType"
         label="商品类型">
+      </el-table-column>
+      <el-table-column
+        prop="wdGoodsModelId"
+        header-align="center"
+        align="center"
+        :formatter="formatModel"
+        label="商品型号">
       </el-table-column>
       <el-table-column
         prop="inPrice"
         header-align="center"
         align="center"
-        label="最新进货价">
+        label="最新进货价（元）">
       </el-table-column>
       <el-table-column
         prop="salePrice"
         header-align="center"
         align="center"
-        label="最新售价">
+        label="最新售价（元）">
       </el-table-column>
       <el-table-column
         prop="staticQty"
@@ -59,34 +95,39 @@
         label="动态库存">
       </el-table-column>
       <el-table-column
-        prop="bdOrgId"
-        header-align="center"
-        align="center"
-        label="所属机构ID">
-      </el-table-column>
-      <el-table-column
         prop="isLock"
         header-align="center"
         align="center"
-        label="是否锁定，0-否，1-是，盘点时会锁定">
+        label="是否锁定">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isLock === 0" size="small">否</el-tag>
+          <el-tag v-if="scope.row.isLock === 1" size="small" type="danger">是</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="modifyTime"
         header-align="center"
         align="center"
+        :default-sort = "{prop: 'modifyTime', order: 'descending'}"
         label="修改时间">
       </el-table-column>
-      <el-table-column
-        fixed="right"
-        header-align="center"
-        align="center"
-        width="150"
-        label="操作">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.wdGoodsId)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.wdGoodsId)">删除</el-button>
-        </template>
-      </el-table-column>
+<!--      <el-table-column-->
+<!--        prop="bdOrgId"-->
+<!--        header-align="center"-->
+<!--        align="center"-->
+<!--        label="机构">-->
+<!--      </el-table-column>-->
+<!--      <el-table-column-->
+<!--        fixed="right"-->
+<!--        header-align="center"-->
+<!--        align="center"-->
+<!--        width="150"-->
+<!--        label="操作">-->
+<!--        <template slot-scope="scope">-->
+<!--          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.wdGoodsId)">修改</el-button>-->
+<!--          <el-button type="text" size="small" @click="deleteHandle(scope.row.wdGoodsId)">删除</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <el-pagination
       @size-change="sizeChangeHandle"
@@ -108,7 +149,9 @@
     data () {
       return {
         dataForm: {
-          key: ''
+          wdGoodsId: '',
+          wdGoodsTypeId: '',
+          wdGoodsModelId: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -116,7 +159,12 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        goodsList: [],
+        typeList: [],
+        modelList: [],
+        modelListForSelect: [],
+        modelDisable: true
       }
     },
     components: {
@@ -124,6 +172,9 @@
     },
     activated () {
       this.getDataList()
+      this.getGoodsList()
+      this.getTypeList()
+      this.getModelList()
     },
     methods: {
       // 获取数据列表
@@ -135,7 +186,10 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'key': this.dataForm.key
+            'wdGoodsId': this.dataForm.wdGoodsId,
+            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
+            'wdGoodsModelId': this.dataForm.wdGoodsModelId,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -199,6 +253,112 @@
             }
           })
         })
+      },
+      getGoodsList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goods/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.goodsList = data.page.list
+        })
+      },
+      // 获取商品类型ID
+      getTypeList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodstype/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.typeList = data.page.list
+        })
+      },
+      // 获取商品型号ID
+      getModelList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.modelList = data.page.list
+        })
+      },
+      // 获取商品型号ID
+      getModelListForSelect () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.modelListForSelect = data.page.list
+        })
+      },
+      formatGoods: function (row, column) {
+        let goodsName = '未知'
+        if (this.goodsList != null) {
+          for (let i = 0; i < this.goodsList.length; i++) {
+            let item = this.goodsList[i]
+            if (item.id === row.wdGoodsId) {
+              goodsName = item.name
+              break
+            }
+          }
+        }
+        return goodsName
+      },
+      formatType: function (row, column) {
+        let typeName = '未知'
+        if (this.typeList != null) {
+          for (let i = 0; i < this.typeList.length; i++) {
+            let item = this.typeList[i]
+            if (item.id === row.wdGoodsTypeId) {
+              typeName = item.name
+              break
+            }
+          }
+        }
+        return typeName
+      },
+      formatModel: function (row, column) {
+        let modelName = '未知'
+        if (this.modelList != null) {
+          for (let i = 0; i < this.modelList.length; i++) {
+            let item = this.modelList[i]
+            if (item.id === row.wdGoodsModelId) {
+              modelName = item.name
+              break
+            }
+          }
+        }
+        return modelName
+      },
+      // 商品类型变更
+      typeChange () {
+        this.dataForm.wdGoodsModelId = ''
+        if (this.dataForm.wdGoodsTypeId) {
+          this.modelDisable = false
+          this.getModelListForSelect()
+        } else {
+          this.modelDisable = true
+          this.modelListForSelect = []
+        }
       }
     }
   }

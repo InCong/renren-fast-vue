@@ -9,7 +9,6 @@
       :data="dataList"
       border
       stripe
-      :default-sort = "{prop: 'orderNum', order: 'ascending'}"
       style="width: 100%;">
       <el-table-column
         prop="menuId"
