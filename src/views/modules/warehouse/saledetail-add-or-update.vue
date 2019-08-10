@@ -4,33 +4,23 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="80px">
-    <el-form-item label="商品" prop="wdGoodsId">
-      <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px">
-        <el-option
-          v-for="item in goodsList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="供应商" prop="wdSupplierId">
-      <el-select v-model="dataForm.wdSupplierId" clearable filterable placeholder="供应商">
-        <el-option
-          v-for="item in supplierList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
+      <el-form-item label="商品" prop="wdGoodsId">
+        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px">
+          <el-option
+            v-for="item in goodsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
     <el-form-item label="数量" prop="qty">
       <el-input-number v-model="dataForm.qty" placeholder="数量" :min="1" :step="1" @change="changeTotalPrice"></el-input-number>
     </el-form-item>
-    <el-form-item label="单价(元)" prop="price">
-      <el-input-number v-model="dataForm.price" placeholder="进货单价" :min="1" :step="1" :precision="2" @change="changeTotalPrice"></el-input-number>
+    <el-form-item label="销售价" prop="price">
+      <el-input-number v-model="dataForm.price" placeholder="销售价" :min="1" :step="1" :precision="2" @change="changeTotalPrice"></el-input-number>
     </el-form-item>
-    <el-form-item label="总价(元)" prop="totalPrice">
+    <el-form-item label="总价" prop="totalPrice">
       <el-input-number v-model="dataForm.totalPrice" placeholder="总价" :min="1" :step="1" :precision="2" :disabled="true"></el-input-number>
     </el-form-item>
     <el-form-item label="创建时间" prop="createTime">
@@ -55,7 +45,8 @@
         dataForm: {
           id: 0,
           wdGoodsId: '',
-          wdSupplierId: '',
+          wdGoodsTypeId: '',
+          wdGoodsModelId: '',
           qty: '',
           price: '',
           totalPrice: '',
@@ -68,21 +59,17 @@
           wdGoodsId: [
             { required: true, message: '商品不能为空', trigger: 'blur' }
           ],
-          wdSupplierId: [
-            { required: true, message: '供应商不能为空', trigger: 'blur' }
-          ],
           qty: [
             { required: true, message: '数量不能为空', trigger: 'blur' }
           ],
           price: [
-            { required: true, message: '进货单价不能为空', trigger: 'blur' }
+            { required: true, message: '销售价不能为空', trigger: 'blur' }
           ],
           totalPrice: [
             { required: true, message: '总价不能为空', trigger: 'blur' }
           ]
         },
-        goodsList: [],
-        supplierList: []
+        goodsList: []
       }
     },
     methods: {
@@ -90,26 +77,25 @@
         this.dataForm.id = id || 0
         this.visible = true
         this.getGoodsList()
-        this.getSupplierList()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/warehouse/buydetail/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/warehouse/saledetail/info/${this.dataForm.id}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.wdGoodsId = data.buyDetail.wdGoodsId
-                this.dataForm.wdSupplierId = data.buyDetail.wdSupplierId
-                this.dataForm.wdGoodsTypeId = data.buyDetail.wdGoodsTypeId
-                this.dataForm.qty = data.buyDetail.qty
-                this.dataForm.price = data.buyDetail.price
-                this.dataForm.totalPrice = data.buyDetail.totalPrice
-                this.dataForm.bdOrgId = data.buyDetail.bdOrgId
-                this.dataForm.createUserId = data.buyDetail.createUserId
-                this.dataForm.createTime = data.buyDetail.createTime
-                this.dataForm.remark = data.buyDetail.remark
+                this.dataForm.wdGoodsId = data.saleDetail.wdGoodsId
+                this.dataForm.wdGoodsTypeId = data.saleDetail.wdGoodsTypeId
+                this.dataForm.wdGoodsModelId = data.saleDetail.wdGoodsModelId
+                this.dataForm.num = data.saleDetail.qty
+                this.dataForm.price = data.saleDetail.price
+                this.dataForm.totalPrice = data.saleDetail.totalPrice
+                this.dataForm.bdOrgId = data.saleDetail.bdOrgId
+                this.dataForm.createUserId = data.saleDetail.createUserId
+                this.dataForm.createTime = data.saleDetail.createTime
+                this.dataForm.remark = data.saleDetail.remark
               }
             })
           }
@@ -139,12 +125,11 @@
                 }
               }
               this.$http({
-                url: this.$http.adornUrl(`/warehouse/buydetail/${!this.dataForm.id ? 'save' : 'update'}`),
+                url: this.$http.adornUrl(`/warehouse/saledetail/${!this.dataForm.id ? 'save' : 'update'}`),
                 method: 'post',
                 data: this.$http.adornData({
                   'id': this.dataForm.id || undefined,
                   'wdGoodsId': this.dataForm.wdGoodsId,
-                  'wdSupplierId': this.dataForm.wdSupplierId,
                   'wdGoodsTypeId': wdGoodsTypeId,
                   'wdGoodsModelId': wdGoodsModelId,
                   'qty': this.dataForm.qty,
@@ -169,12 +154,6 @@
                   this.$message.error(data.msg)
                 }
               })
-            } else {
-              this.$message({
-                message: '由于该商品正在进行盘点中，已被锁定，无法进行修改！！',
-                type: 'warning',
-                duration: 1500
-              })
             }
           }
         })
@@ -189,20 +168,6 @@
           })
         }).then(({data}) => {
           this.goodsList = data.list
-        })
-      },
-      // 获取供应商ID
-      getSupplierList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/supplier/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.supplierList = data.page.list
         })
       },
       changeTotalPrice () {
