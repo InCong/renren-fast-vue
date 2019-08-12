@@ -112,49 +112,49 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               isLock = data.goodsBook.isLock
-            })
-            if (isLock === 0) {
-              let wdGoodsTypeId = ''
-              let wdGoodsModelId = ''
-              for (let i = 0; i < this.goodsList.length; i++) {
-                let item = this.goodsList[i]
-                if (item.id === this.dataForm.wdGoodsId) {
-                  wdGoodsTypeId = item.wdGoodsTypeId
-                  wdGoodsModelId = item.wdGoodsModelId
-                  break
+              if (isLock === 0) {
+                let wdGoodsTypeId = ''
+                let wdGoodsModelId = ''
+                for (let i = 0; i < this.goodsList.length; i++) {
+                  let item = this.goodsList[i]
+                  if (item.id === this.dataForm.wdGoodsId) {
+                    wdGoodsTypeId = item.wdGoodsTypeId
+                    wdGoodsModelId = item.wdGoodsModelId
+                    break
+                  }
                 }
-              }
-              this.$http({
-                url: this.$http.adornUrl(`/warehouse/saledetail/${!this.dataForm.id ? 'save' : 'update'}`),
-                method: 'post',
-                data: this.$http.adornData({
-                  'id': this.dataForm.id || undefined,
-                  'wdGoodsId': this.dataForm.wdGoodsId,
-                  'wdGoodsTypeId': wdGoodsTypeId,
-                  'wdGoodsModelId': wdGoodsModelId,
-                  'qty': this.dataForm.qty,
-                  'price': this.dataForm.price,
-                  'totalPrice': this.dataForm.totalPrice,
-                  'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
-                  'createUserId': this.dataForm.createUserId || this.$store.state.user.id,
-                  'remark': this.dataForm.remark
-                })
-              }).then(({data}) => {
-                if (data && data.code === 0) {
-                  this.$message({
-                    message: '操作成功',
-                    type: 'success',
-                    duration: 1500,
-                    onClose: () => {
-                      this.visible = false
-                      this.$emit('refreshDataList')
-                    }
+                this.$http({
+                  url: this.$http.adornUrl(`/warehouse/saledetail/${!this.dataForm.id ? 'save' : 'update'}`),
+                  method: 'post',
+                  data: this.$http.adornData({
+                    'id': this.dataForm.id || undefined,
+                    'wdGoodsId': this.dataForm.wdGoodsId,
+                    'wdGoodsTypeId': wdGoodsTypeId,
+                    'wdGoodsModelId': wdGoodsModelId,
+                    'qty': this.dataForm.qty,
+                    'price': this.dataForm.price,
+                    'totalPrice': this.dataForm.totalPrice,
+                    'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
+                    'createUserId': this.dataForm.createUserId || this.$store.state.user.id,
+                    'remark': this.dataForm.remark
                   })
-                } else {
-                  this.$message.error(data.msg)
-                }
-              })
-            }
+                }).then(({data}) => {
+                  if (data && data.code === 0) {
+                    this.$message({
+                      message: '操作成功',
+                      type: 'success',
+                      duration: 1500,
+                      onClose: () => {
+                        this.visible = false
+                        this.$emit('refreshDataList')
+                      }
+                    })
+                  } else {
+                    this.$message.error(data.msg)
+                  }
+                })
+              }
+            })
           }
         })
       },

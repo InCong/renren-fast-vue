@@ -7,7 +7,7 @@
     <div style="text-align: center">
       <el-transfer
         v-model="currentValue"
-        :titles="['待选','已选']"
+        :titles="['待选商品','待盘点商品']"
         :data="goodsList"
         :filterable="true"
         :props="{key:'id',label:'name'}"
@@ -27,6 +27,8 @@
       return {
         visible: false,
         currentValue: [],
+        goodsType: [],
+        goodsModel: [],
         goodsList: []
       }
     },
@@ -41,11 +43,25 @@
         }
       },
       dataFormSubmit () {
+        for (let i = 0; i < this.currentValue.length; i++) {
+          for (let y = 0; y < this.goodsList.length; y++) {
+            if (this.currentValue[i] === this.goodsList[y].id) {
+              let item = this.goodsList[y]
+              this.goodsType[i] = item.wdGoodsTypeId
+              this.goodsModel[i] = item.wdGoodsModelId
+              break
+            }
+          }
+        }
         this.$http({
           url: this.$http.adornUrl('/warehouse/countdetail/saveCountDetail'),
           method: 'post',
           data: this.$http.adornData({
-            'currentValue': this.currentValue
+            'currentValue': this.currentValue,
+            'goodsType': this.goodsType,
+            'goodsModel': this.goodsModel,
+            'bdOrgId': this.$store.state.user.bdOrgId,
+            'createUserId': this.$store.state.user.id
           })
         }).then(({data}) => {
           if (data && data.code === 0) {

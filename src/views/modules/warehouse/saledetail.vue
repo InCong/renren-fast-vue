@@ -238,48 +238,48 @@
           params: this.$http.adornParams()
         }).then(({data}) => {
           isLock = data.goodsBook.isLock
-        })
-        if (moment(createTime).add(7, 'days') < moment()) {
-          this.$message({
-            message: '已超过7天，不允许删除！',
-            type: 'warning',
-            duration: 1500
-          })
-        } else if (isLock > 0) {
-          this.$message({
-            message: '由于该商品正在进行盘点，已被锁定，无法删除！',
-            type: 'warning',
-            duration: 1500
-          })
-        } else {
-          var ids = id ? [id] : this.dataListSelections.map(item => {
-            return item.id
-          })
-          this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$http({
-              url: this.$http.adornUrl('/warehouse/saledetail/delete'),
-              method: 'post',
-              data: this.$http.adornData(ids, false)
-            }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.$message({
-                  message: '操作成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.getDataList()
-                  }
-                })
-              } else {
-                this.$message.error(data.msg)
-              }
+          if (moment(createTime).add(7, 'days') < moment()) {
+            this.$message({
+              message: '已超过7天，不允许删除！',
+              type: 'warning',
+              duration: 1500
             })
-          })
-        }
+          } else if (isLock > 0) {
+            this.$message({
+              message: '由于该商品正在进行盘点，已被锁定，无法删除！',
+              type: 'warning',
+              duration: 1500
+            })
+          } else {
+            var ids = id ? [id] : this.dataListSelections.map(item => {
+              return item.id
+            })
+            this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$http({
+                url: this.$http.adornUrl('/warehouse/saledetail/delete'),
+                method: 'post',
+                data: this.$http.adornData(ids, false)
+              }).then(({data}) => {
+                if (data && data.code === 0) {
+                  this.$message({
+                    message: '操作成功',
+                    type: 'success',
+                    duration: 1500,
+                    onClose: () => {
+                      this.getDataList()
+                    }
+                  })
+                } else {
+                  this.$message.error(data.msg)
+                }
+              })
+            })
+          }
+        })
       },
       getGoodsList () {
         this.$http({

@@ -117,11 +117,13 @@
         fixed="right"
         header-align="center"
         align="center"
-        width="150"
+        width="200"
         label="操作">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.modifyTime)">盘点录入</el-button>
-          <el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.modifyTime)">删除</el-button>
+          <el-row style="margin-bottom:10px">
+            <el-col :span="12"><el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.modifyTime)">盘点录入</el-button></el-col>
+            <el-col :span="12"><el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.wdGoodsId, scope.row.modifyTime)">删除</el-button></el-col>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>
@@ -242,10 +244,10 @@
         })
       },
       // 删除
-      deleteHandle (id, modifyTime) {
-        if (moment(modifyTime).add(1, 'days') < moment()) {
+      deleteHandle (id, wdGoodsId, modifyTime) {
+        if (moment(modifyTime)) {
           this.$message({
-            message: '已超过1天，不允许删除！',
+            message: '已完成盘点，不允许删除！',
             type: 'warning',
             duration: 1500
           })
@@ -264,12 +266,27 @@
               data: this.$http.adornData(ids, false)
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.$message({
-                  message: '操作成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.getDataList()
+                this.$http({
+                  url: this.$http.adornUrl('/warehouse/goodsbook/update'),
+                  method: 'post',
+                  data: this.$http.adornData({
+                    'wdGoodsId': wdGoodsId,
+                    'isLock': 0,
+                    'modifyUserId': this.$store.state.user.id,
+                    'modifyTime': moment().format('YYYY-MM-DD HH:mm:ss')
+                  })
+                }).then(({data}) => {
+                  if (data && data.code === 0) {
+                    this.$message({
+                      message: '操作成功',
+                      type: 'success',
+                      duration: 1500,
+                      onClose: () => {
+                        this.getDataList()
+                      }
+                    })
+                  } else {
+                    this.$message.error(data.msg)
                   }
                 })
               } else {

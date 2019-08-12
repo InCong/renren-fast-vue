@@ -5,22 +5,20 @@
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
     <el-form-item label="商品" prop="wdGoodsId">
-      <el-form-item label="商品" prop="wdGoodsId">
-        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px" :disabled="true">
-          <el-option
-            v-for="item in goodsList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
+      <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px" :disabled="true">
+        <el-option
+          v-for="item in goodsList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id">
+        </el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="静态库存" prop="staticQty">
-      <el-input v-model="dataForm.staticQty" placeholder="静态库存" :disabled="true"></el-input>
+      <el-input-number v-model="dataForm.staticQty" placeholder="静态库存" :disabled="true"></el-input-number>
     </el-form-item>
     <el-form-item label="盘点数量" prop="qty">
-      <el-input-number v-model="dataForm.qty" placeholder="盘点数量" :step="1" @change="changeCountQty"></el-input-number>
+      <el-input-number v-model="dataForm.qty" placeholder="盘点数量" :step="1" :min="0" @change="changeCountQty" :disabled="dataForm.modifyTime ? true : false"></el-input-number>
     </el-form-item>
     <el-form-item label="差异数量" prop="diffQty">
       <el-input-number v-model="dataForm.diffQty" placeholder="差异数量" :disabled="true"></el-input-number>
@@ -28,7 +26,7 @@
     <el-form-item label="创建时间" prop="createTime">
       <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
     </el-form-item>
-    <el-form-item label="盘点登记时间" prop="modifyTime">
+    <el-form-item label="登记时间" prop="modifyTime">
       <el-input v-model="dataForm.modifyTime" placeholder="盘点登记时间，自动生成，无需填写" :disabled="true"></el-input>
     </el-form-item>
     <el-form-item label="盘点情况" prop="remark">
@@ -81,6 +79,7 @@
       init (id) {
         this.dataForm.id = id || 0
         this.visible = true
+        this.getGoodsList()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -95,7 +94,7 @@
                 this.dataForm.wdGoodsModelId = data.countDetail.wdGoodsModelId
                 this.dataForm.staticQty = data.countDetail.staticQty
                 this.dataForm.qty = data.countDetail.qty
-                this.dataForm.diffQty = data.countDetail.diffQty
+                this.dataForm.diffQty = data.countDetail.qty - data.countDetail.staticQty
                 this.dataForm.createUserId = data.countDetail.createUserId
                 this.dataForm.createTime = data.countDetail.createTime
                 this.dataForm.modifyUserId = data.countDetail.modifyUserId
@@ -123,13 +122,28 @@
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.$message({
-                  message: '操作成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                    this.$emit('refreshDataList')
+                this.$http({
+                  url: this.$http.adornUrl('/warehouse/goodsbook/update'),
+                  method: 'post',
+                  data: this.$http.adornData({
+                    'wdGoodsId': this.dataForm.wdGoodsId,
+                    'isLock': 0,
+                    'modifyUserId': this.$store.state.user.id,
+                    'modifyTime': moment().format('YYYY-MM-DD HH:mm:ss')
+                  })
+                }).then(({data}) => {
+                  if (data && data.code === 0) {
+                    this.$message({
+                      message: '盘点完成',
+                      type: 'success',
+                      duration: 1500,
+                      onClose: () => {
+                        this.visible = false
+                        this.$emit('refreshDataList')
+                      }
+                    })
+                  } else {
+                    this.$message.error(data.msg)
                   }
                 })
               } else {
@@ -150,12 +164,12 @@
         }).then(({data}) => {
           this.goodsList = data.list
         })
-      }
-    },
-    // 变更盘点数量
-    changeCountQty () {
-      if (this.dataForm.staticQty && this.dataForm.qty) {
-        this.dataForm.diffQty = this.dataForm.qty - this.dataForm.staticQty
+      },
+      // 变更盘点数量
+      changeCountQty () {
+        if (this.dataForm.staticQty && this.dataForm.qty >= 0) {
+          this.dataForm.diffQty = this.dataForm.qty - this.dataForm.staticQty
+        }
       }
     }
   }
