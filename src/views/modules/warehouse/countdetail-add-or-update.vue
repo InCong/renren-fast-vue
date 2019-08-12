@@ -1,32 +1,35 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? '新增' : '盘点登记'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="商品ID" prop="wdGoodsId">
-      <el-input v-model="dataForm.wdGoodsId" placeholder="商品ID"></el-input>
-    </el-form-item>
-    <el-form-item label="商品类型ID" prop="wdGoodsTypeId">
-      <el-input v-model="dataForm.wdGoodsTypeId" placeholder="商品类型ID"></el-input>
-    </el-form-item>
-    <el-form-item label="商品型号id" prop="wdGoodsModelId">
-      <el-input v-model="dataForm.wdGoodsModelId" placeholder="商品型号id"></el-input>
+    <el-form-item label="商品" prop="wdGoodsId">
+      <el-form-item label="商品" prop="wdGoodsId">
+        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px" :disabled="true">
+          <el-option
+            v-for="item in goodsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
     </el-form-item>
     <el-form-item label="静态库存" prop="staticQty">
-      <el-input v-model="dataForm.staticQty" placeholder="静态库存"></el-input>
+      <el-input v-model="dataForm.staticQty" placeholder="静态库存" :disabled="true"></el-input>
     </el-form-item>
     <el-form-item label="盘点数量" prop="qty">
-      <el-input v-model="dataForm.qty" placeholder="盘点数量"></el-input>
+      <el-input-number v-model="dataForm.qty" placeholder="盘点数量" :step="1" @change="changeCountQty"></el-input-number>
     </el-form-item>
     <el-form-item label="差异数量" prop="diffQty">
-      <el-input v-model="dataForm.diffQty" placeholder="差异数量"></el-input>
-    </el-form-item>
-    <el-form-item label="创建人" prop="createUserId">
-      <el-input v-model="dataForm.createUserId" placeholder="创建人"></el-input>
+      <el-input-number v-model="dataForm.diffQty" placeholder="差异数量" :disabled="true"></el-input-number>
     </el-form-item>
     <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间"></el-input>
+      <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
+    </el-form-item>
+    <el-form-item label="盘点登记时间" prop="modifyTime">
+      <el-input v-model="dataForm.modifyTime" placeholder="盘点登记时间，自动生成，无需填写" :disabled="true"></el-input>
     </el-form-item>
     <el-form-item label="盘点情况" prop="remark">
       <el-input v-model="dataForm.remark" placeholder="盘点情况"></el-input>
@@ -40,6 +43,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   export default {
     data () {
       return {
@@ -52,39 +56,25 @@
           staticQty: '',
           qty: '',
           diffQty: '',
+          bdOrgId: '',
           createUserId: '',
           createTime: '',
+          modifyUserId: '',
+          modifyTime: '',
           remark: ''
         },
         dataRule: {
           wdGoodsId: [
-            { required: true, message: '商品ID不能为空', trigger: 'blur' }
-          ],
-          wdGoodsTypeId: [
-            { required: true, message: '商品类型ID不能为空', trigger: 'blur' }
-          ],
-          wdGoodsModelId: [
-            { required: true, message: '商品型号id不能为空', trigger: 'blur' }
-          ],
-          staticQty: [
-            { required: true, message: '静态库存不能为空', trigger: 'blur' }
+            { required: true, message: '商品不能为空', trigger: 'blur' }
           ],
           qty: [
             { required: true, message: '盘点数量不能为空', trigger: 'blur' }
           ],
           diffQty: [
             { required: true, message: '差异数量不能为空', trigger: 'blur' }
-          ],
-          createUserId: [
-            { required: true, message: '创建人不能为空', trigger: 'blur' }
-          ],
-          createTime: [
-            { required: true, message: '创建时间不能为空', trigger: 'blur' }
-          ],
-          remark: [
-            { required: true, message: '盘点情况不能为空', trigger: 'blur' }
           ]
-        }
+        },
+        goodsList: []
       }
     },
     methods: {
@@ -100,15 +90,17 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.wdGoodsId = data.countdetail.wdGoodsId
-                this.dataForm.wdGoodsTypeId = data.countdetail.wdGoodsTypeId
-                this.dataForm.wdGoodsModelId = data.countdetail.wdGoodsModelId
-                this.dataForm.staticQty = data.countdetail.staticQty
-                this.dataForm.qty = data.countdetail.qty
-                this.dataForm.diffQty = data.countdetail.diffQty
-                this.dataForm.createUserId = data.countdetail.createUserId
-                this.dataForm.createTime = data.countdetail.createTime
-                this.dataForm.remark = data.countdetail.remark
+                this.dataForm.wdGoodsId = data.countDetail.wdGoodsId
+                this.dataForm.wdGoodsTypeId = data.countDetail.wdGoodsTypeId
+                this.dataForm.wdGoodsModelId = data.countDetail.wdGoodsModelId
+                this.dataForm.staticQty = data.countDetail.staticQty
+                this.dataForm.qty = data.countDetail.qty
+                this.dataForm.diffQty = data.countDetail.diffQty
+                this.dataForm.createUserId = data.countDetail.createUserId
+                this.dataForm.createTime = data.countDetail.createTime
+                this.dataForm.modifyUserId = data.countDetail.modifyUserId
+                this.dataForm.modifyTime = data.countDetail.modifyTime
+                this.dataForm.remark = data.countDetail.remark
               }
             })
           }
@@ -123,14 +115,10 @@
               method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
-                'wdGoodsId': this.dataForm.wdGoodsId,
-                'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-                'wdGoodsModelId': this.dataForm.wdGoodsModelId,
-                'staticQty': this.dataForm.staticQty,
                 'qty': this.dataForm.qty,
                 'diffQty': this.dataForm.diffQty,
-                'createUserId': this.dataForm.createUserId,
-                'createTime': this.dataForm.createTime,
+                'modifyUserId': this.dataForm.modifyUserId || this.$store.state.user.id,
+                'modifyTime': moment().format('YYYY-MM-DD HH:mm:ss'),
                 'remark': this.dataForm.remark
               })
             }).then(({data}) => {
@@ -150,6 +138,24 @@
             })
           }
         })
+      },
+      // 获取商品ID
+      getGoodsList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goods/queryGoodsListForSelect'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.goodsList = data.list
+        })
+      }
+    },
+    // 变更盘点数量
+    changeCountQty () {
+      if (this.dataForm.staticQty && this.dataForm.qty) {
+        this.dataForm.diffQty = this.dataForm.qty - this.dataForm.staticQty
       }
     }
   }

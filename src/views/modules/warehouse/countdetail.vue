@@ -2,12 +2,39 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品">
+          <el-option
+            v-for="item in goodsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型" @change="typeChange">
+          <el-option
+            v-for="item in typeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="dataForm.wdGoodsModelId" clearable placeholder="商品型号" :disabled="modelDisable">
+          <el-option
+            v-for="item in modelListForSelect"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('warehouse:countdetail:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('warehouse:countdetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('warehouse:countdetail:save')" type="primary" @click="createCountDetail">创建盘点任务</el-button>
+<!--        <el-button v-if="isAuth('warehouse:countdetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
@@ -16,35 +43,39 @@
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
       style="width: 100%;">
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
-      </el-table-column>
+<!--      <el-table-column-->
+<!--        type="selection"-->
+<!--        header-align="center"-->
+<!--        align="center"-->
+<!--        width="50">-->
+<!--      </el-table-column>-->
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
-        label="id">
+        label="id"
+        width="50">
       </el-table-column>
       <el-table-column
         prop="wdGoodsId"
         header-align="center"
         align="center"
-        label="商品ID">
+        :formatter="formatGoods"
+        label="商品">
       </el-table-column>
       <el-table-column
         prop="wdGoodsTypeId"
         header-align="center"
         align="center"
-        label="商品类型ID">
+        :formatter="formatType"
+        label="商品类型">
       </el-table-column>
       <el-table-column
         prop="wdGoodsModelId"
         header-align="center"
         align="center"
-        label="商品型号id">
+        :formatter="formatModel"
+        label="商品型号">
       </el-table-column>
       <el-table-column
         prop="staticQty"
@@ -65,16 +96,16 @@
         label="差异数量">
       </el-table-column>
       <el-table-column
-        prop="createUserId"
-        header-align="center"
-        align="center"
-        label="创建人">
-      </el-table-column>
-      <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
         label="创建时间">
+      </el-table-column>
+      <el-table-column
+        prop="modifyTime"
+        header-align="center"
+        align="center"
+        label="盘点时间">
       </el-table-column>
       <el-table-column
         prop="remark"
@@ -89,8 +120,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.modifyTime)">盘点录入</el-button>
+          <el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.modifyTime)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,18 +134,24 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <!-- 弹窗, 新增 / 修改 -->
+    <!-- 弹窗, 盘点录入 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 弹窗，新增商品盘点任务 -->
+    <count-detail-create v-if="countDetailCreateVisible" ref="countDetailCreate" @refreshDataList="getDataList"></count-detail-create>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './countdetail-add-or-update'
+  import CountDetailCreate from './countdetail-create'
+  import moment from 'moment'
   export default {
     data () {
       return {
         dataForm: {
-          key: ''
+          wdGoodsId: '',
+          wdGoodsTypeId: '',
+          wdGoodsModelId: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -122,14 +159,24 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        countDetailCreateVisible: false,
+        goodsList: [],
+        typeList: [],
+        modelList: [],
+        modelListForSelect: [],
+        modelDisable: true
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      CountDetailCreate
     },
     activated () {
       this.getDataList()
+      this.getGoodsList()
+      this.getTypeList()
+      this.getModelList()
     },
     methods: {
       // 获取数据列表
@@ -141,7 +188,10 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'key': this.dataForm.key
+            'wdGoodsId': this.dataForm.wdGoodsId,
+            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
+            'wdGoodsModelId': this.dataForm.wdGoodsModelId,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -169,42 +219,171 @@
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 新增 / 修改
-      addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
+      // 盘点录入
+      addOrUpdateHandle (id, modifyTime) {
+        if (moment(modifyTime).add(1, 'days') < moment()) {
+          this.$message({
+            message: '已超过1天，不允许修改！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else {
+          this.addOrUpdateVisible = true
+          this.$nextTick(() => {
+            this.$refs.addOrUpdate.init(id)
+          })
+        }
+      },
+      // 新增盘点任务
+      createCountDetail () {
+        this.countDetailCreateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.countDetailCreate.init()
         })
       },
       // 删除
-      deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.id
-        })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$http({
-            url: this.$http.adornUrl('/warehouse/countdetail/delete'),
-            method: 'post',
-            data: this.$http.adornData(ids, false)
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getDataList()
-                }
-              })
-            } else {
-              this.$message.error(data.msg)
-            }
+      deleteHandle (id, modifyTime) {
+        if (moment(modifyTime).add(1, 'days') < moment()) {
+          this.$message({
+            message: '已超过1天，不允许删除！',
+            type: 'warning',
+            duration: 1500
           })
+        } else {
+          var ids = id ? [id] : this.dataListSelections.map(item => {
+            return item.id
+          })
+          this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$http({
+              url: this.$http.adornUrl('/warehouse/countdetail/delete'),
+              method: 'post',
+              data: this.$http.adornData(ids, false)
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.$message({
+                  message: '操作成功',
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.getDataList()
+                  }
+                })
+              } else {
+                this.$message.error(data.msg)
+              }
+            })
+          })
+        }
+      },
+      getGoodsList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goods/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.goodsList = data.page.list
         })
+      },
+      // 获取商品类型ID
+      getTypeList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodstype/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.typeList = data.page.list
+        })
+      },
+      // 获取商品型号ID
+      getModelList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.modelList = data.page.list
+        })
+      },
+      // 获取商品型号ID
+      getModelListForSelect () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.modelListForSelect = data.page.list
+        })
+      },
+      formatGoods: function (row, column) {
+        let goodsName = '未知'
+        if (this.goodsList != null) {
+          for (let i = 0; i < this.goodsList.length; i++) {
+            let item = this.goodsList[i]
+            if (item.id === row.wdGoodsId) {
+              goodsName = item.name
+              break
+            }
+          }
+        }
+        return goodsName
+      },
+      formatType: function (row, column) {
+        let typeName = '未知'
+        if (this.typeList != null) {
+          for (let i = 0; i < this.typeList.length; i++) {
+            let item = this.typeList[i]
+            if (item.id === row.wdGoodsTypeId) {
+              typeName = item.name
+              break
+            }
+          }
+        }
+        return typeName
+      },
+      formatModel: function (row, column) {
+        let modelName = '未知'
+        if (this.modelList != null) {
+          for (let i = 0; i < this.modelList.length; i++) {
+            let item = this.modelList[i]
+            if (item.id === row.wdGoodsModelId) {
+              modelName = item.name
+              break
+            }
+          }
+        }
+        return modelName
+      },
+      // 商品类型变更
+      typeChange () {
+        this.dataForm.wdGoodsModelId = ''
+        if (this.dataForm.wdGoodsTypeId) {
+          this.modelDisable = false
+          this.getModelListForSelect()
+        } else {
+          this.modelDisable = true
+          this.modelListForSelect = []
+        }
       }
     }
   }

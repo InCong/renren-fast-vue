@@ -172,7 +172,6 @@
       this.getGoodsList()
       this.getTypeList()
       this.getModelList()
-      this.getSupplierList()
     },
     methods: {
       // 获取数据列表
@@ -217,10 +216,6 @@
       },
       // 新增 / 修改
       addOrUpdateHandle (id, createTime) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
-        })
         if (moment(createTime).add(7, 'days') < moment()) {
           this.$message({
             message: '已超过7天，不允许修改！',
