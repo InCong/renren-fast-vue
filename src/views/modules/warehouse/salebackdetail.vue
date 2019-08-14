@@ -33,8 +33,8 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('warehouse:saledetail:save')" type="primary" @click="addOrUpdateHandle()">销售登记</el-button>
-<!--        <el-button v-if="isAuth('warehouse:saledetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
+        <el-button v-if="isAuth('warehouse:salebackdetail:save')" type="primary" @click="saleBackDetailCreate">新增退货记录</el-button>
+<!--        <el-button v-if="isAuth('warehouse:salebackdetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
@@ -81,24 +81,6 @@
         prop="qty"
         header-align="center"
         align="center"
-        label="数量">
-      </el-table-column>
-      <el-table-column
-        prop="price"
-        header-align="center"
-        align="center"
-        label="销售价（元）">
-      </el-table-column>
-      <el-table-column
-        prop="totalPrice"
-        header-align="center"
-        align="center"
-        label="总价（元）">
-      </el-table-column>
-      <el-table-column
-        prop="backQty"
-        header-align="center"
-        align="center"
         label="退货数量">
       </el-table-column>
       <el-table-column
@@ -111,7 +93,8 @@
         prop="remark"
         header-align="center"
         align="center"
-        label="备注">
+        show-overflow-tooltip
+        label="退货备注">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -134,13 +117,16 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <!-- 弹窗, 新增 / 修改 -->
+    <!-- 弹窗, 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 弹窗，新增 -->
+    <sale-back-detail-create v-if="saleBackDetailCreateVisible" ref="saleBackDetailCreate" @refreshDataList="getDataList"></sale-back-detail-create>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './saledetail-add-or-update'
+  import AddOrUpdate from './salebackdetail-add-or-update'
+  import SaleBackDetailCreate from './salebackdetail-create'
   import moment from 'moment'
   export default {
     data () {
@@ -157,15 +143,18 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
+        saleBackDetailCreateVisible: false,
         goodsList: [],
         typeList: [],
         modelList: [],
         modelListForSelect: [],
+        supplierList: [],
         modelDisable: true
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      SaleBackDetailCreate
     },
     activated () {
       this.getDataList()
@@ -178,7 +167,7 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/warehouse/saledetail/list'),
+          url: this.$http.adornUrl('/warehouse/salebackdetail/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -214,20 +203,26 @@
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 新增 / 修改
+      // 修改
       addOrUpdateHandle (id, createTime) {
-        if (moment(createTime).add(7, 'days') < moment()) {
+        if (moment(createTime).add(30, 'days') < moment()) {
           this.$message({
-            message: '已超过7天，不允许修改！',
+            message: '已超过30天，不允许修改！',
             type: 'warning',
             duration: 1500
           })
         } else {
           this.addOrUpdateVisible = true
           this.$nextTick(() => {
-            this.$refs.addOrUpdate.init(id)
+            this.$refs.addOrUpdate.init(id, this.goodsList, this.typeList, this.modelList)
           })
         }
+      },
+      saleBackDetailCreate () {
+        this.saleBackDetailCreateVisible = true
+        this.$nextTick(() => {
+          this.$refs.saleBackDetailCreate.init(this.goodsList, this.typeList, this.modelList)
+        })
       },
       // 删除
       deleteHandle (id, wdGoodsId, createTime) {
@@ -238,9 +233,9 @@
           params: this.$http.adornParams()
         }).then(({data}) => {
           isLock = data.goodsBook.isLock
-          if (moment(createTime).add(7, 'days') < moment()) {
+          if (moment(createTime).add(30, 'days') < moment()) {
             this.$message({
-              message: '已超过7天，不允许删除！',
+              message: '已超过30天，不允许删除！',
               type: 'warning',
               duration: 1500
             })
@@ -260,7 +255,7 @@
               type: 'warning'
             }).then(() => {
               this.$http({
-                url: this.$http.adornUrl('/warehouse/saledetail/delete'),
+                url: this.$http.adornUrl('/warehouse/salebackdetail/delete'),
                 method: 'post',
                 data: this.$http.adornData(ids, false)
               }).then(({data}) => {

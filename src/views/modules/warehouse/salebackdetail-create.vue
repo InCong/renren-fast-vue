@@ -5,7 +5,7 @@
     :visible.sync="visible"
     width="60%">
     <el-steps :active="active" align-center finish-status="success">
-      <el-step title="步骤1" description="选择对应的采购进货记录"></el-step>
+      <el-step title="步骤1" description="选择对应的销售记录"></el-step>
       <el-step title="步骤2" description="填写退货数量与备注"></el-step>
     </el-steps>
     <div v-if="active===0" style="margin-top: 20px">
@@ -81,14 +81,6 @@
           label="商品型号">
         </el-table-column>
         <el-table-column
-          prop="wdSupplierId"
-          header-align="center"
-          align="center"
-          :formatter="formatSupplier"
-          show-overflow-tooltip
-          label="供应商">
-        </el-table-column>
-        <el-table-column
           prop="qty"
           header-align="center"
           align="center"
@@ -106,7 +98,7 @@
           prop="price"
           header-align="center"
           align="center"
-          label="进货单价（元）">
+          label="销售单价（元）">
         </el-table-column>
         <el-table-column
           prop="createTime"
@@ -136,7 +128,7 @@
     <div v-if="active===1" style="margin-top: 20px">
       <el-form :model="dataForm" ref="dataForm" label-width="80px">
         <el-form-item label="退货数量" prop="qty">
-          <el-input-number v-model="dataForm.qty" placeholder="退货数量" :min="1" :max="currentBuyQty - currentBuyBackQty" :step="1"></el-input-number>
+          <el-input-number v-model="dataForm.qty" placeholder="退货数量" :min="1" :max="currentSaleQty - currentSaleBackQty" :step="1"></el-input-number>
         </el-form-item>
         <el-form-item label="退货备注" prop="remark">
           <el-input v-model="dataForm.remark" placeholder="退货备注"></el-input>
@@ -182,33 +174,30 @@
         currentWdGoodsId: '',
         currentWdGoodsTypeId: '',
         currentWdGoodsModelId: '',
-        currentWdSupplierId: '',
-        currentWdBuyDetailId: '',
-        currentBuyQty: '',
-        currentBuyBackQty: ''
+        currentWdSaleDetailId: '',
+        currentSaleQty: '',
+        currentSaleBackQty: ''
       }
     },
     methods: {
-      init () {
+      init (goodsList, typeList, modelList) {
         this.visible = true
         this.active = 0
         this.getDataList()
-        this.getGoodsList()
-        this.getTypeList()
-        this.getModelList()
-        this.getSupplierList()
+        this.goodsList = goodsList
+        this.typeList = typeList
+        this.modelList = modelList
       },
       // 提交
       dataFormSubmit () {
         this.$http({
-          url: this.$http.adornUrl('/warehouse/buybackdetail/save'),
+          url: this.$http.adornUrl('/warehouse/salebackdetail/save'),
           method: 'post',
           data: this.$http.adornData({
             'wdGoodsId': this.currentWdGoodsId,
             'wdGoodsTypeId': this.currentWdGoodsTypeId,
             'wdGoodsModelId': this.currentWdGoodsModelId,
-            'wdSupplierId': this.currentWdSupplierId,
-            'wdBuyDetailId': this.currentWdBuyDetailId,
+            'wdSaleDetailId': this.currentWdSaleDetailId,
             'qty': this.dataForm.qty,
             'bdOrgId': this.$store.state.user.bdOrgId,
             'createUserId': this.$store.state.user.id,
@@ -234,11 +223,11 @@
       next () {
         if (this.currentWdGoodsId === 0) {
           this.$message({
-            message: '请选择指定采购记录',
+            message: '请选择指定销售记录',
             type: 'warning',
             duration: 1500
           })
-        } else if (this.currentBuyQty === this.currentBuyBackQty) {
+        } else if (this.currentSaleQty === this.currentSaleBackQty) {
           this.$message({
             message: '所选记录已完全退货，请选择其它记录！',
             type: 'warning',
@@ -258,7 +247,7 @@
                 type: 'warning',
                 duration: 1500
               })
-            } else if (this.currentWdGoodsId > 0 && this.currentBuyQty > this.currentBuyBackQty) {
+            } else if (this.currentWdGoodsId > 0 && this.currentSaleQty > this.currentSaleBackQty) {
               if (this.active++ >= 1) {
                 this.active = 1
               }
@@ -273,19 +262,18 @@
         }
         // 刷新列表并重置选择
         this.getDataList()
-        this.currentWdBuyDetailId = 0
+        this.currentWdSaleDetailId = 0
         this.currentWdGoodsId = 0
         this.currentWdGoodsId = 0
         this.currentWdGoodsId = 0
-        this.currentWdSupplierId = 0
-        this.currentBuyQty = 0
-        this.currentBuyBackQty = 0
+        this.currentSaleQty = 0
+        this.currentSaleBackQty = 0
       },
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/warehouse/buydetail/list'),
+          url: this.$http.adornUrl('/warehouse/saledetail/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -316,75 +304,6 @@
       currentChangeHandle (val) {
         this.pageIndex = val
         this.getDataList()
-      },
-      getGoodsList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goods/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.goodsList = data.page.list
-        })
-      },
-      // 获取商品类型ID
-      getTypeList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodstype/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.typeList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelListForSelect () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelListForSelect = data.page.list
-        })
-      },
-      getSupplierList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/supplier/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.supplierList = data.page.list
-        })
       },
       formatGoods: function (row, column) {
         let goodsName = '未知'
@@ -425,19 +344,6 @@
         }
         return modelName
       },
-      formatSupplier: function (row, column) {
-        let supplierName = '未知'
-        if (this.supplierList != null) {
-          for (let i = 0; i < this.supplierList.length; i++) {
-            let item = this.supplierList[i]
-            if (item.id === row.wdSupplierId) {
-              supplierName = item.name
-              break
-            }
-          }
-        }
-        return supplierName
-      },
       // 商品类型变更
       typeChange () {
         this.dataForm.wdGoodsModelId = ''
@@ -453,21 +359,19 @@
       selectChange (val) {
         this.currentRow = val
         if (this.currentRow != null) {
-          this.currentWdBuyDetailId = val.id
+          this.currentWdSaleDetailId = val.id
           this.currentWdGoodsId = val.wdGoodsId
           this.currentWdGoodsTypeId = val.wdGoodsTypeId
           this.currentWdGoodsModelId = val.wdGoodsModelId
-          this.currentWdSupplierId = val.wdSupplierId
-          this.currentBuyQty = val.qty
-          this.currentBuyBackQty = val.backQty
+          this.currentSaleQty = val.qty
+          this.currentSaleBackQty = val.backQty
         } else {
-          this.currentWdBuyDetailId = 0
+          this.currentWdSaleDetailId = 0
           this.currentWdGoodsId = 0
           this.currentWdGoodsId = 0
           this.currentWdGoodsId = 0
-          this.currentWdSupplierId = 0
-          this.currentBuyQty = 0
-          this.currentBuyBackQty = 0
+          this.currentSaleQty = 0
+          this.currentSaleBackQty = 0
         }
       }
     }
