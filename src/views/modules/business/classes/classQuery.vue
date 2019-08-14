@@ -146,7 +146,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -166,7 +166,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -186,7 +186,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -206,7 +206,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -226,7 +226,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -246,7 +246,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -266,7 +266,7 @@
                     <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
                     <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ item.num + 'cm;margin-top: ' + ((item.diffTime) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentNames)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentNames)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -540,8 +540,8 @@
     color: wheat;
   }
   .timeRow {
-    margin-bottom: 0.5cm;
-    height: 0.5cm;
+    margin-bottom: 1cm;
+    height: 1cm;
     font-size: 18px;
   }
   .timeSheet .el-card__body{

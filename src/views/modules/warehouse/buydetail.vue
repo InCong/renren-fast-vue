@@ -82,13 +82,22 @@
         header-align="center"
         align="center"
         :formatter="formatSupplier"
+        show-overflow-tooltip
         label="供应商">
       </el-table-column>
       <el-table-column
         prop="qty"
         header-align="center"
         align="center"
-        label="数量">
+        label="数量"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        prop="backQty"
+        header-align="center"
+        align="center"
+        label="退货数量"
+        width="80">
       </el-table-column>
       <el-table-column
         prop="price"
@@ -107,6 +116,13 @@
         header-align="center"
         align="center"
         label="创建时间">
+      </el-table-column>
+      <el-table-column
+        prop="remark"
+        header-align="center"
+        align="center"
+        show-overflow-tooltip
+        label="备注">
       </el-table-column>
       <el-table-column
         fixed="right"

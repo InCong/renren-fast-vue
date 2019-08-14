@@ -33,8 +33,8 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('warehouse:countdetail:save')" type="primary" @click="createCountDetail">创建盘点任务</el-button>
-<!--        <el-button v-if="isAuth('warehouse:countdetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
+        <el-button v-if="isAuth('warehouse:buybackdetail:save')" type="primary" @click="buyBackDetailCreate()">新增退货记录</el-button>
+<!--        <el-button v-if="isAuth('warehouse:buybackdetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
@@ -78,22 +78,18 @@
         label="商品型号">
       </el-table-column>
       <el-table-column
-        prop="staticQty"
+        prop="wdSupplierId"
         header-align="center"
         align="center"
-        label="静态库存">
+        :formatter="formatSupplier"
+        show-overflow-tooltip
+        label="供应商">
       </el-table-column>
       <el-table-column
         prop="qty"
         header-align="center"
         align="center"
-        label="盘点数量">
-      </el-table-column>
-      <el-table-column
-        prop="diffQty"
-        header-align="center"
-        align="center"
-        label="差异数量">
+        label="退货数量">
       </el-table-column>
       <el-table-column
         prop="createTime"
@@ -102,28 +98,21 @@
         label="创建时间">
       </el-table-column>
       <el-table-column
-        prop="modifyTime"
-        header-align="center"
-        align="center"
-        label="盘点时间">
-      </el-table-column>
-      <el-table-column
         prop="remark"
         header-align="center"
         align="center"
-        label="盘点情况">
+        show-overflow-tooltip
+        label="退货备注">
       </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
-        width="200"
+        width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-row style="margin-bottom:10px">
-            <el-col :span="12"><el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.modifyTime)">盘点录入</el-button></el-col>
-            <el-col :span="12"><el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.wdGoodsId, scope.row.modifyTime)">删除</el-button></el-col>
-          </el-row>
+          <el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.createTime)">修改</el-button>
+          <el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.wdGoodsId, scope.row.createTime)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -136,16 +125,16 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <!-- 弹窗, 盘点录入 -->
+    <!-- 弹窗, 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-    <!-- 弹窗，新增商品盘点任务 -->
-    <count-detail-create v-if="countDetailCreateVisible" ref="countDetailCreate" @refreshDataList="getDataList"></count-detail-create>
+    <!-- 弹窗，新增 -->
+    <buy-back-detail-create v-if="buyBackDetailCreateVisible" ref="buyBackDetailCreate" @refreshDataList="getDataList"></buy-back-detail-create>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './countdetail-add-or-update'
-  import CountDetailCreate from './countdetail-create'
+  import AddOrUpdate from './buybackdetail-add-or-update'
+  import BuyBackDetailCreate from './buybackdetail-create'
   import moment from 'moment'
   export default {
     data () {
@@ -162,30 +151,32 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
-        countDetailCreateVisible: false,
+        buyBackDetailCreateVisible: false,
         goodsList: [],
         typeList: [],
         modelList: [],
         modelListForSelect: [],
+        supplierList: [],
         modelDisable: true
       }
     },
     components: {
       AddOrUpdate,
-      CountDetailCreate
+      BuyBackDetailCreate
     },
     activated () {
       this.getDataList()
       this.getGoodsList()
       this.getTypeList()
       this.getModelList()
+      this.getSupplierList()
     },
     methods: {
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/warehouse/countdetail/list'),
+          url: this.$http.adornUrl('/warehouse/buybackdetail/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
@@ -221,11 +212,11 @@
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 盘点录入
-      addOrUpdateHandle (id, modifyTime) {
-        if (moment(modifyTime).add(1, 'days') < moment()) {
+      // 新增 / 修改
+      addOrUpdateHandle (id, createTime) {
+        if (moment(createTime).add(30, 'days') < moment()) {
           this.$message({
-            message: '已超过1天，不允许修改！',
+            message: '已超过30天，不允许修改！',
             type: 'warning',
             duration: 1500
           })
@@ -236,65 +227,63 @@
           })
         }
       },
-      // 新增盘点任务
-      createCountDetail () {
-        this.countDetailCreateVisible = true
+      buyBackDetailCreate () {
+        this.buyBackDetailCreateVisible = true
         this.$nextTick(() => {
-          this.$refs.countDetailCreate.init()
+          this.$refs.buyBackDetailCreate.init()
         })
       },
       // 删除
-      deleteHandle (id, wdGoodsId, modifyTime) {
-        if (modifyTime) {
-          this.$message({
-            message: '已完成盘点，不允许删除！',
-            type: 'warning',
-            duration: 1500
-          })
-        } else {
-          var ids = id ? [id] : this.dataListSelections.map(item => {
-            return item.id
-          })
-          this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$http({
-              url: this.$http.adornUrl('/warehouse/countdetail/delete'),
-              method: 'post',
-              data: this.$http.adornData(ids, false)
-            }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.$http({
-                  url: this.$http.adornUrl('/warehouse/goodsbook/update'),
-                  method: 'post',
-                  data: this.$http.adornData({
-                    'wdGoodsId': wdGoodsId,
-                    'isLock': 0,
-                    'modifyUserId': this.$store.state.user.id,
-                    'modifyTime': moment().format('YYYY-MM-DD HH:mm:ss')
-                  })
-                }).then(({data}) => {
-                  if (data && data.code === 0) {
-                    this.$message({
-                      message: '操作成功',
-                      type: 'success',
-                      duration: 1500,
-                      onClose: () => {
-                        this.getDataList()
-                      }
-                    })
-                  } else {
-                    this.$message.error(data.msg)
-                  }
-                })
-              } else {
-                this.$message.error(data.msg)
-              }
+      deleteHandle (id, wdGoodsId, createTime) {
+        let isLock = 0
+        this.$http({
+          url: this.$http.adornUrl(`/warehouse/goodsbook/info/${wdGoodsId}`),
+          method: 'get',
+          params: this.$http.adornParams()
+        }).then(({data}) => {
+          isLock = data.goodsBook.isLock
+          if (moment(createTime).add(30, 'days') < moment()) {
+            this.$message({
+              message: '已超过30天，不允许删除！',
+              type: 'warning',
+              duration: 1500
             })
-          })
-        }
+          } else if (isLock > 0) {
+            this.$message({
+              message: '由于该商品正在进行盘点，已被锁定，无法删除！',
+              type: 'warning',
+              duration: 1500
+            })
+          } else {
+            var ids = id ? [id] : this.dataListSelections.map(item => {
+              return item.id
+            })
+            this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$http({
+                url: this.$http.adornUrl('/warehouse/buybackdetail/delete'),
+                method: 'post',
+                data: this.$http.adornData(ids, false)
+              }).then(({data}) => {
+                if (data && data.code === 0) {
+                  this.$message({
+                    message: '操作成功',
+                    type: 'success',
+                    duration: 1500,
+                    onClose: () => {
+                      this.getDataList()
+                    }
+                  })
+                } else {
+                  this.$message.error(data.msg)
+                }
+              })
+            })
+          }
+        })
       },
       getGoodsList () {
         this.$http({
@@ -352,6 +341,19 @@
           this.modelListForSelect = data.page.list
         })
       },
+      getSupplierList () {
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/supplier/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          this.supplierList = data.page.list
+        })
+      },
       formatGoods: function (row, column) {
         let goodsName = '未知'
         if (this.goodsList != null) {
@@ -390,6 +392,19 @@
           }
         }
         return modelName
+      },
+      formatSupplier: function (row, column) {
+        let supplierName = '未知'
+        if (this.supplierList != null) {
+          for (let i = 0; i < this.supplierList.length; i++) {
+            let item = this.supplierList[i]
+            if (item.id === row.wdSupplierId) {
+              supplierName = item.name
+              break
+            }
+          }
+        }
+        return supplierName
       },
       // 商品类型变更
       typeChange () {

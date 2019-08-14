@@ -54,6 +54,7 @@
         dataListLoading: false,
         bdStudentId: 0,
         // 以下是传参进来的变量
+        currentRow: '',
         teacherName: '',
         teacherMobile: '',
         teacherUrl: '',
