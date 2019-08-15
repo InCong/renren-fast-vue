@@ -1,69 +1,67 @@
 <template>
-  <div class="mod-home">
-    <el-row :gutter="20">
-      <el-col :span="8">
-        <el-card class="card">
-          <div slot="header" class="cardHeader">
-            学生总数
-          </div>
-          <div class="cardContent">
-            <span>{{studentCount}}</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8">
-        <el-card class="card">
-          <div slot="header" class="cardHeader">
-            教师总数
-          </div>
-          <div class="cardContent">
-            <span>10</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8">
-        <el-card class="card">
-          <div slot="header" class="cardHeader">
-            开设课程总数
-          </div>
-          <div class="cardContent">
-            <span>10</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card>
-          <div slot="header" class="cardHeader">
-            购买课时占比
-          </div>
-          <div id="J_chartPieBox" class="chart-box"></div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card>
-          <div slot="header" class="cardHeader">
-            课时分布概况
-          </div>
-          <div id="J_chartLineBox" class="chart-box"></div>
-        </el-card>
-      </el-col>
-      <el-col :span="24">
-        <el-card>
-          <div slot="header" class="cardHeader">
-            商品销售概况
-          </div>
-          <div id="J_chartBarBox" class="chart-box"></div>
-        </el-card>
-      </el-col>
-      <el-col :span="24">
-        <el-card>
-          <div slot="header" class="cardHeader">
-            商品利润概况
-          </div>
-          <div id="J_chartBarBox1" class="chart-box"></div>
-        </el-card>
-      </el-col>
-    </el-row>
+  <div>
+    <div style="margin-bottom: 25px;margin-top: 10px">
+      <span style="font-size: 25px;font-weight: 900">整体数据概览</span>
+      <el-button class="el-icon-refresh" type="primary" size="mini" circle style="margin-left: 20px;font-size: 20px" @click="refresh"></el-button>
+    </div>
+    <div class="mod-home">
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <el-card class="card">
+            <div slot="header" class="cardHeader">
+              学生总数
+            </div>
+            <div class="cardContent" v-loading="studentSumLoading">
+              <span>{{studentSum}}</span><span style="font-size: 20px"> 人</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card class="card">
+            <div slot="header" class="cardHeader">
+              教师总数
+            </div>
+            <div class="cardContent" v-loading="teacherSumLoading">
+              <span>{{teacherSum}}</span><span style="font-size: 20px"> 人</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="8">
+          <el-card class="card">
+            <div slot="header" class="cardHeader">
+              开设课程总数
+            </div>
+            <div class="cardContent" v-loading="classesSumLoading">
+              <span>{{classesSum}}</span><span style="font-size: 20px"> 个</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card>
+            <div slot="header" class="cardHeader">
+              购买课时占比
+            </div>
+            <div id="classesFormChartBar" class="chart-box"></div>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card>
+            <div slot="header" class="cardHeader">
+              课时分布概况
+            </div>
+            <div id="classesDistributionChartBar" class="chart-box"></div>
+          </el-card>
+        </el-col>
+        <el-col :span="24">
+          <el-card>
+            <div slot="header" class="cardHeader">
+              商品利润概况
+            </div>
+            <div id="profitsChartBar" class="chart-box"></div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -72,18 +70,25 @@
   export default {
     data () {
       return {
-        studentCount: 0,
+        studentSum: 0,
+        teacherSum: 0,
+        classesSum: 0,
         chartLine: null,
         chartBar: null,
         chartPie: null,
-        chartScatter: null
+        chartScatter: null,
+        studentSumLoading: false,
+        teacherSumLoading: false,
+        classesSumLoading: false
       }
     },
     mounted () {
-      this.getStudentCount()
-      this.initChartLine()
-      this.initChartBar()
-      this.initChartPie()
+      this.getStudentSum()
+      this.getTeacherSum()
+      this.getClassesSum()
+      this.initClassesDistributionChartLine()
+      this.initProfitsChartBar()
+      this.initClassesFormChartPie()
     },
     activated () {
       // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
@@ -99,7 +104,8 @@
     },
     methods: {
       // 学员总数
-      getStudentCount () {
+      getStudentSum () {
+        this.studentSumLoading = true
         this.$http({
           url: this.$http.adornUrl('/statistical/studentSum'),
           method: 'post',
@@ -108,14 +114,127 @@
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.studentCount = data.count
+            this.studentSum = data.count
+            this.studentSumLoading = false
           } else {
-            this.studentCount = 0
+            this.studentSum = 0
           }
         })
       },
-      // 折线图
-      initChartLine () {
+      // 教师总数
+      getTeacherSum () {
+        this.teacherSumLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/statistical/teacherSum'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.teacherSum = data.count
+            this.teacherSumLoading = false
+          } else {
+            this.teacherSum = 0
+          }
+        })
+      },
+      // 课程总数
+      getClassesSum () {
+        this.classesSumLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/statistical/classesSum'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.classesSum = data.count
+            this.classesSumLoading = false
+          } else {
+            this.classesSum = 0
+          }
+        })
+      },
+      // 饼状图
+      initClassesFormChartPie () {
+        var option = {
+          // backgroundColor: '#2c343c',
+          // title: {
+          //   text: '购买课时总比',
+          //   left: 'center',
+          //   top: 20,
+          //   textStyle: {
+          //     // color: '#ccc'
+          //   }
+          // },
+          tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+          },
+          visualMap: {
+            show: false,
+            min: 80,
+            max: 600,
+            inRange: {
+              colorLightness: [0, 1]
+            }
+          },
+          series: [
+            {
+              name: '访问来源',
+              type: 'pie',
+              radius: '55%',
+              center: ['50%', '50%'],
+              data: [
+                { value: 335, name: '直接访问' },
+                { value: 310, name: '邮件营销' },
+                { value: 274, name: '联盟广告' },
+                { value: 235, name: '视频广告' },
+                { value: 400, name: '搜索引擎' }
+              ].sort(function (a, b) { return a.value - b.value }),
+              roseType: 'radius',
+              label: {
+                normal: {
+                  textStyle: {
+                    color: 'rgb(9,7,7)'
+                  }
+                }
+              },
+              labelLine: {
+                normal: {
+                  lineStyle: {
+                    color: 'rgb(9,7,7)'
+                  },
+                  smooth: 0.2,
+                  length: 10,
+                  length2: 20
+                }
+              },
+              itemStyle: {
+                normal: {
+                  color: '#c23531',
+                  shadowBlur: 200,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              },
+              animationType: 'scale',
+              animationEasing: 'elasticOut',
+              animationDelay: function (idx) {
+                return Math.random() * 200
+              }
+            }
+          ]
+        }
+        this.chartPie = echarts.init(document.getElementById('classesFormChartBar'))
+        this.chartPie.setOption(option)
+        window.addEventListener('resize', () => {
+          this.chartPie.resize()
+        })
+      },
+      // 课时分布折线图
+      initClassesDistributionChartLine () {
         var option = {
           // 'title': {
           //   'text': '课时分布概况'
@@ -178,24 +297,24 @@
             }
           ]
         }
-        this.chartLine = echarts.init(document.getElementById('J_chartLineBox'))
+        this.chartLine = echarts.init(document.getElementById('classesDistributionChartBar'))
         this.chartLine.setOption(option)
         window.addEventListener('resize', () => {
           this.chartLine.resize()
         })
       },
-      // 柱状图
-      initChartBar () {
+      // 利润柱状图
+      initProfitsChartBar () {
         var option = {
           // title: {text: '商品销售概况'},
           tooltip: {
             trigger: 'axis',
             axisPointer: {
-              type: 'shadow'
+              type: 'cross'
             }
           },
           legend: {
-            data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎', '百度', '谷歌', '必应', '其他']
+            data: ['收入', '成本', '利润率']
           },
           grid: {
             left: '3%',
@@ -206,161 +325,56 @@
           xAxis: [
             {
               type: 'category',
-              data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+              data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
             }
           ],
           yAxis: [
             {
-              type: 'value'
+              type: 'value',
+              name: '金额'
+            },
+            {
+              type: 'value',
+              name: '利润率',
+              min: -5,
+              max: 5
             }
           ],
           series: [
             {
-              name: '直接访问',
+              name: '收入',
               type: 'bar',
-              data: [320, 332, 301, 334, 390, 330, 320]
+              stack: '商品销售',
+              data: [320, 332, 301, 334, 390, 330, 320, 301, 334, 390, 330, 320]
             },
             {
-              name: '邮件营销',
+              name: '成本',
               type: 'bar',
-              stack: '广告',
-              data: [120, 132, 101, 134, 90, 230, 210]
+              stack: '商品销售',
+              data: [-120, -132, -101, -134, -90, -230, -210, -101, -134, -90, -230, -210]
             },
             {
-              name: '联盟广告',
-              type: 'bar',
-              stack: '广告',
-              data: [220, 182, 191, 234, 290, 330, 310]
-            },
-            {
-              name: '视频广告',
-              type: 'bar',
-              stack: '广告',
-              data: [150, 232, 201, 154, 190, 330, 410]
-            },
-            {
-              name: '搜索引擎',
-              type: 'bar',
-              data: [862, 1018, 964, 1026, 1679, 1600, 1570],
-              markLine: {
-                lineStyle: {
-                  normal: {
-                    type: 'dashed'
-                  }
-                },
-                data: [
-                  [{ type: 'min' }, { type: 'max' }]
-                ]
-              }
-            },
-            {
-              name: '百度',
-              type: 'bar',
-              barWidth: 5,
-              stack: '搜索引擎',
-              data: [620, 732, 701, 734, 1090, 1130, 1120]
-            },
-            {
-              name: '谷歌',
-              type: 'bar',
-              stack: '搜索引擎',
-              data: [120, 132, 101, 134, 290, 230, 220]
-            },
-            {
-              name: '必应',
-              type: 'bar',
-              stack: '搜索引擎',
-              data: [60, 72, 71, 74, 190, 130, 110]
-            },
-            {
-              name: '其他',
-              type: 'bar',
-              stack: '搜索引擎',
-              data: [62, 82, 91, 84, 109, 110, 120]
+              name: '利润率',
+              type: 'line',
+              yAxisIndex: 1,
+              data: [1.67, 1.51, 1.98, 1.49, 3.33, 0.52, 0.52, 1.98, 1.49, 3.33, 0.43, 0.52]
             }
           ]
         }
-        this.chartBar = echarts.init(document.getElementById('J_chartBarBox'))
+        this.chartBar = echarts.init(document.getElementById('profitsChartBar'))
         this.chartBar.setOption(option)
         window.addEventListener('resize', () => {
           this.chartBar.resize()
         })
       },
-      // 饼状图
-      initChartPie () {
-        var option = {
-          // backgroundColor: '#2c343c',
-          // title: {
-          //   text: '购买课时总比',
-          //   left: 'center',
-          //   top: 20,
-          //   textStyle: {
-          //     // color: '#ccc'
-          //   }
-          // },
-          tooltip: {
-            trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)'
-          },
-          visualMap: {
-            show: false,
-            min: 80,
-            max: 600,
-            inRange: {
-              colorLightness: [0, 1]
-            }
-          },
-          series: [
-            {
-              name: '访问来源',
-              type: 'pie',
-              radius: '55%',
-              center: ['50%', '50%'],
-              data: [
-                { value: 335, name: '直接访问' },
-                { value: 310, name: '邮件营销' },
-                { value: 274, name: '联盟广告' },
-                { value: 235, name: '视频广告' },
-                { value: 400, name: '搜索引擎' }
-              ].sort(function (a, b) { return a.value - b.value }),
-              roseType: 'radius',
-              label: {
-                normal: {
-                  textStyle: {
-                    // color: 'rgba(255, 255, 255, 0.3)'
-                  }
-                }
-              },
-              labelLine: {
-                normal: {
-                  lineStyle: {
-                    // color: 'rgba(255, 255, 255, 0.3)'
-                  },
-                  smooth: 0.2,
-                  length: 10,
-                  length2: 20
-                }
-              },
-              itemStyle: {
-                normal: {
-                  color: '#c23531',
-                  shadowBlur: 200,
-                  shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-              },
-              animationType: 'scale',
-              animationEasing: 'elasticOut',
-              animationDelay: function (idx) {
-                return Math.random() * 200
-              }
-            }
-          ]
-        }
-        this.chartPie = echarts.init(document.getElementById('J_chartPieBox'))
-        this.chartPie.setOption(option)
-        window.addEventListener('resize', () => {
-          this.chartPie.resize()
-        })
+      // 刷新
+      refresh () {
+        this.getStudentSum()
+        this.getTeacherSum()
+        this.getClassesSum()
+        this.initClassesDistributionChartLine()
+        this.initProfitsChartBar()
+        this.initClassesFormChartPie()
       }
     }
   }
@@ -384,16 +398,16 @@
     }
   }
   .card {
-    min-height: 200px;
+    /*min-height: 200px;*/
   }
   .cardHeader {
     font-size: 18px;
     font-weight: 700;
-    /*color: #ccc;*/
+    color: rgba(108, 108, 108, 0.76);
   }
   .cardContent {
     text-align: center;
-    font-size: 50px;
+    font-size: 60px;
     /*color: #ccc;*/
   }
 </style>
