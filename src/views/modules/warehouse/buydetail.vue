@@ -238,7 +238,7 @@
         } else {
           this.addOrUpdateVisible = true
           this.$nextTick(() => {
-            this.$refs.addOrUpdate.init(id)
+            this.$refs.addOrUpdate.init(id, this.supplierList)
           })
         }
       },

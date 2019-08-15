@@ -73,10 +73,11 @@
       }
     },
     methods: {
-      init (id) {
+      init (id, goodsList) {
         this.dataForm.id = id || 0
         this.visible = true
-        this.getGoodsList()
+        // this.getGoodsList()
+        this.goodsList = goodsList
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -156,18 +157,6 @@
               }
             })
           }
-        })
-      },
-      // 获取商品ID
-      getGoodsList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goods/queryGoodsListForSelect'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.goodsList = data.list
         })
       },
       changeTotalPrice () {

@@ -86,11 +86,11 @@
       }
     },
     methods: {
-      init (id) {
+      init (id, supplierList) {
         this.dataForm.id = id || 0
         this.visible = true
         this.getGoodsList()
-        this.getSupplierList()
+        this.supplierList = supplierList
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -189,20 +189,6 @@
           })
         }).then(({data}) => {
           this.goodsList = data.list
-        })
-      },
-      // 获取供应商ID
-      getSupplierList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/supplier/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.supplierList = data.page.list
         })
       },
       changeTotalPrice () {

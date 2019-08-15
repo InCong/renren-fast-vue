@@ -91,13 +91,17 @@
       }
     },
     methods: {
-      init (id) {
+      init (id, goodsList, typeList, modelList, supplierList) {
         this.dataForm.id = id || 0
         this.visible = true
-        this.getGoodsList()
-        this.getTypeList()
-        this.getModelList()
-        this.getSupplierList()
+        // this.getGoodsList()
+        // this.getTypeList()
+        // this.getModelList()
+        // this.getSupplierList()
+        this.goodsList = goodsList
+        this.typeList = typeList
+        this.modelList = modelList
+        this.supplierList = supplierList
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
@@ -158,60 +162,6 @@
               }
             })
           }
-        })
-      },
-      getGoodsList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goods/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.goodsList = data.page.list
-        })
-      },
-      // 获取商品类型ID
-      getTypeList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodstype/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.typeList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelList = data.page.list
-        })
-      },
-      getSupplierList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/supplier/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.supplierList = data.page.list
         })
       }
     }

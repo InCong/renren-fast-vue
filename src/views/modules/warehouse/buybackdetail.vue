@@ -212,7 +212,7 @@
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 新增 / 修改
+      // 修改
       addOrUpdateHandle (id, createTime) {
         if (moment(createTime).add(30, 'days') < moment()) {
           this.$message({
@@ -223,14 +223,15 @@
         } else {
           this.addOrUpdateVisible = true
           this.$nextTick(() => {
-            this.$refs.addOrUpdate.init(id)
+            this.$refs.addOrUpdate.init(id, this.goodsList, this.typeList, this.modelList, this.supplierList)
           })
         }
       },
+      // 新增
       buyBackDetailCreate () {
         this.buyBackDetailCreateVisible = true
         this.$nextTick(() => {
-          this.$refs.buyBackDetailCreate.init()
+          this.$refs.buyBackDetailCreate.init(this.goodsList, this.typeList, this.modelList, this.supplierList)
         })
       },
       // 删除

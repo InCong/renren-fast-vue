@@ -189,14 +189,14 @@
       }
     },
     methods: {
-      init () {
+      init (goodsList, typeList, modelList, supplierList) {
         this.visible = true
         this.active = 0
         this.getDataList()
-        this.getGoodsList()
-        this.getTypeList()
-        this.getModelList()
-        this.getSupplierList()
+        this.goodsList = goodsList
+        this.typeList = typeList
+        this.modelList = modelList
+        this.supplierList = supplierList
       },
       // 提交
       dataFormSubmit () {
@@ -316,75 +316,6 @@
       currentChangeHandle (val) {
         this.pageIndex = val
         this.getDataList()
-      },
-      getGoodsList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goods/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.goodsList = data.page.list
-        })
-      },
-      // 获取商品类型ID
-      getTypeList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodstype/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.typeList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelListForSelect () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelListForSelect = data.page.list
-        })
-      },
-      getSupplierList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/supplier/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.supplierList = data.page.list
-        })
       },
       formatGoods: function (row, column) {
         let goodsName = '未知'

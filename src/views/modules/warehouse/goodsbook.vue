@@ -138,13 +138,10 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './goodsbook-add-or-update'
   export default {
     data () {
       return {
@@ -168,7 +165,6 @@
       }
     },
     components: {
-      AddOrUpdate
     },
     activated () {
       this.getDataList()
