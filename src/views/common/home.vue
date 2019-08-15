@@ -7,7 +7,7 @@
             学生总数
           </div>
           <div class="cardContent">
-            <span>4</span>
+            <span>{{studentCount}}</span>
           </div>
         </el-card>
       </el-col>
@@ -72,6 +72,7 @@
   export default {
     data () {
       return {
+        studentCount: 0,
         chartLine: null,
         chartBar: null,
         chartPie: null,
@@ -79,6 +80,7 @@
       }
     },
     mounted () {
+      this.getStudentCount()
       this.initChartLine()
       this.initChartBar()
       this.initChartPie()
@@ -96,6 +98,22 @@
       }
     },
     methods: {
+      // 学员总数
+      getStudentCount () {
+        this.$http({
+          url: this.$http.adornUrl('/statistical/studentSum'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.studentCount = data.count
+          } else {
+            this.studentCount = 0
+          }
+        })
+      },
       // 折线图
       initChartLine () {
         var option = {
