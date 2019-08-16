@@ -160,70 +160,51 @@
       // 饼状图
       initClassesFormChartPie () {
         var option = {
-          // backgroundColor: '#2c343c',
-          // title: {
-          //   text: '购买课时总比',
-          //   left: 'center',
-          //   top: 20,
-          //   textStyle: {
-          //     // color: '#ccc'
-          //   }
-          // },
           tooltip: {
             trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)'
+            formatter: "{a} <br/>{b}: {c} ({d}%)"
           },
-          visualMap: {
-            show: false,
-            min: 80,
-            max: 600,
-            inRange: {
-              colorLightness: [0, 1]
-            }
+          legend: {
+            orient: 'vertical',
+            x: 'left',
+            data:['钢琴','跳舞','尤克里里','钢琴高级','跳舞1','跳舞2','跳舞3','尤克里里高级','尤克里里1','尤克里里2', '尤克里里3']
           },
           series: [
             {
-              name: '访问来源',
-              type: 'pie',
-              radius: '55%',
-              center: ['50%', '50%'],
-              data: [
-                { value: 335, name: '直接访问' },
-                { value: 310, name: '邮件营销' },
-                { value: 274, name: '联盟广告' },
-                { value: 235, name: '视频广告' },
-                { value: 400, name: '搜索引擎' }
-              ].sort(function (a, b) { return a.value - b.value }),
-              roseType: 'radius',
+              name:'访问来源',
+              type:'pie',
+              selectedMode: 'single',
+              radius: [0, '50%'],
               label: {
                 normal: {
-                  textStyle: {
-                    color: 'rgb(9,7,7)'
-                  }
+                  position: 'inner'
                 }
               },
               labelLine: {
                 normal: {
-                  lineStyle: {
-                    color: 'rgb(9,7,7)'
-                  },
-                  smooth: 0.2,
-                  length: 10,
-                  length2: 20
+                  show: false
                 }
               },
-              itemStyle: {
-                normal: {
-                  color: '#c23531',
-                  shadowBlur: 200,
-                  shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-              },
-              animationType: 'scale',
-              animationEasing: 'elasticOut',
-              animationDelay: function (idx) {
-                return Math.random() * 200
-              }
+              data:[
+                {value:335, name:'钢琴'},
+                {value:679, name:'跳舞'},
+                {value:1548, name:'尤克里里'}
+              ]
+            },
+            {
+              name:'访问来源',
+              type:'pie',
+              radius: ['60%', '80%'],
+              data:[
+                {value:335, name:'钢琴高级'},
+                {value:310, name:'跳舞1'},
+                {value:234, name:'跳舞2'},
+                {value:135, name:'跳舞3'},
+                {value:1048, name:'尤克里里高级'},
+                {value:251, name:'尤克里里1'},
+                {value:147, name:'尤克里里2'},
+                {value:102, name:'尤克里里3'}
+              ]
             }
           ]
         }
@@ -236,14 +217,11 @@
       // 课时分布折线图
       initClassesDistributionChartLine () {
         var option = {
-          // 'title': {
-          //   'text': '课时分布概况'
-          // },
           'tooltip': {
             'trigger': 'axis'
           },
           'legend': {
-            'data': [ '邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎' ]
+            'data': [ '钢琴', '跳舞', '尤克里里']
           },
           'grid': {
             'left': '3%',
@@ -259,41 +237,29 @@
           'xAxis': {
             'type': 'category',
             'boundaryGap': false,
-            'data': [ '周一', '周二', '周三', '周四', '周五', '周六', '周日' ]
+            'data': [ '0816', '0817', '0818', '0819', '0820', '0821', '0822' ]
           },
           'yAxis': {
             'type': 'value'
           },
           'series': [
             {
-              'name': '邮件营销',
+              'name': '钢琴',
               'type': 'line',
               'stack': '总量',
               'data': [ 120, 132, 101, 134, 90, 230, 210 ]
             },
             {
-              'name': '联盟广告',
+              'name': '跳舞',
               'type': 'line',
               'stack': '总量',
               'data': [ 220, 182, 191, 234, 290, 330, 310 ]
             },
             {
-              'name': '视频广告',
+              'name': '尤克里里',
               'type': 'line',
               'stack': '总量',
               'data': [ 150, 232, 201, 154, 190, 330, 410 ]
-            },
-            {
-              'name': '直接访问',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 320, 332, 301, 334, 390, 330, 320 ]
-            },
-            {
-              'name': '搜索引擎',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 820, 932, 901, 934, 1290, 1330, 1320 ]
             }
           ]
         }
@@ -314,6 +280,7 @@
             }
           },
           legend: {
+            type: 'scroll',
             data: ['收入', '成本', '利润率']
           },
           grid: {
