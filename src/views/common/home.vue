@@ -39,7 +39,7 @@
         <el-col :span="12">
           <el-card>
             <div slot="header" class="cardHeader">
-              购买课时占比
+              本月课时占比
             </div>
             <div id="classesFormChartBar" class="chart-box"></div>
           </el-card>
@@ -47,7 +47,7 @@
         <el-col :span="12">
           <el-card>
             <div slot="header" class="cardHeader">
-              课时分布概况
+              未来七天课时分布
             </div>
             <div id="classesDistributionChartBar" class="chart-box"></div>
           </el-card>
@@ -79,13 +79,30 @@
         chartScatter: null,
         studentSumLoading: false,
         teacherSumLoading: false,
-        classesSumLoading: false
+        classesSumLoading: false,
+        // 本月课时数量及相关数据
+        monthClassesName: [],
+        monthClassesTypeData: [],
+        monthClassesData: [],
+        // 未来7天的课时数量及相关数据
+        daysClassesName: [],
+        daysName: [],
+        daysClassesData: [],
+        // 销售利润的数据
+        saleIncomeData: [],
+        saleCostData: [],
+        saleProfitData: []
       }
     },
     mounted () {
+      // 先加载数据
       this.getStudentSum()
       this.getTeacherSum()
       this.getClassesSum()
+      this.getMonthClassesNum()
+      this.get7DaysClassesNum()
+      this.getSaleData()
+      // 再初始化图表
       this.initClassesDistributionChartLine()
       this.initProfitsChartBar()
       this.initClassesFormChartPie()
@@ -157,22 +174,77 @@
           }
         })
       },
-      // 饼状图
+      // 获取本月课时数量
+      getMonthClassesNum () {
+        this.monthClassesName = ['钢琴','跳舞','尤克里里','钢琴高级','跳舞1','跳舞2','跳舞3','尤克里里高级','尤克里里1','尤克里里2', '尤克里里3']
+        this.monthClassesTypeData = [
+          {value:335, name:'钢琴'},
+          {value:679, name:'跳舞'},
+          {value:1548, name:'尤克里里'}
+        ]
+        this.monthClassesData = [
+          {value:335, name:'钢琴高级'},
+          {value:310, name:'跳舞1'},
+          {value:234, name:'跳舞2'},
+          {value:135, name:'跳舞3'},
+          {value:1048, name:'尤克里里高级'},
+          {value:251, name:'尤克里里1'},
+          {value:147, name:'尤克里里2'},
+          {value:102, name:'尤克里里3'}
+        ]
+      },
+      // 获取未来7天的课时数量
+      get7DaysClassesNum () {
+        this.daysClassesName = ['钢琴', '跳舞', '尤克里里']
+        this.daysName = ['0816', '0817', '0818', '0819', '0820', '0821', '0822']
+        this.daysClassesData = [
+          {
+            'name': '钢琴',
+            'type': 'line',
+            'stack': '总量',
+            'data': [ 120, 132, 101, 134, 90, 230, 210 ]
+          },
+          {
+            'name': '跳舞',
+            'type': 'line',
+            'stack': '总量',
+            'data': [ 220, 182, 191, 234, 290, 330, 310 ]
+          },
+          {
+            'name': '尤克里里',
+            'type': 'line',
+            'stack': '总量',
+            'data': [ 150, 232, 201, 154, 190, 330, 410 ]
+          }
+        ]
+      },
+      // 获取商品销售利润情况
+      getSaleData () {
+        this.saleIncomeData = [320, 332, 301, 334, 390, 330, 320, 301, 334, 390, 330, 320]
+        this.saleCostData = [-120, -132, -101, -134, -90, -230, -210, -101, -134, -90, -230, -210]
+        this.saleProfitData = [1.67, 1.51, 1.98, 1.49, 3.33, 0.52, 0.52, 1.98, 1.49, 3.33, 0.43, 0.52]
+      },
+      // 课时数量占比饼状图
       initClassesFormChartPie () {
-        var option = {
+        const option = {
           tooltip: {
             trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
+            formatter: '{a} <br/>{b}: {c} ({d}%)'
           },
           legend: {
             orient: 'vertical',
             x: 'left',
-            data:['钢琴','跳舞','尤克里里','钢琴高级','跳舞1','跳舞2','跳舞3','尤克里里高级','尤克里里1','尤克里里2', '尤克里里3']
+            data: this.monthClassesName
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: { }
+            }
           },
           series: [
             {
-              name:'访问来源',
-              type:'pie',
+              name: '课程种类',
+              type: 'pie',
               selectedMode: 'single',
               radius: [0, '50%'],
               label: {
@@ -185,26 +257,13 @@
                   show: false
                 }
               },
-              data:[
-                {value:335, name:'钢琴'},
-                {value:679, name:'跳舞'},
-                {value:1548, name:'尤克里里'}
-              ]
+              data: this.monthClassesTypeData
             },
             {
-              name:'访问来源',
-              type:'pie',
+              name: '课程名',
+              type: 'pie',
               radius: ['60%', '80%'],
-              data:[
-                {value:335, name:'钢琴高级'},
-                {value:310, name:'跳舞1'},
-                {value:234, name:'跳舞2'},
-                {value:135, name:'跳舞3'},
-                {value:1048, name:'尤克里里高级'},
-                {value:251, name:'尤克里里1'},
-                {value:147, name:'尤克里里2'},
-                {value:102, name:'尤克里里3'}
-              ]
+              data: this.monthClassesData
             }
           ]
         }
@@ -214,14 +273,14 @@
           this.chartPie.resize()
         })
       },
-      // 课时分布折线图
+      // 课时日期分布折线图
       initClassesDistributionChartLine () {
         var option = {
           'tooltip': {
             'trigger': 'axis'
           },
           'legend': {
-            'data': [ '钢琴', '跳舞', '尤克里里']
+            'data': this.daysClassesName
           },
           'grid': {
             'left': '3%',
@@ -237,31 +296,12 @@
           'xAxis': {
             'type': 'category',
             'boundaryGap': false,
-            'data': [ '0816', '0817', '0818', '0819', '0820', '0821', '0822' ]
+            'data': this.daysName
           },
           'yAxis': {
             'type': 'value'
           },
-          'series': [
-            {
-              'name': '钢琴',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 120, 132, 101, 134, 90, 230, 210 ]
-            },
-            {
-              'name': '跳舞',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 220, 182, 191, 234, 290, 330, 310 ]
-            },
-            {
-              'name': '尤克里里',
-              'type': 'line',
-              'stack': '总量',
-              'data': [ 150, 232, 201, 154, 190, 330, 410 ]
-            }
-          ]
+          'series': this.daysClassesData
         }
         this.chartLine = echarts.init(document.getElementById('classesDistributionChartBar'))
         this.chartLine.setOption(option)
@@ -271,8 +311,7 @@
       },
       // 利润柱状图
       initProfitsChartBar () {
-        var option = {
-          // title: {text: '商品销售概况'},
+        const option = {
           tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -282,6 +321,11 @@
           legend: {
             type: 'scroll',
             data: ['收入', '成本', '利润率']
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: { }
+            }
           },
           grid: {
             left: '3%',
@@ -312,19 +356,19 @@
               name: '收入',
               type: 'bar',
               stack: '商品销售',
-              data: [320, 332, 301, 334, 390, 330, 320, 301, 334, 390, 330, 320]
+              data: this.saleIncomeData
             },
             {
               name: '成本',
               type: 'bar',
               stack: '商品销售',
-              data: [-120, -132, -101, -134, -90, -230, -210, -101, -134, -90, -230, -210]
+              data: this.saleCostData
             },
             {
               name: '利润率',
               type: 'line',
               yAxisIndex: 1,
-              data: [1.67, 1.51, 1.98, 1.49, 3.33, 0.52, 0.52, 1.98, 1.49, 3.33, 0.43, 0.52]
+              data: this.saleProfitData
             }
           ]
         }
@@ -339,9 +383,9 @@
         this.getStudentSum()
         this.getTeacherSum()
         this.getClassesSum()
-        this.initClassesDistributionChartLine()
-        this.initProfitsChartBar()
-        this.initClassesFormChartPie()
+        this.getMonthClassesNum()
+        this.get7DaysClassesNum()
+        this.getSaleData()
       }
     }
   }
