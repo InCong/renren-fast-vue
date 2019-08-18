@@ -138,7 +138,7 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'bdTeacherId': teacherId,
+            'bdTeacherId': this.bdTeacherId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : bdOrgId, // 超级管理员可以获取全部机构部门的列表
             'typeId': typeId // 1-图片，2-视频
           })

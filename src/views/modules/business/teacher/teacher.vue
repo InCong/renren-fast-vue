@@ -205,7 +205,8 @@
         }).then(({data}) => {
           if (data && data.code === 0) {
             this.dataList = data.page.records
-            this.totalPage = data.page.totalCount
+            this.totalPage = data.page.total
+            console.log(data)
           } else {
             this.dataList = []
             this.totalPage = 0

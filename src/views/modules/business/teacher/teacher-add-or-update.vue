@@ -119,10 +119,6 @@
           mobile: [
             { required: true, message: '联系电话不能为空', trigger: 'blur' },
             { validator: validateMobile, trigger: 'blur' }
-          ],
-          email: [
-            { required: true, message: '邮箱不能为空', trigger: 'blur' },
-            { validator: validateEmail, trigger: 'blur' }
           ]
         }
       }
