@@ -22,6 +22,14 @@
     <el-row :gutter="10" style="padding-top: 10px">
       <el-col :span="4">
         <el-card shadow="always">
+          <el-row :gutter="5" style="margin-bottom: 10px">
+            <el-col :span="16">
+              <el-input v-model="queryName" placeholder="名称" clearable></el-input>
+            </el-col>
+            <el-col :span="4">
+              <el-button @click="getTeacherList">查询</el-button>
+            </el-col>
+          </el-row>
           <el-row>
             <el-col :span="12">
               <el-table
@@ -58,6 +66,16 @@
               </el-table>
             </el-col>
           </el-row>
+          <el-pagination
+            @size-change="sizeChangeHandle"
+            @current-change="currentChangeHandle"
+            :hide-on-single-page="true"
+            :current-page="pageIndex"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            :total="totalPage"
+            layout="total, prev, pager, next">
+          </el-pagination>
         </el-card>
       </el-col>
       <el-col :span="20">
@@ -93,11 +111,9 @@
               <el-row class="timeRow"><el-divider></el-divider></el-row>
               <el-row class="timeRow"><el-divider></el-divider></el-row>
               <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
             </div>
             <div style="position: relative">
               <el-col :span="2" style="text-align: center">
-                <el-row class="timeRow">6:00</el-row>
                 <el-row class="timeRow">7:00</el-row>
                 <el-row class="timeRow">8:00</el-row>
                 <el-row class="timeRow">9:00</el-row>
@@ -128,7 +144,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -150,7 +166,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -172,7 +188,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -194,7 +210,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -216,7 +232,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -238,7 +254,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -260,7 +276,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length)">
+                  <div class="contentBlock" v-bind:class="{ contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime) * 2 + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.studentName}}（{{item.className}}）
@@ -342,13 +358,17 @@
         week6: '',
         week7: '',
         // 以下是基本使用的变量
+        pageIndex: 1,
+        pageSize: 20,
+        totalPage: 0,
         classArrangeListLoading: false,
         bdTeacherId: 0,
         bdStudentId: 0,
         teacherName: '',
         studentName: '',
         classArrangeAddVisible: false,
-        classArrangeOperaVisible: false
+        classArrangeOperaVisible: false,
+        queryName: ''
       }
     },
     activated () {
@@ -370,18 +390,33 @@
         this.$http({
           url: this.$http.adornUrl('/business/teacher/list'),
           method: 'post',
-          data: this.$http.adornData({
-            'page': 1,
-            'limit': 1000,
+          params: this.$http.adornParams({
+            'page': this.pageIndex,
+            'limit': this.pageSize,
+            'name': this.queryName,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
             this.teacherList = data.page.list
+            this.totalPage = data.page.totalCount
           } else {
             this.teacherList = []
+            this.totalPage = 0
           }
+          this.studentList = []
         })
+      },
+      // 每页数
+      sizeChangeHandle (val) {
+        this.pageSize = val
+        this.pageIndex = 1
+        this.getTeacherList()
+      },
+      // 当前页
+      currentChangeHandle (val) {
+        this.pageIndex = val
+        this.getTeacherList()
       },
       // 点击指定教师时，显示该教师名下的学员清单，并显示该教师的排课情况
       teacherRowClick (row, column, event) {
@@ -537,10 +572,10 @@
         }
       },
       // 课程点击
-      classClick (id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId, length) {
+      classClick (id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId, length, remark) {
         this.classArrangeOperaVisible = true
         this.$nextTick(() => {
-          this.$refs.classArrangeOpera.init(id, this.bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length)
+          this.$refs.classArrangeOpera.init(id, this.bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length, remark)
         })
       },
       // 判断是否超时但未签到

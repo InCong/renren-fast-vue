@@ -28,7 +28,7 @@
       <!-- 弹窗，显示课程的时间段修改 -->
       <class-arrange-modify v-if="classArrangeModifyVisible" ref="classArrangeModify"></class-arrange-modify>
       <!-- 弹窗，显示微信签到 -->
-      <class-arrange-wechat-sign v-if="classArrangeWechatSignVisible" ref="classArrangeWechatSign"></class-arrange-wechat-sign>
+      <class-arrange-wechat-sign v-if="classArrangeWechatSignVisible" ref="classArrangeWechatSign" @signSuccess="signSuccess"></class-arrange-wechat-sign>
     </div>
   </el-dialog>
 </template>
@@ -57,11 +57,12 @@
         arrangeDate: '',
         noticeText: '',
         classArrangeModifyVisible: false,
-        classArrangeWechatSignVisible: false
+        classArrangeWechatSignVisible: false,
+        remark: ''
       }
     },
     methods: {
-      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length) {
+      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length, remark) {
         this.visible = true
         this.id = id
         this.bdClassesStudentId = bdClassesStudentId
@@ -72,6 +73,7 @@
         this.endTime = endTime
         this.arrangeDate = arrangeDate
         this.length = length
+        this.remark = remark
         // 组件看不见时调用，清空数组
         this.over = () => {
           this.visible = false
@@ -117,6 +119,9 @@
           }
         })
       },
+      signSuccess () {
+        this.isModify = true
+      },
       // 微信通知
       noticeButtonClick () {
         this.type = 'notice'
@@ -161,7 +166,7 @@
         this.isModify = true
         this.classArrangeModifyVisible = true
         this.$nextTick(() => {
-          this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime, this.bdTeacherId, this.bdClassesStudentId, this.length)
+          this.$refs.classArrangeModify.init(this.id, this.arrangeDate, this.startTime, this.endTime, this.bdTeacherId, this.bdClassesStudentId, this.length, this.remark)
         })
       },
       // 删除课程

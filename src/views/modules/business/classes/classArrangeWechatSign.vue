@@ -72,6 +72,7 @@
                 })
               }).then(({data}) => {
                 if (data && data.code === 0) {
+                  this.$emit('signSuccess')
                   this.$message({
                     message: '签到消息推送成功！',
                     type: 'success',

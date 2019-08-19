@@ -73,7 +73,6 @@
                 :page-sizes="[10, 20, 50, 100]"
                 :page-size="pageSize"
                 :total="totalPage"
-                hide-on-single-page
                 layout="total, prev, pager, next">
               </el-pagination>
             </el-col>
@@ -390,6 +389,7 @@
             this.teacherList = []
             this.totalPage = 0
           }
+          this.classesList = []
         })
       },
       // 每页数

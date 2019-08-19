@@ -19,9 +19,9 @@
           :editable="false"
           :clearable="false"
           :picker-options="{
-              start: '06:00',
+              start: '07:00',
               step: '00:15',
-              end: '23:00'
+              end: '22:00'
             }">
         </el-time-select>
         <span style="margin-left: 10px;margin-right: 20px">至</span>
@@ -31,7 +31,7 @@
           :clearable="false"
           :disabled="true"
           :picker-options="{
-              start: '06:00',
+              start: '07:00',
               step: '00:15',
               end: '23:00',
               minTime: dataForm.startTime
@@ -45,7 +45,7 @@
         </el-radio-group>
         <el-button type="success" @click="specialClassClick">待定班课</el-button>
       </div>
-      <div style="text-align: center">
+      <div style="text-align: center;margin-bottom: 30px">
         <el-radio-group v-model="dataForm.bdClassesStudentId" @change="classChange">
           <el-tooltip v-for="item in classesList" v-bind:key="item.id" effect="light" placement="right">
             <div slot="content" style="text-align: left;font-size: 16px">
@@ -56,6 +56,10 @@
             <el-radio-button :label="item.id + '_' + item.length" style="margin-right: 20px">{{item.className}}</el-radio-button>
           </el-tooltip>
         </el-radio-group>
+      </div>
+      <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
+      <div style="text-align: center;margin-top: 30px">
+        <el-input type="text" v-model="dataForm.remark" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%"></el-input>
       </div>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -98,7 +102,8 @@
           arrangeDate: '',
           startTime: '',
           endTime: '',
-          bdClassesStudentId: ''
+          bdClassesStudentId: '',
+          remark: ''
         },
         dataRule: {
           arrangeDate: [
@@ -147,6 +152,7 @@
           this.dataForm.startTime = ''
           this.dataForm.endTime = ''
           this.dataForm.bdClassesStudentId = ''
+          this.dataForm.remark = ''
           this.radioClassWay = ''
           this.visible = false
           this.classDisabled = true
@@ -181,7 +187,6 @@
             duration: 1500
           })
         } else {
-          console.log(parseInt(this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_'))))
           // 先检查选定的学生课程所剩课时足不足够，若足够再保存
           let num = this.dataForm.endTime.substr(0, 2) - this.dataForm.startTime.substr(0, 2) + (this.dataForm.endTime.substr(3, 2) - this.dataForm.startTime.substr(3, 2)) / 60
           let remainNum = 0
@@ -208,6 +213,7 @@
                       'arrangeDate': this.dataForm.arrangeDate,
                       'startTime': this.dataForm.startTime,
                       'endTime': this.dataForm.endTime,
+                      'remark': this.dataForm.remark,
                       'num': num,
                       'createUserId': this.$store.state.user.id,
                       'bdTeacherId': this.bdTeacherId
@@ -224,6 +230,7 @@
                       this.dataForm.startTime = ''
                       this.dataForm.endTime = ''
                       this.dataForm.bdClassesStudentId = ''
+                      this.dataForm.remark = ''
                       this.radioClassWay = ''
                       this.classDisabled = true
                     } else {
@@ -243,6 +250,7 @@
                       'arrangeDate': this.dataForm.arrangeDate,
                       'startTime': this.dataForm.startTime,
                       'endTime': this.dataForm.endTime,
+                      'remark': this.dataForm.remark,
                       'num': num,
                       'createUserId': this.$store.state.user.id,
                       'bdTeacherId': this.bdTeacherId,
@@ -260,6 +268,7 @@
                       this.dataForm.startTime = ''
                       this.dataForm.endTime = ''
                       this.dataForm.bdClassesStudentId = ''
+                      this.dataForm.remark = ''
                       this.radioClassWay = ''
                     } else {
                       this.$message({

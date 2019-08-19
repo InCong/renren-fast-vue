@@ -4,7 +4,8 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     append-to-body>
-    <div style="text-align: center;margin-bottom: 30px">
+    <el-divider content-position="left"><span style="color: #00a0e9">排课日期与时间</span></el-divider>
+    <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
       <el-date-picker
         v-model="arrangeDate"
         value-format="yyyy-MM-dd"
@@ -12,7 +13,7 @@
         placeholder="选择排课日期">
       </el-date-picker>
     </div>
-    <div style="text-align: center">
+    <div style="text-align: center;margin-bottom: 30px">
       <el-time-select
         placeholder="起始时间"
         v-model="startTime"
@@ -20,9 +21,9 @@
         :editable="false"
         :clearable="false"
         :picker-options="{
-            start: '06:00',
+            start: '07:00',
             step: '00:15',
-            end: '23:00'
+            end: '22:00'
           }">
       </el-time-select>
       <span style="margin-left: 10px;margin-right: 20px">至</span>
@@ -32,12 +33,16 @@
         :clearable="false"
         :disabled="true"
         :picker-options="{
-            start: '06:00',
+            start: '07:00',
             step: '00:15',
             end: '23:00',
             minTime: startTime
           }">
       </el-time-select>
+    </div>
+    <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
+    <div style="text-align: center;margin-top: 30px">
+      <el-input type="text" v-model="remark" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%"></el-input>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -57,11 +62,12 @@
         startTime: '',
         endTime: '',
         bdTeacherId: '',
-        length: 0
+        length: 0,
+        remark: ''
       }
     },
     methods: {
-      init (id, arrangeDate, startTime, endTime, bdTeacherId, bdClassesStudentId, length) {
+      init (id, arrangeDate, startTime, endTime, bdTeacherId, bdClassesStudentId, length, remark) {
         this.visible = true
         this.id = id
         this.bdClassesStudentId = bdClassesStudentId
@@ -70,6 +76,7 @@
         this.endTime = endTime
         this.bdTeacherId = bdTeacherId
         this.length = length
+        this.remark = remark
       },
       dataFormSubmit () {
         let num = this.endTime.substr(0, 2) - this.startTime.substr(0, 2) + (this.endTime.substr(3, 2) - this.startTime.substr(3, 2)) / 60
@@ -98,7 +105,8 @@
                   'startTime': this.startTime,
                   'endTime': this.endTime,
                   'num': num,
-                  'bdTeacherId': this.bdTeacherId
+                  'bdTeacherId': this.bdTeacherId,
+                  'remark': this.remark
                 })
               }).then(({data}) => {
                 if (data && data.code === 0) {

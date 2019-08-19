@@ -142,7 +142,7 @@
       initWebSocket: function () {
         // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
         // let websocket = new WebSocket('ws://127.0.0.1:8080/renren-fast/websocket/sendArticle')
-        let websocket = new WebSocket('ws://www.lejiao88.com:8080/renren-fast/websocket/sign')
+        let websocket = new WebSocket('ws://www.lejiao88.com:8080/renren-fast/websocket/sendArticle')
         websocket.onopen = this.webSocketOnOpen
         websocket.onerror = this.webSocketOnError
         websocket.onmessage = this.webSocketOnMessage
