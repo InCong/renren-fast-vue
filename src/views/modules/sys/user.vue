@@ -161,15 +161,14 @@
       // 获取机构（部门）ID
       getOrgList () {
         this.$http({
-          url: this.$http.adornUrl('/business/org/select'),
+          url: this.$http.adornUrl('/business/org/list'),
           method: 'get',
-          params: this.$http.adornParams()
+          params: this.$http.adornParams({
+            'name': this.$store.state.user.id === 1 ? null : this.dataForm.name, // 超级管理员可以获取全部机构部门的列表
+            'id': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+          })
         }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.orgList = data.orgList
-          } else {
-            this.orgList = []
-          }
+          this.orgList = data
         })
       },
       // 每页数
@@ -191,23 +190,8 @@
       addOrUpdateHandle (id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.addOrUpdate.init(id, this.orgList)
         })
-        // this.$http({
-        //   url: this.$http.adornUrl(`/wechat/TemplateMessage/${id}`),
-        //   method: 'post',
-        //   data: this.$http.adornData()
-        // }).then(({data}) => {
-        //   if (data && data.code === 0) {
-        //     this.$message({
-        //       message: '消息已成功推送！',
-        //       type: 'success',
-        //       duration: 1500
-        //     })
-        //   } else {
-        //     this.$message.error(data.msg)
-        //   }
-        // })
       },
       // 删除
       deleteHandle (id) {

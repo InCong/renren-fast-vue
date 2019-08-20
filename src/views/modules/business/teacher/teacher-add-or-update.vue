@@ -57,7 +57,7 @@
 </template>
 
 <script>
-  import { isEmail, isMobile } from '@/utils/validate'
+  import { isMobile } from '@/utils/validate'
   export default {
     data () {
       var validateMobile = (rule, value, callback) => {

@@ -34,6 +34,16 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="所属机构" prop="bdOrgId">
+        <el-select v-model="dataForm.bdOrgId" placeholder="请选择" filterable>
+          <el-option
+            v-for="item in orgList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="状态" size="mini" prop="status">
         <el-radio-group v-model="dataForm.status">
           <el-radio :label="0">禁用</el-radio>
@@ -49,7 +59,7 @@
 </template>
 
 <script>
-  import { isEmail, isMobile } from '@/utils/validate'
+  import { isMobile } from '@/utils/validate'
   export default {
     data () {
       var validatePassword = (rule, value, callback) => {
@@ -78,6 +88,7 @@
       return {
         visible: false,
         roleList: [],
+        orgList: [],
         identities: [{
           value: 0,
           label: '未知'
@@ -104,7 +115,8 @@
           mobile: '',
           identity: '',
           roleIdList: [],
-          status: 1
+          status: 1,
+          bdOrgId: ''
         },
         dataRule: {
           userName: [
@@ -120,6 +132,9 @@
             { required: true, message: '手机号不能为空', trigger: 'blur' },
             { validator: validateMobile, trigger: 'blur' }
           ],
+          bdOrgId: [
+            { required: true, message: '所属机构不能为空', trigger: 'blur' }
+          ],
           identity: [
             { required: true, message: '身份，0-未知，1-管理员，2-教师，3-学生，9-其它不能为空', trigger: 'blur' }
           ]
@@ -127,8 +142,9 @@
       }
     },
     methods: {
-      init (id) {
+      init (id, orgList) {
         this.dataForm.id = id || 0
+        this.orgList = orgList
         this.$http({
           url: this.$http.adornUrl('/sys/role/select'),
           method: 'get',
@@ -155,6 +171,7 @@
                 this.dataForm.identity = data.user.identity
                 this.dataForm.roleIdList = data.user.roleIdList
                 this.dataForm.status = data.user.status
+                this.dataForm.bdOrgId = data.user.bdOrgId
               }
             })
           }
@@ -176,7 +193,8 @@
                 'mobile': this.dataForm.mobile,
                 'identity': this.dataForm.identity,
                 'status': this.dataForm.status,
-                'roleIdList': this.dataForm.roleIdList
+                'roleIdList': this.dataForm.roleIdList,
+                'bdOrgId': this.dataForm.bdOrgId
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

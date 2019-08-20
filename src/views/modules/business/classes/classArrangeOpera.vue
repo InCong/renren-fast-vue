@@ -9,6 +9,7 @@
       <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">相关操作</span></el-divider>
       <div style="margin-top: 30px;margin-bottom: 30px">
         <el-button type="success" @click="signButtonClick">微信签到</el-button>
+        <el-button type="primary" @click="artificialSignButtonClick">人工签到</el-button>
         <el-button type="primary" @click="modifyButtonClick">课程修改</el-button>
         <el-button type="danger" @click="deleteButtonClick">删除课程</el-button>
       </div>
@@ -116,6 +117,27 @@
                 duration: 1500
               })
             }
+          }
+        })
+      },
+      // 人工签到
+      artificialSignButtonClick () {
+        this.type = 'sign'
+        this.$http({
+          url: this.$http.adornUrl('/business/studentclassarrange/artificialSign'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdStudentClassArrangeId': this.id,
+            'bdStudentId': this.bdStudentId
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.isModify = true
+            this.$message({
+              message: '人工签到成功！微信消息已发送！',
+              type: 'success',
+              duration: 3000
+            })
           }
         })
       },
