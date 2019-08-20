@@ -14,7 +14,13 @@
         <el-button type="danger" @click="deleteButtonClick">删除课程</el-button>
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">发送通知</span></el-divider>
-      <div style="margin-top: 30px;margin-bottom: 30px">
+      <div style="margin-top: 30px">
+        <el-checkbox-group v-model="checkList">
+          <el-checkbox label="学员"></el-checkbox>
+          <el-checkbox label="教师"></el-checkbox>
+        </el-checkbox-group>
+      </div>
+      <div style="margin-top: 10px;margin-bottom: 30px">
         <el-input
           type="textarea"
           :rows="3"
@@ -59,7 +65,8 @@
         noticeText: '',
         classArrangeModifyVisible: false,
         classArrangeWechatSignVisible: false,
-        remark: ''
+        remark: '',
+        checkList: ['学员', '教师']
       }
     },
     methods: {
@@ -147,14 +154,15 @@
       // 微信通知
       noticeButtonClick () {
         this.type = 'notice'
-        if (this.noticeText) {
+        if (this.noticeText && this.checkList.length > 0) {
           this.$http({
             url: this.$http.adornUrl('/business/studentclassarrange/sendWeChatNoticeToStudent'),
             method: 'post',
             data: this.$http.adornData({
               'id': this.id,
               'bdStudentId': this.bdStudentId,
-              'noticeText': this.noticeText
+              'noticeText': this.noticeText,
+              'checkList': this.checkList
             })
           }).then(({data}) => {
             if (data && data.code === 0) {
@@ -174,10 +182,16 @@
               })
             }
           })
-        } else {
+        } else if (this.checkList.length === 0) {
+          this.$message({
+            message: '请选择通知对象！',
+            type: 'warning',
+            duration: 2000
+          })
+        } else if (!this.noticeText) {
           this.$message({
             message: '请填写通知内容！',
-            type: 'error',
+            type: 'warning',
             duration: 2000
           })
         }

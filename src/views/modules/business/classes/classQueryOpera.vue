@@ -2,7 +2,7 @@
   <el-dialog
     :title= className
     :visible.sync="visible"
-    width="30%"
+    width="40%"
     center>
     <div style="text-align: center;margin-bottom: 20px">
       <el-card class="classInfo">
@@ -50,7 +50,7 @@
               label="签到类型">
               <template slot-scope="scope">
                 <el-tag v-if="scope.row.signType === 1" size="small">微信</el-tag>
-                <el-tag v-if="scope.row.signType === 2" size="small">强制</el-tag>
+                <el-tag v-if="scope.row.signType === 2" size="small">手工</el-tag>
               </template>
             </el-table-column>
             <el-table-column
@@ -96,7 +96,9 @@
           method: 'post',
           data: this.$http.adornData({
             'bdClassesId': this.bdClassesId,
-            'arrangeDate': this.arrangeDate
+            'arrangeDate': this.arrangeDate,
+            'startTime': this.startTime,
+            'endTime': this.endTime
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
