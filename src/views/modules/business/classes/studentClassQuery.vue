@@ -25,13 +25,13 @@
                   <el-input v-model="queryName" placeholder="名称" clearable></el-input>
                 </el-col>
                 <el-col :span="4">
-                  <el-button @click="getTeacherList">查询</el-button>
+                  <el-button @click="getStudentList">查询</el-button>
                 </el-col>
               </el-row>
               <el-row>
-                <el-col :span="12">
+                <el-col :span="24">
                   <el-table
-                    :data="teacherList"
+                    :data="studentList"
                     border
                     highlight-current-row
                     max-height="1000px"
@@ -39,28 +39,10 @@
                     :row-style="tableRowStyle"
                     @row-click="teacherRowClick">
                     <el-table-column
-                      prop="name"
+                      prop="nickname"
                       header-align="center"
                       align="center"
-                      label="教师">
-                    </el-table-column>
-                  </el-table>
-                </el-col>
-                <el-col :span="12">
-                  <el-table
-                    :data="classesList"
-                    border
-                    highlight-current-row
-                    max-height="1000px"
-                    :header-cell-style="tableHeaderColor"
-                    :row-style="tableRowStyle"
-                    @row-click="classesRowClick">
-                    <el-table-column
-                      prop="bdClassesName"
-                      header-align="center"
-                      align="center"
-                      :formatter="formatClassesName"
-                      label="课程">
+                      label="学员">
                     </el-table-column>
                   </el-table>
                 </el-col>
@@ -140,10 +122,12 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList1" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
+                    <el-row><i class="el-icon-s-custom toolTipsContent"></i>{{item.teacherName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}} 共{{item.length}}分钟</el-row>
+                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
+                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
                   <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
@@ -160,10 +144,12 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList2" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
+                    <el-row><i class="el-icon-s-custom toolTipsContent"></i>{{item.teacherName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}} 共{{item.length}}分钟</el-row>
+                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
+                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
                   <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
@@ -180,10 +166,12 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList3" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
+                    <el-row><i class="el-icon-s-custom toolTipsContent"></i>{{item.teacherName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}} 共{{item.length}}分钟</el-row>
+                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
+                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
                   <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
@@ -200,10 +188,12 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList4" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
+                    <el-row><i class="el-icon-s-custom toolTipsContent"></i>{{item.teacherName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}} 共{{item.length}}分钟</el-row>
+                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
+                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
                   <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
@@ -220,10 +210,12 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList5" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
+                    <el-row><i class="el-icon-s-custom toolTipsContent"></i>{{item.teacherName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}} 共{{item.length}}分钟</el-row>
+                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
+                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
                   <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
@@ -240,10 +232,12 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList6" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
+                    <el-row><i class="el-icon-s-custom toolTipsContent"></i>{{item.teacherName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}} 共{{item.length}}分钟</el-row>
+                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
+                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
                   <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                     <div class="centerContent">
@@ -260,10 +254,12 @@
               <el-col :span="3" class="classArrangeCol">
                 <el-tooltip v-for="item in dayList7" v-bind:key="item.id" effect="light" placement="right">
                   <div slot="content" style="text-align: left;font-size: 18px">
+                    <el-row><i class="el-icon-s-custom toolTipsContent"></i>{{item.teacherName}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
                     <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                    <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                    <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}} 共{{item.length}}分钟</el-row>
+                    <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
+                    <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
                   <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentNames)">
                     <div class="centerContent">
@@ -319,7 +315,7 @@
         },
         // 以下是基本用的数据数组
         classesList: [],
-        teacherList: [],
+        studentList: [],
         // 以下是日期的相关数据数组
         dayList1: [],
         dayList2: [],
@@ -349,15 +345,15 @@
         totalPage: 0,
         classQueryListLoading: false,
         classQueryOperaVisible: false,
-        bdTeacherId: 0,
-        teacherName: '',
+        bdStudentId: 0,
+        studentName: '',
         bdClassesId: 0,
         classesName: '',
         queryName: ''
       }
     },
     activated () {
-      this.getTeacherList()
+      this.getStudentList()
       this.initHeader()
     },
     methods: {
@@ -371,22 +367,22 @@
       tableRowStyle ({row, rowIndex}) {
         return 'height: 60px;font-size: 16px'
       },
-      getTeacherList () {
+      getStudentList () {
         this.$http({
-          url: this.$http.adornUrl('/business/teacher/list'),
+          url: this.$http.adornUrl('/business/student/list'),
           method: 'post',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'name': this.queryName,
+            'nickname': this.queryName,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.teacherList = data.page.list
+            this.studentList = data.page.list
             this.totalPage = data.page.totalCount
           } else {
-            this.teacherList = []
+            this.studentList = []
             this.totalPage = 0
           }
           this.classesList = []
@@ -396,41 +392,20 @@
       sizeChangeHandle (val) {
         this.pageSize = val
         this.pageIndex = 1
-        this.getTeacherList()
+        this.getStudentList()
       },
       // 当前页
       currentChangeHandle (val) {
         this.pageIndex = val
-        this.getTeacherList()
+        this.getStudentList()
       },
-      // 点击指定教师时，显示该教师名下的学员清单，并显示该教师的排课情况
+      // 点击指定学员时，显示该学员的排课情况
       teacherRowClick (row, column, event) {
-        this.bdTeacherId = row.id
-        this.teacherName = row.name
+        this.bdStudentId = row.id
+        this.studentName = row.name
         this.bdClassesId = 0
         this.classesName = ''
-        // 先获取学员列表
-        this.$http({
-          url: this.$http.adornUrl('/business/classesteacher/listClassesByTeacherId'),
-          method: 'post',
-          data: this.$http.adornData({
-            'bdTeacherId': row.id
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.classesList = data.list
-          } else {
-            this.classesList = []
-          }
-        })
-        // 显示该教师的排课情况
-        this.getClassQuery()
-      },
-      // 点击指定课程，显示该课程的排课情况
-      classesRowClick (row, column, event) {
-        this.bdClassesId = row.bdClassesId
-        this.classesName = row.bdClassesName
-        // 显示该课程的排课情况
+        // 显示该学员的排课情况
         this.getClassQuery()
       },
       // 选择完日期之后，自动填充列头
@@ -501,11 +476,10 @@
         let dateList = [this.day1, this.day2, this.day3, this.day4, this.day5, this.day6, this.day7]
         this.classQueryListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/business/studentclassarrange/listClassArrange'),
+          url: this.$http.adornUrl('/business/studentclassarrange/listStudentClassArrange2'),
           method: 'post',
           data: this.$http.adornData({
-            'bdTeacherId': this.bdTeacherId,
-            'bdClassesId': this.bdClassesId,
+            'bdStudentId': this.bdStudentId,
             'arrangeDateList': dateList
           })
         }).then(({data}) => {

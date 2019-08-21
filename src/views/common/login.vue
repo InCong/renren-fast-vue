@@ -33,6 +33,9 @@
         </div>
       </div>
     </div>
+    <div style="position: fixed;bottom: 10px;left: 40%">
+      <a href="http://www.beian.miit.gov.cn/" target="_blank" style="color: gray">粤ICP备19098333号</a>
+    </div>
   </div>
 </template>
 
