@@ -232,7 +232,7 @@
       },
       // 下一步
       next () {
-        if (this.currentWdGoodsId === 0) {
+        if (this.currentWdGoodsId === 0 || this.currentWdGoodsId === '') {
           this.$message({
             message: '请选择指定采购记录',
             type: 'warning',
