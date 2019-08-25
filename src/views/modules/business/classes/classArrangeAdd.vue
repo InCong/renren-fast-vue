@@ -41,7 +41,7 @@
       <el-divider content-position="left"><span style="color: #00a0e9">课程</span></el-divider>
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
         <el-radio-group v-model="radioClassWay" @change="classWayChange" :disabled="classDisabled">
-          <el-radio-button v-for="item in classWayList" v-bind:key="item.id" :label="item.id" style="margin-right: 20px">{{item.name}}</el-radio-button>
+          <el-radio-button v-for="item in classWayList" :label="item" style="margin-right: 20px">{{item.name}}</el-radio-button>
         </el-radio-group>
         <el-button type="success" @click="specialClassClick">待定班课</el-button>
       </div>
@@ -100,6 +100,7 @@
         count: '',
         // 以下是单选的变量
         radioClassWay: '',
+        radioClassWayType: '',
         radioType: '1',
         // 以下是表单变量
         dataForm: {
@@ -158,6 +159,7 @@
           this.dataForm.bdClassesStudentId = ''
           this.dataForm.remark = ''
           this.radioClassWay = ''
+          this.radioClassWayType = ''
           this.visible = false
           this.classDisabled = true
           this.classLength = 0
@@ -188,6 +190,12 @@
         } else if (this.dataForm.bdClassesStudentId === '') {
           this.$message({
             message: '请选择指定学员的课程！！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else if (this.radioClassWayType === 1 && this.count > 0) {
+          this.$message({
+            message: '该教师在该日期时间内已安排一对一的课程，无法再安排其它一对一课程！！',
             type: 'warning',
             duration: 1500
           })
@@ -237,6 +245,7 @@
                       this.dataForm.bdClassesStudentId = ''
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
+                      this.radioClassWayType = ''
                       this.classDisabled = true
                     } else {
                       this.$message({
@@ -275,6 +284,7 @@
                       this.dataForm.bdClassesStudentId = ''
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
+                      this.radioClassWayType = ''
                     } else {
                       this.$message({
                         message: data.msg,
@@ -315,13 +325,15 @@
       // 课程类型选择变更事件
       classWayChange () {
         this.clearClassSelect()
+        let classWay = this.radioClassWay.id
+        this.radioClassWayType = this.radioClassWay.type
         this.$http({
           url: this.$http.adornUrl('/business/studentclassarrange/targetClassArrange'),
           method: 'post',
           data: this.$http.adornData({
             'bdTeacherId': this.bdTeacherId,
             'bdStudentId': this.bdStudentId,
-            'bdClassWayId': this.radioClassWay
+            'bdClassWayId': classWay
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -389,6 +401,7 @@
         this.dataForm.endTime = ''
         this.dataForm.bdClassesStudentId = ''
         this.radioClassWay = ''
+        this.radioClassWayType = ''
         this.classLength = 0
         this.classDisabled = true
         this.$http({
