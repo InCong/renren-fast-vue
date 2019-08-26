@@ -129,7 +129,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.bdStudentId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -151,7 +151,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.bdStudentId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -173,7 +173,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.bdStudentId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -195,7 +195,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.bdStudentId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -217,7 +217,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.bdStudentId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -239,7 +239,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.bdStudentId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -261,7 +261,7 @@
                     <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                     <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                   </div>
-                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentNames)">
+                  <div class="contentBlock" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + ((item.diffTime * 2) + 0.25) + 'cm'" v-on:dblclick="classClick(item.id, item.bdStudentId, item.className, item.startTime, item.endTime, item.arrangeDate)">
                     <div class="centerContent">
                       <el-row style="margin-bottom: 5px">
                         {{item.className}}
@@ -279,18 +279,17 @@
       </el-col>
     </el-row>
     <!-- 弹窗，显示课程操作区域 -->
-    <class-query-opera v-if="classQueryOperaVisible" ref="classQueryOpera"></class-query-opera>
+    <student-class-query-opera v-if="studentClassQueryOperaVisible" ref="studentClassQueryOpera"></student-class-query-opera>
   </div>
 </template>
 
 <script>
   import moment from 'moment'
   import 'moment/locale/zh-cn'
-  import ClassQueryOpera from './classQueryOpera'
-
+  import StudentClassQueryOpera from './studentClassQueryOpera'
   export default {
     components: {
-      ClassQueryOpera
+      StudentClassQueryOpera
     },
     data () {
       return {
@@ -344,7 +343,7 @@
         pageSize: 20,
         totalPage: 0,
         classQueryListLoading: false,
-        classQueryOperaVisible: false,
+        studentClassQueryOperaVisible: false,
         bdStudentId: 0,
         studentName: '',
         bdClassesId: 0,
@@ -500,10 +499,10 @@
         })
       },
       // 课程点击
-      classClick (bdClassesId, className, startTime, endTime, arrangeDate, classWay, studentName) {
-        this.classQueryOperaVisible = true
+      classClick (id, bdStudentId, className, startTime, endTime, arrangeDate) {
+        this.studentClassQueryOperaVisible = true
         this.$nextTick(() => {
-          this.$refs.classQueryOpera.init(bdClassesId, className, startTime, endTime, arrangeDate, classWay, studentName)
+          this.$refs.studentClassQueryOpera.init(id, bdStudentId, className, startTime, endTime, arrangeDate)
         })
       },
       formatClassesName: function (row, column) {

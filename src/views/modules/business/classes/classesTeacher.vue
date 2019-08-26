@@ -6,7 +6,7 @@
     <div style="text-align: center">
       <el-transfer
         v-model="currentValue"
-        :titles="['待选','已选']"
+        :titles="['待选教师','任课教师']"
         :data="teacherList"
         :filterable="true"
         :props="{key:'id',label:'name'}"

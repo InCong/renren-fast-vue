@@ -156,7 +156,7 @@
         this.type = 'notice'
         if (this.noticeText && this.checkList.length > 0) {
           this.$http({
-            url: this.$http.adornUrl('/business/studentclassarrange/sendWeChatNoticeToStudent'),
+            url: this.$http.adornUrl('/business/studentclassarrange/sendWeChatNotice'),
             method: 'post',
             data: this.$http.adornData({
               'id': this.id,

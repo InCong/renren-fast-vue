@@ -7,7 +7,7 @@
     <el-divider content-position="left"><span style="color: #00a0e9">日期与时间</span></el-divider>
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
-        <el-radio-group v-model="dataForm.arrangeDate">
+        <el-radio-group v-model="dataForm.arrangeDate" @change="clearClassSelect">
           <el-radio-button v-for="item in dayList" v-bind:key="item" :label="item" style="margin-right: 20px">{{item.substring(5)}}</el-radio-button>
         </el-radio-group>
       </div>
@@ -41,11 +41,11 @@
       <el-divider content-position="left"><span style="color: #00a0e9">课程</span></el-divider>
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
         <el-radio-group v-model="radioClassWay" @change="classWayChange" :disabled="classDisabled">
-          <el-radio-button v-for="item in classWayList" v-bind:key="item.id" :label="item.id" style="margin-right: 20px">{{item.name}}</el-radio-button>
+          <el-radio-button v-for="item in classWayList" :label="item" style="margin-right: 20px">{{item.name}}</el-radio-button>
         </el-radio-group>
         <el-button type="success" @click="specialClassClick">待定班课</el-button>
       </div>
-      <div style="text-align: center;margin-bottom: 30px">
+      <div style="text-align: center;margin-bottom: 20px">
         <el-radio-group v-model="dataForm.bdClassesStudentId" @change="classChange">
           <el-tooltip v-for="item in classesList" v-bind:key="item.id" effect="light" placement="right">
             <div slot="content" style="text-align: left;font-size: 16px">
@@ -56,6 +56,9 @@
             <el-radio-button :label="item.id + '_' + item.length" style="margin-right: 20px">{{item.className}}</el-radio-button>
           </el-tooltip>
         </el-radio-group>
+      </div>
+      <div style="text-align: center;margin-bottom: 10px">
+        <span v-if="count !== ''">已安排学员数量：{{count}}</span>
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
       <div style="text-align: center;margin-top: 30px">
@@ -94,8 +97,10 @@
         classLength: 0,
         isSpecialClassClick: false,
         selectReferenceClassVisible: false,
+        count: '',
         // 以下是单选的变量
         radioClassWay: '',
+        radioClassWayType: '',
         radioType: '1',
         // 以下是表单变量
         dataForm: {
@@ -154,10 +159,12 @@
           this.dataForm.bdClassesStudentId = ''
           this.dataForm.remark = ''
           this.radioClassWay = ''
+          this.radioClassWayType = ''
           this.visible = false
           this.classDisabled = true
           this.classLength = 0
           this.isSpecialClassClick = false
+          this.count = ''
           this.$emit('refreshClassArrange')
         }
       },
@@ -183,6 +190,12 @@
         } else if (this.dataForm.bdClassesStudentId === '') {
           this.$message({
             message: '请选择指定学员的课程！！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else if (this.radioClassWayType === 1 && this.count > 0) {
+          this.$message({
+            message: '该教师在该日期时间内已安排一对一的课程，无法再安排其它一对一课程！！',
             type: 'warning',
             duration: 1500
           })
@@ -232,6 +245,7 @@
                       this.dataForm.bdClassesStudentId = ''
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
+                      this.radioClassWayType = ''
                       this.classDisabled = true
                     } else {
                       this.$message({
@@ -270,6 +284,7 @@
                       this.dataForm.bdClassesStudentId = ''
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
+                      this.radioClassWayType = ''
                     } else {
                       this.$message({
                         message: data.msg,
@@ -305,16 +320,20 @@
           let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
           this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
         }
+        this.clearClassSelect()
       },
       // 课程类型选择变更事件
       classWayChange () {
+        this.clearClassSelect()
+        let classWay = this.radioClassWay.id
+        this.radioClassWayType = this.radioClassWay.type
         this.$http({
           url: this.$http.adornUrl('/business/studentclassarrange/targetClassArrange'),
           method: 'post',
           data: this.$http.adornData({
             'bdTeacherId': this.bdTeacherId,
             'bdStudentId': this.bdStudentId,
-            'bdClassWayId': this.radioClassWay
+            'bdClassWayId': classWay
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -327,10 +346,27 @@
       },
       // 课程选择变更事件
       classChange (bdClassesStudentId) {
+        let id = bdClassesStudentId.substring(0, bdClassesStudentId.indexOf('_'))
         if (!this.isSpecialClassClick) {
           this.classLength = bdClassesStudentId.substring(bdClassesStudentId.indexOf('_') + 1)
           let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
           this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
+          // 获取该课程在指定日期时间里的学员数量
+          this.$http({
+            url: this.$http.adornUrl('/business/studentclassarrange/getClassStudentCount'),
+            method: 'post',
+            data: this.$http.adornData({
+              'bdClassesStudentId': id,
+              'arrangeDate': this.dataForm.arrangeDate,
+              'startTime': this.dataForm.startTime
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.count = data.count
+            } else {
+              this.count = 0
+            }
+          })
         } else {
           this.selectReferenceClassVisible = true
           this.$nextTick(() => {
@@ -344,7 +380,7 @@
                 endDate = this.dayList[i]
               }
             }
-            this.$refs.selectReferenceClass.init(bdClassesStudentId.substring(0, bdClassesStudentId.indexOf('_')), this.dayList[0], endDate)
+            this.$refs.selectReferenceClass.init(id, this.dayList[0], endDate)
           })
         }
       },
@@ -365,6 +401,7 @@
         this.dataForm.endTime = ''
         this.dataForm.bdClassesStudentId = ''
         this.radioClassWay = ''
+        this.radioClassWayType = ''
         this.classLength = 0
         this.classDisabled = true
         this.$http({
@@ -386,6 +423,11 @@
       // 关闭时的逻辑
       closeDialog () {
         this.over()
+      },
+      // 清除课程选择
+      clearClassSelect () {
+        this.dataForm.bdClassesStudentId = ''
+        this.count = ''
       }
     }
   }
