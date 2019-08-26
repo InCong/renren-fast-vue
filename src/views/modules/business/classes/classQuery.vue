@@ -357,8 +357,10 @@
       }
     },
     activated () {
-      this.getTeacherList()
       this.initHeader()
+    },
+    mounted () {
+      this.getTeacherList()
     },
     methods: {
       // 修改教师与学员表格列头样式

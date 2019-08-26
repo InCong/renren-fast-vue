@@ -44,6 +44,7 @@
           <el-tag v-if="scope.row.type === 1" size="small">一对一</el-tag>
           <el-tag v-if="scope.row.type === 2" size="small">一对多</el-tag>
           <el-tag v-if="scope.row.type === 3" size="small">多对多</el-tag>
+          <el-tag v-if="scope.row.type === 4" size="small">多对一</el-tag>
         </template>
       </el-table-column>
       <el-table-column

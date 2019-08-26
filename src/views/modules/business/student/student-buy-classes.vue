@@ -109,6 +109,7 @@
               data: this.$http.adornData({
                 'bdStudentId': this.studentId,
                 'bdClassesId': this.dataForm.bdClassesId,
+                'bdTeacherId': this.dataForm.bdTeacherId,
                 'num': this.dataForm.num,
                 'remainNum': this.dataForm.remainNum,
                 'remark': this.dataForm.remark
