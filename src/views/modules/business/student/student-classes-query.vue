@@ -76,7 +76,7 @@
           label="操作">
           <template slot-scope="scope">
             <el-row style="margin-bottom:10px">
-              <el-col :span="12"><el-button size="mini" @click="updateClass(scope.row.id, scope.row.teacherName, scope.row.className)">修改</el-button></el-col>
+              <el-col :span="12"><el-button size="mini" @click="updateClass(scope.row.id, scope.row.teacherName, scope.row.className, scope.row.bdClassesId, scope.row.bdTeacherId)">修改</el-button></el-col>
               <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
             </el-row>
           </template>
@@ -190,10 +190,10 @@
         })
       },
       // 更新课时
-      updateClass: function (id, teacherName, className) {
+      updateClass: function (id, teacherName, className, bdClassesId, bdTeacherId) {
         this.studentUpdateClassesNumVisible = true
         this.$nextTick(() => {
-          this.$refs.studentUpdateClassesNum.init(id, teacherName, className)
+          this.$refs.studentUpdateClassesNum.init(id, teacherName, className, bdClassesId, bdTeacherId)
         })
       }
     }

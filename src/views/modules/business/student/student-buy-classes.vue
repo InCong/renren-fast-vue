@@ -17,7 +17,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="课程" prop="bdClassesId">
-        <el-select v-model="dataForm.bdClassesId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable" @change="handleClassChange">
+        <el-select v-model="dataForm.bdClassesId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable">
           <el-option
             v-for="item in classList"
             :key="item.bdClassesId"
@@ -25,20 +25,6 @@
             :value="item.bdClassesId">
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="其它教师" prop="classTeacherSelect">
-        <el-select v-model="classTeacherSelect" clearable placeholder="选择其它教师作为该课程的任课教师" filterable multiple :disabled="classTeacherDisable" style="width: 50%">
-          <el-option
-            v-for="item in classTeacherList"
-            :key="item.bdTeacherId"
-            :label="item.bdTeacherName"
-            :value="item.bdTeacherId">
-          </el-option>
-        </el-select>
-        <el-tooltip placement="top" effect="light">
-          <div slot="content">选择其它教师，系统则会认为所选择的教师都一起任教该课程、指导该学员。</div>
-          <i class="el-icon-question"></i>
-        </el-tooltip>
       </el-form-item>
       <el-form-item label="课时" prop="num">
         <el-input v-model="dataForm.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
@@ -90,12 +76,7 @@
         teacherList: [],
         // 课程
         classList: [],
-        classSelectDisable: true,
-        // 课程教师关系
-        classTeacherList: [],
-        classTeacherPreSelect: [],
-        classTeacherSelect: [],
-        classTeacherDisable: true
+        classSelectDisable: true
       }
     },
     methods: {
@@ -126,10 +107,6 @@
           this.teacherList = []
           this.classList = []
           this.classSelectDisable = true
-          this.classTeacherList = []
-          this.classTeacherPreSelect = []
-          this.classTeacherSelect = []
-          this.classTeacherDisable = true
         }
       },
       dataFormSubmit () {
@@ -188,30 +165,6 @@
         } else {
           this.classSelectDisable = true
           this.classList = []
-        }
-      },
-      // 课程选择变更
-      handleClassChange () {
-        if (this.dataForm.bdClassesId != null && this.dataForm.bdClassesId !== '') {
-          this.classTeacherDisable = false
-          this.$http({
-            url: this.$http.adornUrl('/business/classesteacher/listTeacherByBdClassesId'),
-            method: 'post',
-            data: this.$http.adornData({
-              'bdClassesId': this.dataForm.bdClassesId,
-              'bdTeacherId': this.dataForm.bdTeacherId
-            })
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              this.classTeacherList = data.list
-            } else {
-              this.classTeacherList = []
-            }
-          })
-        } else {
-          this.classTeacherDisable = true
-          this.classTeacherPreSelect = []
-          this.classTeacherSelect = []
         }
       },
       // 关闭时的逻辑
