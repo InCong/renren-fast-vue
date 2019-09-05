@@ -12,9 +12,33 @@
         </el-radio-group>
       </div>
       <div style="text-align: center;margin-bottom: 30px">
+        <el-switch
+          v-model="isTimeSelect"
+          active-text="选择时间"
+          inactive-text="填写时间"
+          style="margin-right: 10px">
+        </el-switch>
+        <el-input
+          v-model="hours"
+          v-if="!isTimeSelect"
+          type="number"
+          placeholder="时"
+          style="width: 100px"
+          @change="hourChange">
+        </el-input>
+        <a v-if="!isTimeSelect">：</a>
+        <el-input
+          v-model="minutes"
+          v-if="!isTimeSelect"
+          type="number"
+          placeholder="分"
+          style="width: 100px"
+          @change="minuteChange">
+        </el-input>
         <el-time-select
           placeholder="起始时间"
           v-model="dataForm.startTime"
+          v-if="isTimeSelect"
           @change="startTimeChange"
           :editable="false"
           :clearable="false"
@@ -32,7 +56,7 @@
           :disabled="true"
           :picker-options="{
               start: '07:00',
-              step: '00:15',
+              step: '00:01',
               end: '23:00',
               minTime: dataForm.startTime
             }">
@@ -53,7 +77,7 @@
               <el-row style="margin-bottom: 10px"><span>课程时长（分钟）：</span>{{item.length}}</el-row>
               <el-row><span>备注：</span>{{item.remark}}</el-row>
             </div>
-            <el-radio-button :label="item.id + '_' + item.length" style="margin-right: 20px">{{item.className}}</el-radio-button>
+            <el-radio-button :label="item.id + '_' + item.length" style="margin-right: 20px;margin-bottom: 10px">{{item.className}}</el-radio-button>
           </el-tooltip>
         </el-radio-group>
       </div>
@@ -78,10 +102,12 @@
 <script>
   import moment from 'moment'
   import 'moment/locale/zh-cn'
+  import DatePicker from 'vue2-datepicker'
   import SelectReferenceClass from './selectReferenceClass'
   export default {
     components: {
-      SelectReferenceClass
+      SelectReferenceClass,
+      DatePicker
     },
     data () {
       return {
@@ -98,6 +124,10 @@
         isSpecialClassClick: false,
         selectReferenceClassVisible: false,
         count: '',
+        // 时间选择或填写的模式
+        isTimeSelect: true,
+        hours: null,
+        minutes: null,
         // 以下是单选的变量
         radioClassWay: '',
         radioClassWayType: '',
@@ -165,11 +195,20 @@
           this.classLength = 0
           this.isSpecialClassClick = false
           this.count = ''
+          this.isTimeSelect = true
+          this.hours = ''
+          this.minutes = ''
           this.$emit('refreshClassArrange')
         }
       },
       dataFormSubmit: function () {
-        if (this.dataForm.arrangeDate === '') {
+        if (!this.isTimeSelect && this.hours < 7) {
+          this.$message({
+            message: '起始时间需要大于或等于7点！！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else if (this.dataForm.arrangeDate === '') {
           this.$message({
             message: '请选择安排日期！！',
             type: 'warning',
@@ -247,6 +286,8 @@
                       this.radioClassWay = ''
                       this.radioClassWayType = ''
                       this.classDisabled = true
+                      this.hours = ''
+                      this.minutes = ''
                     } else {
                       this.$message({
                         message: data.msg,
@@ -285,6 +326,8 @@
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
                       this.radioClassWayType = ''
+                      this.hours = ''
+                      this.minutes = ''
                     } else {
                       this.$message({
                         message: data.msg,
@@ -315,6 +358,11 @@
       startTimeChange () {
         if (this.dataForm.startTime !== '') {
           this.classDisabled = false
+          this.hours = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime).hour()
+          this.minutes = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime).minute()
+        } else {
+          this.hours = ''
+          this.minutes = ''
         }
         if (this.classLength > 0) {
           let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
@@ -428,6 +476,42 @@
       clearClassSelect () {
         this.dataForm.bdClassesStudentId = ''
         this.count = ''
+      },
+      // 数字左补零
+      prefixInt (num, length) {
+        return (Array(length).join('0') + num).slice(-length)
+      },
+      // 小时变化
+      hourChange () {
+        if (this.hours !== '') {
+          if (this.minutes === '') {
+            this.minutes = 0
+          }
+          this.classDisabled = false
+          this.dataForm.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
+          console.log(this.dataForm.startTime)
+        } else {
+          this.minutes = ''
+          this.dataForm.startTime = ''
+        }
+        if (this.classLength > 0) {
+          let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
+          this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
+        }
+      },
+      // 分钟变化
+      minuteChange () {
+        if (this.minutes !== '') {
+          this.dataForm.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
+        } else if (this.hours !== '' && this.minutes === '') {
+          this.minutes = 0
+          this.dataForm.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
+        }
+        console.log(this.dataForm.startTime)
+        if (this.classLength > 0) {
+          let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
+          this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
+        }
       }
     }
   }

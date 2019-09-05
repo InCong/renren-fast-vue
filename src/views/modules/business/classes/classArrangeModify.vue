@@ -14,9 +14,33 @@
       </el-date-picker>
     </div>
     <div style="text-align: center;margin-bottom: 30px">
+      <el-switch
+        v-model="isTimeSelect"
+        active-text="选择时间"
+        inactive-text="填写时间"
+        style="margin-right: 10px">
+      </el-switch>
+      <el-input
+        v-model="hours"
+        v-if="!isTimeSelect"
+        type="number"
+        placeholder="时"
+        style="width: 100px"
+        @change="hourChange">
+      </el-input>
+      <a v-if="!isTimeSelect">：</a>
+      <el-input
+        v-model="minutes"
+        v-if="!isTimeSelect"
+        type="number"
+        placeholder="分"
+        style="width: 100px"
+        @change="minuteChange">
+      </el-input>
       <el-time-select
         placeholder="起始时间"
         v-model="startTime"
+        v-if="isTimeSelect"
         @change="startTimeChange"
         :editable="false"
         :clearable="false"
@@ -34,7 +58,7 @@
         :disabled="true"
         :picker-options="{
             start: '07:00',
-            step: '00:15',
+            step: '00:01',
             end: '23:00',
             minTime: startTime
           }">
@@ -63,7 +87,10 @@
         endTime: '',
         bdTeacherId: '',
         length: 0,
-        remark: ''
+        remark: '',
+        isTimeSelect: true,
+        hours: '',
+        minutes: ''
       }
     },
     methods: {
@@ -73,6 +100,8 @@
         this.bdClassesStudentId = bdClassesStudentId
         this.arrangeDate = arrangeDate
         this.startTime = startTime
+        this.hours = moment(this.arrangeDate + ' ' + this.startTime).hour()
+        this.minutes = moment(this.arrangeDate + ' ' + this.startTime).minute()
         this.endTime = endTime
         this.bdTeacherId = bdTeacherId
         this.length = length
@@ -134,6 +163,41 @@
         })
       },
       startTimeChange () {
+        if (this.length > 0) {
+          let date = moment(this.arrangeDate + ' ' + this.startTime)
+          this.endTime = date.add(this.length, 'minutes').format('HH:mm')
+          this.hours = moment(this.arrangeDate + ' ' + this.startTime).hour()
+          this.minutes = moment(this.arrangeDate + ' ' + this.startTime).minute()
+        }
+      },
+      // 数字左补零
+      prefixInt (num, length) {
+        return (Array(length).join('0') + num).slice(-length)
+      },
+      hourChange () {
+        if (this.hours !== '') {
+          if (this.minutes === '') {
+            this.minutes = 0
+          }
+          this.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
+          console.log(this.startTime)
+        } else {
+          this.minutes = ''
+          this.startTime = ''
+        }
+        if (this.length > 0) {
+          let date = moment(this.arrangeDate + ' ' + this.startTime)
+          this.endTime = date.add(this.length, 'minutes').format('HH:mm')
+        }
+      },
+      minuteChange () {
+        if (this.minutes !== '') {
+          this.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
+        } else if (this.hours !== '' && this.minutes === '') {
+          this.minutes = 0
+          this.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
+        }
+        console.log(this.startTime)
         if (this.length > 0) {
           let date = moment(this.arrangeDate + ' ' + this.startTime)
           this.endTime = date.add(this.length, 'minutes').format('HH:mm')

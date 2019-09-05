@@ -20,7 +20,7 @@
       <el-button @click="studentArrangeClassClick" round type="primary">学员排课</el-button>
     </div>
     <el-row :gutter="10" style="padding-top: 10px">
-      <el-col :span="4">
+      <el-col :span="5">
         <el-card shadow="always">
           <el-row :gutter="5" style="margin-bottom: 10px">
             <el-col :span="16">
@@ -73,12 +73,13 @@
             :current-page="pageIndex"
             :page-sizes="[10, 20, 50, 100]"
             :page-size="pageSize"
+            :pager-count="5"
             :total="totalPage"
             layout="total, prev, pager, next">
           </el-pagination>
         </el-card>
       </el-col>
-      <el-col :span="20">
+      <el-col :span="19">
         <el-card shadow="always" style="background: #a2e1da">
           <el-row>
             <el-col :span="2" style="text-align: center;height: 37px"><div style="position: relative;top: 50%;transform: translateY(-50%);font-size: 16px">时间</div></el-col>
