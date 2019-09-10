@@ -112,11 +112,9 @@
               <el-row class="timeRow"><el-divider></el-divider></el-row>
               <el-row class="timeRow"><el-divider></el-divider></el-row>
               <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
             </div>
             <div style="position: relative">
               <el-col :span="2" style="text-align: center">
-                <el-row class="timeRow">6:00</el-row>
                 <el-row class="timeRow">7:00</el-row>
                 <el-row class="timeRow">8:00</el-row>
                 <el-row class="timeRow">9:00</el-row>
