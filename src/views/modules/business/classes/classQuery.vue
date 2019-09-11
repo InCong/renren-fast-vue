@@ -71,6 +71,7 @@
                 :hide-on-single-page="true"
                 :current-page="pageIndex"
                 :page-sizes="[10, 20, 50, 100]"
+                :pager-count="5"
                 :page-size="pageSize"
                 :total="totalPage"
                 layout="total, prev, pager, next">
