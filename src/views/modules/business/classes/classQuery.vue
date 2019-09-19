@@ -437,6 +437,10 @@
       // 选择完日期之后，自动填充列头
       changeRangeDate () {
         this.initHeader()
+        // 变更日期时，如果有选择教师或课程时，自动刷新课程表
+        if (this.bdTeacherId > 0) {
+          this.getClassQuery()
+        }
       },
       // 第一次初始化列头
       initHeader () {

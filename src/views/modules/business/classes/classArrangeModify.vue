@@ -3,6 +3,7 @@
     title="课程修改"
     :close-on-click-modal="false"
     :visible.sync="visible"
+    @close="closeDialog"
     append-to-body>
     <el-divider content-position="left"><span style="color: #00a0e9">排课日期与时间</span></el-divider>
     <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
@@ -25,7 +26,7 @@
         v-if="!isTimeSelect"
         type="number"
         placeholder="时"
-        style="width: 100px"
+        style="width: 80px"
         @change="hourChange">
       </el-input>
       <a v-if="!isTimeSelect">：</a>
@@ -34,13 +35,14 @@
         v-if="!isTimeSelect"
         type="number"
         placeholder="分"
-        style="width: 100px"
+        style="width: 80px"
         @change="minuteChange">
       </el-input>
       <el-time-select
         placeholder="起始时间"
         v-model="startTime"
         v-if="isTimeSelect"
+        style="width: 120px"
         @change="startTimeChange"
         :editable="false"
         :clearable="false"
@@ -54,6 +56,7 @@
       <el-time-select
         placeholder="结束时间"
         v-model="endTime"
+        style="width: 120px"
         :clearable="false"
         :disabled="true"
         :picker-options="{
@@ -63,6 +66,18 @@
             minTime: startTime
           }">
       </el-time-select>
+      <el-switch
+        v-model="isTimeChange"
+        active-text="修改时长"
+        style="margin-left: 10px">
+      </el-switch>
+      <el-input
+        v-model="length"
+        :disabled="!isTimeChange"
+        type="number"
+        style="width: 80px"
+        @change="classLengthChange">
+      </el-input>
     </div>
     <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
     <div style="text-align: center;margin-top: 30px">
@@ -90,7 +105,8 @@
         remark: '',
         isTimeSelect: true,
         hours: '',
-        minutes: ''
+        minutes: '',
+        isTimeChange: false
       }
     },
     methods: {
@@ -106,9 +122,16 @@
         this.bdTeacherId = bdTeacherId
         this.length = length
         this.remark = remark
+
+        // 组件看不见时调用
+        this.over = () => {
+          this.isTimeChange = false
+        }
       },
       dataFormSubmit () {
         let num = this.endTime.substr(0, 2) - this.startTime.substr(0, 2) + (this.endTime.substr(3, 2) - this.startTime.substr(3, 2)) / 60
+        // 四舍五入取整
+        num = Math.ceil(num)
         let remainNum = 0
         this.$http({
           url: this.$http.adornUrl(`/business/classesstudent/info/${this.bdClassesStudentId}`),
@@ -142,7 +165,11 @@
                   this.$message({
                     message: '保存成功！',
                     type: 'success',
-                    duration: 1500
+                    duration: 1500,
+                    onClose: () => {
+                      this.visible = false
+                      this.$emit('updateTimeData', this.arrangeDate, this.startTime, this.endTime, this.length)
+                    }
                   })
                 } else {
                   this.$message({
@@ -202,6 +229,16 @@
           let date = moment(this.arrangeDate + ' ' + this.startTime)
           this.endTime = date.add(this.length, 'minutes').format('HH:mm')
         }
+      },
+      classLengthChange () {
+        if (this.length > 0) {
+          let date = moment(this.arrangeDate + ' ' + this.startTime)
+          this.endTime = date.add(this.length, 'minutes').format('HH:mm')
+        }
+      },
+      // 关闭时的逻辑
+      closeDialog () {
+        this.over()
       }
     }
   }

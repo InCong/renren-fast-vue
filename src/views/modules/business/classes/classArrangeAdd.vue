@@ -8,7 +8,7 @@
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
         <el-radio-group v-model="dataForm.arrangeDate" @change="clearClassSelect">
-          <el-radio-button v-for="item in dayList" v-bind:key="item" :label="item" style="margin-right: 20px">{{item.substring(5)}}</el-radio-button>
+          <el-radio-button v-for="item in dayList" v-bind:key="item" v-if="item.length > 5" :label="item" style="margin-right: 20px">{{item.substring(5)}}</el-radio-button>
         </el-radio-group>
       </div>
       <div style="text-align: center;margin-bottom: 30px">
@@ -23,7 +23,7 @@
           v-if="!isTimeSelect"
           type="number"
           placeholder="时"
-          style="width: 100px"
+          style="width: 80px"
           @change="hourChange">
         </el-input>
         <a v-if="!isTimeSelect">：</a>
@@ -32,13 +32,14 @@
           v-if="!isTimeSelect"
           type="number"
           placeholder="分"
-          style="width: 100px"
+          style="width: 80px"
           @change="minuteChange">
         </el-input>
         <el-time-select
           placeholder="起始时间"
           v-model="dataForm.startTime"
           v-if="isTimeSelect"
+          style="width: 120px"
           @change="startTimeChange"
           :editable="false"
           :clearable="false"
@@ -52,6 +53,7 @@
         <el-time-select
           placeholder="结束时间"
           v-model="dataForm.endTime"
+          style="width: 120px"
           :clearable="false"
           :disabled="true"
           :picker-options="{
@@ -61,6 +63,19 @@
               minTime: dataForm.startTime
             }">
         </el-time-select>
+        <el-switch
+          v-model="isTimeChange"
+          active-text="修改时长"
+          :disabled="classLength <= 0"
+          style="margin-left: 10px">
+        </el-switch>
+        <el-input
+          v-model="classLength"
+          :disabled="!isTimeChange || classLength <= 0"
+          type="number"
+          style="width: 80px"
+          @change="classLengthChange">
+        </el-input>
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9">课程</span></el-divider>
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
@@ -128,6 +143,8 @@
         isTimeSelect: true,
         hours: null,
         minutes: null,
+        // 时长修改选择
+        isTimeChange: false,
         // 以下是单选的变量
         radioClassWay: '',
         radioClassWayType: '',
@@ -198,6 +215,7 @@
           this.isTimeSelect = true
           this.hours = ''
           this.minutes = ''
+          this.isTimeChange = false
           this.$emit('refreshClassArrange')
         }
       },
@@ -205,6 +223,12 @@
         if (!this.isTimeSelect && this.hours < 7) {
           this.$message({
             message: '起始时间需要大于或等于7点！！',
+            type: 'warning',
+            duration: 1500
+          })
+        } else if (this.classLength < 30) {
+          this.$message({
+            message: '课程时长不能小于30分钟！！',
             type: 'warning',
             duration: 1500
           })
@@ -241,6 +265,8 @@
         } else {
           // 先检查选定的学生课程所剩课时足不足够，若足够再保存
           let num = this.dataForm.endTime.substr(0, 2) - this.dataForm.startTime.substr(0, 2) + (this.dataForm.endTime.substr(3, 2) - this.dataForm.startTime.substr(3, 2)) / 60
+          // 四舍五入取整
+          num = Math.ceil(num)
           let remainNum = 0
           this.$http({
             url: this.$http.adornUrl(`/business/classesstudent/info/${this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_'))}`),
@@ -249,7 +275,7 @@
           }).then(({data}) => {
             if (data && data.code === 0) {
               remainNum = data.classesStudent.remainNum
-              if (remainNum < num) {
+              if (remainNum < 1) {
                 this.$message({
                   message: '当前剩余课时不足！最新剩余课时：' + remainNum,
                   type: 'warning',
@@ -288,6 +314,8 @@
                       this.classDisabled = true
                       this.hours = ''
                       this.minutes = ''
+                      this.isTimeChange = false
+                      this.classLength = 0
                     } else {
                       this.$message({
                         message: data.msg,
@@ -328,6 +356,8 @@
                       this.radioClassWayType = ''
                       this.hours = ''
                       this.minutes = ''
+                      this.isTimeChange = false
+                      this.classLength = 0
                     } else {
                       this.$message({
                         message: data.msg,
@@ -508,6 +538,13 @@
           this.dataForm.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
         }
         console.log(this.dataForm.startTime)
+        if (this.classLength > 0) {
+          let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
+          this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
+        }
+      },
+      // 时长变化
+      classLengthChange () {
         if (this.classLength > 0) {
           let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
           this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')

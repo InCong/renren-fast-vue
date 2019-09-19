@@ -33,7 +33,7 @@
         <el-button type="success" @click="noticeButtonClick">微信通知</el-button>
       </div>
       <!-- 弹窗，显示课程的时间段修改 -->
-      <class-arrange-modify v-if="classArrangeModifyVisible" ref="classArrangeModify"></class-arrange-modify>
+      <class-arrange-modify v-if="classArrangeModifyVisible" ref="classArrangeModify" @updateTimeData="updateTimeData"></class-arrange-modify>
       <!-- 弹窗，显示微信签到 -->
       <class-arrange-wechat-sign v-if="classArrangeWechatSignVisible" ref="classArrangeWechatSign" @signSuccess="signSuccess"></class-arrange-wechat-sign>
     </div>
@@ -232,6 +232,13 @@
             }
           })
         })
+      },
+      // 接收下级界面返回的数据并进行更新
+      updateTimeData (arrangeDate, startTime, endTime, length) {
+        this.arrangeDate = arrangeDate
+        this.startTime = startTime
+        this.endTime = endTime
+        this.length = length
       }
     }
   }
