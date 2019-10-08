@@ -8,7 +8,7 @@
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
         <el-radio-group v-model="dataForm.arrangeDate" @change="clearClassSelect">
-          <el-radio-button v-for="item in dayList" v-bind:key="item" v-if="item.length > 5" :label="item" style="margin-right: 20px">{{item.substring(5)}}</el-radio-button>
+          <el-radio-button v-for="item in dayList" v-bind:key="item.id" v-if="item.length > 5" :label="item" style="margin-right: 20px">{{item.substring(5)}}</el-radio-button>
         </el-radio-group>
       </div>
       <div style="text-align: center;margin-bottom: 30px">

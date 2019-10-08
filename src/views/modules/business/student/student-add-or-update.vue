@@ -135,15 +135,8 @@
             { required: true, message: '手机号码不能为空', trigger: 'blur' },
             { validator: validateMobile, trigger: 'blur' }
           ],
-          mobile2: [
-            { required: true, message: '手机号码不能为空', trigger: 'blur' },
-            { validator: validateMobile, trigger: 'blur' }
-          ],
           mobile3: [
             { validator: validateMobile, trigger: 'blur' }
-          ],
-          status: [
-            { required: true, message: '学员状态，0-未知，1-已缴费，2-未续费，9-其它不能为空', trigger: 'blur' }
           ]
         }
       }

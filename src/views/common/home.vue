@@ -176,21 +176,21 @@
       },
       // 获取本月课时数量
       getMonthClassesNum () {
-        this.monthClassesName = ['钢琴','跳舞','尤克里里','钢琴高级','跳舞1','跳舞2','跳舞3','尤克里里高级','尤克里里1','尤克里里2', '尤克里里3']
+        this.monthClassesName = ['钢琴', '跳舞', '尤克里里', '钢琴高级', '跳舞1', '跳舞2', '跳舞3', '尤克里里高级', '尤克里里1', '尤克里里2', '尤克里里3']
         this.monthClassesTypeData = [
-          {value:335, name:'钢琴'},
-          {value:679, name:'跳舞'},
-          {value:1548, name:'尤克里里'}
+          {value: 335, name: '钢琴'},
+          {value: 679, name: '跳舞'},
+          {value: 1548, name: '尤克里里'}
         ]
         this.monthClassesData = [
-          {value:335, name:'钢琴高级'},
-          {value:310, name:'跳舞1'},
-          {value:234, name:'跳舞2'},
-          {value:135, name:'跳舞3'},
-          {value:1048, name:'尤克里里高级'},
-          {value:251, name:'尤克里里1'},
-          {value:147, name:'尤克里里2'},
-          {value:102, name:'尤克里里3'}
+          {value: 335, name: '钢琴高级'},
+          {value: 310, name: '跳舞1'},
+          {value: 234, name: '跳舞2'},
+          {value: 135, name: '跳舞3'},
+          {value: 1048, name: '尤克里里高级'},
+          {value: 251, name: '尤克里里1'},
+          {value: 147, name: '尤克里里2'},
+          {value: 102, name: '尤克里里3'}
         ]
       },
       // 获取未来7天的课时数量
