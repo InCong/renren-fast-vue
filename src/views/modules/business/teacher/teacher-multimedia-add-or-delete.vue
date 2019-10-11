@@ -131,6 +131,7 @@
         this.bdTeacherId = teacherId
         this.typeId = typeId
         this.url = this.$http.adornUrl(`/business/teachermultimedia/upload?token=${this.$cookie.get('token')}&teacherId=${teacherId}&bdOrgId=${bdOrgId}&typeId=${typeId}`)
+        // console.log(this.url)
         this.dataListLoading = true
         this.$http({
           url: this.$http.adornUrl('/business/teachermultimedia/list'),
@@ -159,6 +160,8 @@
           this.activeName = 'pictureUpload'
           this.isPictureUploadShow = true
           this.isVideoUploadShow = false
+          this.num = 0
+          this.successNum = 0
         }
       },
       handleTabClick (tab, event) {
@@ -179,7 +182,7 @@
       // 图片上传的相关事件
       handlePictureRemove (file, fileList) {
         if (file.status === 'success') {
-          console.log(file, fileList)
+          // console.log(file, fileList)
           this.$http({
             url: this.$http.adornUrl('/business/teachermultimedia/deleteFromOss'),
             method: 'post',
@@ -225,6 +228,7 @@
         this.fileList = fileList
         this.successNum++
         if (response && response.code === 0) {
+          // console.log(this.num, this.successNum)
           if (this.num === this.successNum) {
             this.$confirm('操作成功, 是否继续操作?', '提示', {
               confirmButtonText: '确定',
@@ -318,7 +322,7 @@
       },
       handleVideoRemove (file, fileList) {
         if (file.status === 'success') {
-          console.log(file, fileList)
+          // console.log(file, fileList)
           this.$http({
             url: this.$http.adornUrl('/business/teachermultimedia/deleteFromOss'),
             method: 'post',

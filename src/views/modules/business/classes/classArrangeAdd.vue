@@ -79,10 +79,10 @@
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9">课程</span></el-divider>
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
-        <el-radio-group v-model="radioClassWay" @change="classWayChange" :disabled="classDisabled">
-          <el-radio-button v-for="item in classWayList" :label="item" style="margin-right: 20px">{{item.name}}</el-radio-button>
+        <el-radio-group v-model="radioClassWay" @change="classWayChange">
+          <el-radio-button v-for="item in classWayList" v-bind:key="item.id" :label="item" style="margin-right: 20px">{{item.name}}</el-radio-button>
         </el-radio-group>
-        <el-button type="success" @click="specialClassClick">待定班课</el-button>
+        <el-button type="success" @click="specialClassClick">班课参考</el-button>
       </div>
       <div style="text-align: center;margin-bottom: 20px">
         <el-radio-group v-model="dataForm.bdClassesStudentId" @change="classChange">
@@ -134,7 +134,7 @@
         dayList: [],
         classWayList: [],
         classesList: [],
-        classDisabled: true,
+        // classDisabled: true,
         classLength: 0,
         isSpecialClassClick: false,
         selectReferenceClassVisible: false,
@@ -208,7 +208,7 @@
           this.radioClassWay = ''
           this.radioClassWayType = ''
           this.visible = false
-          this.classDisabled = true
+          // this.classDisabled = true
           this.classLength = 0
           this.isSpecialClassClick = false
           this.count = ''
@@ -311,7 +311,7 @@
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
                       this.radioClassWayType = ''
-                      this.classDisabled = true
+                      // this.classDisabled = true
                       this.hours = ''
                       this.minutes = ''
                       this.isTimeChange = false
@@ -387,7 +387,7 @@
       // 开始时间变更
       startTimeChange () {
         if (this.dataForm.startTime !== '') {
-          this.classDisabled = false
+          // this.classDisabled = false
           this.hours = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime).hour()
           this.minutes = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime).minute()
         } else {
@@ -455,7 +455,11 @@
                 break
               }
               if (i === 6) {
-                endDate = this.dayList[i]
+                if (this.dayList[i] != null) {
+                  endDate = this.dayList[i]
+                } else {
+                  endDate = this.dayList[0]
+                }
               }
             }
             this.$refs.selectReferenceClass.init(id, this.dayList[0], endDate)
@@ -481,7 +485,7 @@
         this.radioClassWay = ''
         this.radioClassWayType = ''
         this.classLength = 0
-        this.classDisabled = true
+        // this.classDisabled = true
         this.$http({
           url: this.$http.adornUrl('/business/studentclassarrange/targetClassArrange'),
           method: 'post',
@@ -517,7 +521,7 @@
           if (this.minutes === '') {
             this.minutes = 0
           }
-          this.classDisabled = false
+          // this.classDisabled = false
           this.dataForm.startTime = this.prefixInt(this.hours, 2) + ':' + this.prefixInt(this.minutes, 2)
           console.log(this.dataForm.startTime)
         } else {

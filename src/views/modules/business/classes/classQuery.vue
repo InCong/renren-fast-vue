@@ -1,10 +1,16 @@
 <template>
   <div class="mod-config">
     <div style="text-align: center">
+      <el-button
+        type="primary"
+        @click="lastWeekClick"
+        style="margin-right: 10px">
+        上一周
+      </el-button>
       <el-date-picker
         v-model="rangeDate"
         type="daterange"
-        align="right"
+        align="center"
         range-separator="——"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
@@ -13,6 +19,12 @@
         :picker-options="pickerOptions"
         @change="changeRangeDate">
       </el-date-picker>
+      <el-button
+        type="primary"
+        @click="nextWeekClick"
+        style="margin-left: 10px">
+        下一周
+      </el-button>
     </div>
     <el-row :gutter="10" style="padding-top: 10px">
       <el-col :sm="8" :lg="5" :xl="4">
@@ -265,7 +277,7 @@
                   </el-tooltip>
                 </div>
               </el-col>
-              <el-col :sm="3" :xl="3"class="classArrangeCol">
+              <el-col :sm="3" :xl="3" class="classArrangeCol">
                 <div v-for="(item, index) in dayList7" v-bind:key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
@@ -548,6 +560,20 @@
       },
       formatClassesName: function (row, column) {
         return row.bdClassesName.substring(0, row.bdClassesName.indexOf('('))
+      },
+      // 快速选择上一周
+      lastWeekClick () {
+        let startDate = this.rangeDate[0]
+        let endDate = this.rangeDate[1]
+        this.rangeDate = [moment(startDate).add(-7, 'days').format('YYYY-MM-D'), moment(endDate).add(-7, 'days').format('YYYY-MM-D')]
+        this.changeRangeDate()
+      },
+      // 快速选择下一周
+      nextWeekClick () {
+        let startDate = this.rangeDate[0]
+        let endDate = this.rangeDate[1]
+        this.rangeDate = [moment(startDate).add(7, 'days').format('YYYY-MM-D'), moment(endDate).add(7, 'days').format('YYYY-MM-D')]
+        this.changeRangeDate()
       }
     }
   }

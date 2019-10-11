@@ -13,6 +13,13 @@
         <el-button type="primary" @click="modifyButtonClick">课程修改</el-button>
         <el-button type="danger" @click="deleteButtonClick">删除课程</el-button>
       </div>
+      <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">自动提醒</span></el-divider>
+      <div style="margin-top: 30px;margin-bottom: 30px">
+        <el-switch
+          v-model="isAutoRemind"
+          active-text="是否自动提醒">
+        </el-switch>
+      </div>
       <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">发送通知</span></el-divider>
       <div style="margin-top: 30px">
         <el-checkbox-group v-model="checkList">
@@ -66,7 +73,8 @@
         classArrangeModifyVisible: false,
         classArrangeWechatSignVisible: false,
         remark: '',
-        checkList: ['学员', '教师']
+        checkList: ['学员', '教师'],
+        isAutoRemind: false
       }
     },
     methods: {
@@ -95,6 +103,7 @@
           this.type = ''
           this.isModify = false
           this.noticeText = ''
+          this.isAutoRemind = false
         }
       },
       // 关闭时的逻辑

@@ -1,10 +1,16 @@
 <template>
   <div class="mod-config">
     <div style="text-align: center">
+      <el-button
+        type="primary"
+        @click="lastWeekClick"
+        style="margin-right: 10px">
+        上一周
+      </el-button>
       <el-date-picker
         v-model="rangeDate"
         type="daterange"
-        align="right"
+        align="center"
         range-separator="——"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
@@ -13,10 +19,22 @@
         :picker-options="pickerOptions"
         @change="changeRangeDate">
       </el-date-picker>
+      <el-button
+        type="primary"
+        @click="nextWeekClick"
+        style="margin-left: 10px">
+        下一周
+      </el-button>
     </div>
     <div>
-      <el-button style="margin-left: 23px" @click="teacherArrangeClassClick" round type="primary">教师排课</el-button>
-      <el-button @click="studentArrangeClassClick" round type="primary">学员排课</el-button>
+      <el-row>
+        <el-col :sm="8" :lg="5" :xl="4" style="text-align: center">
+<!--          <el-button style="margin-left: 23px" @click="teacherArrangeClassClick" round type="primary">教师排课</el-button>-->
+          <el-button @click="studentArrangeClassClick" round type="primary">学员排课</el-button>
+        </el-col>
+        <el-col :sm="16" :lg="19" :xl="20">
+        </el-col>
+      </el-row>
     </div>
     <div>
       <el-row :gutter="10" style="padding-top: 10px">
@@ -159,8 +177,8 @@
                     <el-row class="timeRow">22:00</el-row>
                     <el-row class="timeRow">23:00</el-row>
                   </el-col>
-                  <el-col :sm="3" :xl="3" class="classArrangeCol">
-                    <div v-for="(item, index) in dayList1" v-bind:key="item.id" >
+                  <el-col :sm="3" :xl="3" class="classArrangeCol" v-on:dblclick.native="colClick(day1)">
+                    <div v-for="(item, index) in dayList1" v-bind:key="item.id" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
                       <el-tooltip effect="light" placement="right">
                         <div slot="content" style="text-align: left;font-size: 18px">
                           <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
@@ -183,8 +201,8 @@
                       </el-tooltip>
                     </div>
                   </el-col>
-                  <el-col :sm="3" :xl="3" class="classArrangeCol">
-                    <div v-for="(item, index) in dayList2" v-bind:key="item.id">
+                  <el-col :sm="3" :xl="3" class="classArrangeCol" v-on:dblclick.native="colClick(day2)">
+                    <div v-for="(item, index) in dayList2" v-bind:key="item.id" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
                       <el-tooltip effect="light" placement="right">
                         <div slot="content" style="text-align: left;font-size: 18px">
                           <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
@@ -207,8 +225,8 @@
                       </el-tooltip>
                     </div>
                   </el-col>
-                  <el-col :sm="3" :xl="3" class="classArrangeCol">
-                    <div v-for="(item, index) in dayList3" v-bind:key="item.id">
+                  <el-col :sm="3" :xl="3" class="classArrangeCol" v-on:dblclick.native="colClick(day3)">
+                    <div v-for="(item, index) in dayList3" v-bind:key="item.id" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
                       <el-tooltip effect="light" placement="right">
                         <div slot="content" style="text-align: left;font-size: 18px">
                           <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
@@ -231,8 +249,8 @@
                       </el-tooltip>
                     </div>
                   </el-col>
-                  <el-col :sm="3" :xl="3" class="classArrangeCol">
-                    <div v-for="(item, index) in dayList4" v-bind:key="item.id">
+                  <el-col :sm="3" :xl="3" class="classArrangeCol" v-on:dblclick.native="colClick(day4)">
+                    <div v-for="(item, index) in dayList4" v-bind:key="item.id" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
                       <el-tooltip effect="light" placement="right">
                         <div slot="content" style="text-align: left;font-size: 18px">
                           <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
@@ -255,8 +273,8 @@
                       </el-tooltip>
                     </div>
                   </el-col>
-                  <el-col :sm="3" :xl="3" class="classArrangeCol">
-                    <div v-for="(item, index) in dayList5" v-bind:key="item.id">
+                  <el-col :sm="3" :xl="3" class="classArrangeCol" v-on:dblclick.native="colClick(day5)">
+                    <div v-for="(item, index) in dayList5" v-bind:key="item.id" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
                       <el-tooltip effect="light" placement="right">
                         <div slot="content" style="text-align: left;font-size: 18px">
                           <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
@@ -279,8 +297,8 @@
                       </el-tooltip>
                     </div>
                   </el-col>
-                  <el-col :sm="3" :xl="3" class="classArrangeCol">
-                    <div v-for="(item, index) in dayList6" v-bind:key="item.id">
+                  <el-col :sm="3" :xl="3" class="classArrangeCol" v-on:dblclick.native="colClick(day6)">
+                    <div v-for="(item, index) in dayList6" v-bind:key="item.id" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
                       <el-tooltip effect="light" placement="right">
                         <div slot="content" style="text-align: left;font-size: 18px">
                           <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
@@ -303,8 +321,8 @@
                       </el-tooltip>
                     </div>
                   </el-col>
-                  <el-col :sm="3" :xl="3" class="classArrangeCol">
-                    <div v-for="(item, index) in dayList7" v-bind:key="item.id">
+                  <el-col :sm="3" :xl="3" class="classArrangeCol" v-on:dblclick.native="colClick(day7)">
+                    <div v-for="(item, index) in dayList7" v-bind:key="item.id" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
                       <el-tooltip effect="light" placement="right">
                         <div slot="content" style="text-align: left;font-size: 18px">
                           <el-row><i class="el-icon-user-solid toolTipsContent"></i>{{item.studentName}}</el-row>
@@ -409,7 +427,8 @@
         studentName: '',
         classArrangeAddVisible: false,
         classArrangeOperaVisible: false,
-        queryName: ''
+        queryName: '',
+        isMouseEnter: false
       }
     },
     activated () {
@@ -628,6 +647,37 @@
       // 判断是否超时但未签到
       isSignOver (arrangeDate, endTime) {
         return moment() > moment(arrangeDate + ' ' + endTime)
+      },
+      // 快速选择上一周
+      lastWeekClick () {
+        let startDate = this.rangeDate[0]
+        let endDate = this.rangeDate[1]
+        this.rangeDate = [moment(startDate).add(-7, 'days').format('YYYY-MM-D'), moment(endDate).add(-7, 'days').format('YYYY-MM-D')]
+        this.changeRangeDate()
+      },
+      // 快速选择下一周
+      nextWeekClick () {
+        let startDate = this.rangeDate[0]
+        let endDate = this.rangeDate[1]
+        this.rangeDate = [moment(startDate).add(7, 'days').format('YYYY-MM-D'), moment(endDate).add(7, 'days').format('YYYY-MM-D')]
+        this.changeRangeDate()
+      },
+      // 列空白处双击事件，如果鼠标没移入课程方块处且已选择学员时，会弹出排课的操作界面
+      colClick (day) {
+        if (!this.isMouseEnter && this.bdStudentId > 0) {
+          this.classArrangeAddVisible = true
+          this.$nextTick(() => {
+            this.$refs.classArrangeAdd.init(this.bdTeacherId, this.bdStudentId, this.studentName, [day])
+          })
+        }
+      },
+      // 鼠标进入课程的方块范围
+      mouseEnter () {
+        this.isMouseEnter = true
+      },
+      // 鼠标移出课程的方块范围
+      mouseLeave () {
+        this.isMouseEnter = false
       }
     }
   }
@@ -653,7 +703,8 @@
     margin-right: 2px;
   }
   .centerContent {
-    position: relative;top: 50%;transform: translateY(-50%)
+    position: relative;top: 50%;transform: translateY(-50%);
+    -webkit-user-select: none;
   }
   .contentBlock {
     background: lightskyblue;
