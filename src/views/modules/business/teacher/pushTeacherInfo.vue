@@ -30,6 +30,7 @@
         :current-page="pageIndex"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
+        :pager-count="5"
         :total="totalPage"
         layout="total, prev, pager, next">
       </el-pagination>
@@ -49,7 +50,7 @@
         studentName: '',
         dataList: [],
         pageIndex: 1,
-        pageSize: 20,
+        pageSize: 5,
         totalPage: 0,
         dataListLoading: false,
         bdStudentId: 0,
@@ -160,7 +161,7 @@
       },
       webSocketOnMessage: function (e) {
         if (e.data === 'sendArticle_success') {
-          console.log(e.data)
+          // console.log(e.data)
           this.$message({
             message: '推送成功！',
             type: 'success',
@@ -168,7 +169,7 @@
           })
           this.visible = false
         } else if (e.data === 'sendArticle_unbinding') {
-          console.log(e.data)
+          // console.log(e.data)
           this.$message({
             message: '该学员未绑定微信，无法推送！！！',
             type: 'error',
@@ -176,7 +177,7 @@
           })
         } else if (e.data === 'sendArticle_all_fail') {
           this.visible = false
-          console.log(e.data)
+          // console.log(e.data)
           this.$message({
             message: '该学员绑定的微信用户长时间未与公众号交互，因此无法推送消息给这些微信用户！！！',
             type: 'warning',
@@ -184,7 +185,7 @@
           })
         } else if (e.data === 'sendArticle_someone_fail') {
           this.visible = false
-          console.log(e.data)
+          // console.log(e.data)
           this.$message({
             message: '该学员绑定的个别微信用户长时间未与公众号交互，因此无法推送消息给这些微信用户！！！',
             type: 'warning',

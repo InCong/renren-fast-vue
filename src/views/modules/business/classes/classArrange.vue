@@ -418,7 +418,7 @@
         week7: '',
         // 以下是基本使用的变量
         pageIndex: 1,
-        pageSize: 20,
+        pageSize: 10,
         totalPage: 0,
         classArrangeListLoading: false,
         bdTeacherId: 0,
