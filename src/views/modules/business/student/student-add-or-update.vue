@@ -2,70 +2,129 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-    <el-form-item label="昵称" prop="nickname">
-      <el-input v-model="dataForm.nickname" placeholder="昵称"></el-input>
-    </el-form-item>
-    <el-form-item label="性别" prop="sex">
-      <el-radio-group v-model="dataForm.sex" placeholder="性别，1-男，0-女">
-        <el-radio :label="1">男</el-radio>
-        <el-radio :label="0">女</el-radio>
-      </el-radio-group>
-    </el-form-item>
-    <el-form-item label="出生日期" prop="birthday">
-      <el-date-picker
-        v-model="dataForm.birthday"
-        type="date"
-        placeholder="选择日期">
-      </el-date-picker>
-    </el-form-item>
-    <el-form-item label="手机号码" prop="mobile">
-      <el-input v-model="dataForm.mobile" placeholder="手机号码"></el-input>
-    </el-form-item>
-    <el-form-item label="联系电话1" prop="mobile2">
-      <el-input v-model="dataForm.mobile2" placeholder="紧急联系人电话"></el-input>
-    </el-form-item>
-    <el-form-item label="联系电话2" prop="mobile3">
-      <el-input v-model="dataForm.mobile3" placeholder="紧急联系人电话"></el-input>
-    </el-form-item>
-    <el-form-item label="邮箱地址" prop="email">
-      <el-input v-model="dataForm.email" placeholder="邮箱地址"></el-input>
-    </el-form-item>
-    <el-form-item label="所属地区" prop="bdAreaId">
-      <el-select v-model="dataForm.bdAreaId" clearable placeholder="请选择">
-        <el-option
-          v-for="item in areaList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="学员水平" prop="bdStudentLevelId">
-      <el-select v-model="dataForm.bdStudentLevelId" clearable placeholder="请选择">
-        <el-option
-          v-for="item in studentLevelList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="成员状态" prop="status">
-      <el-select v-model="dataForm.status" placeholder="请选择">
-        <el-option
-          v-for="item in statusList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
-    </el-form-item>
-    </el-form>
+    :visible.sync="visible"
+    @close="closeDialog">
+    <el-tabs v-model="activeName" type="border-card">
+      <el-tab-pane label="信息填写" name="editInfo">
+        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="100px">
+          <el-form-item label="昵称" prop="nickname">
+            <el-input v-model="dataForm.nickname" placeholder="昵称"></el-input>
+          </el-form-item>
+          <el-form-item label="性别" prop="sex">
+            <el-radio-group v-model="dataForm.sex" placeholder="性别，1-男，0-女">
+              <el-radio :label="1">男</el-radio>
+              <el-radio :label="0">女</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="出生日期" prop="birthday">
+            <el-date-picker
+              v-model="dataForm.birthday"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="手机号码" prop="mobile">
+            <el-input v-model="dataForm.mobile" placeholder="手机号码"></el-input>
+          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="联系电话1" prop="mobile2">
+                <el-input v-model="dataForm.mobile2" placeholder="紧急联系人电话"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系电话2" prop="mobile3">
+                <el-input v-model="dataForm.mobile3" placeholder="紧急联系人电话"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="邮箱地址" prop="email">
+            <el-input v-model="dataForm.email" placeholder="邮箱地址"></el-input>
+          </el-form-item>
+          <el-form-item label="入学时间" prop="entryTime">
+            <el-date-picker
+              v-model="dataForm.entryTime"
+              type="date"
+              placeholder="入学时间">
+            </el-date-picker>
+          </el-form-item>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="所属地区" prop="bdAreaId">
+                <el-select v-model="dataForm.bdAreaId" clearable placeholder="请选择">
+                  <el-option
+                    v-for="item in areaList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="学员水平" prop="bdStudentLevelId">
+                <el-select v-model="dataForm.bdStudentLevelId" clearable placeholder="请选择">
+                  <el-option
+                    v-for="item in studentLevelList"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="成员状态" prop="status">
+                <el-select v-model="dataForm.status" placeholder="请选择">
+                  <el-option
+                    v-for="item in statusList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="创建时间" prop="createTime">
+            <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
+      <el-tab-pane label="课程购买" name="buyClass" v-if="!dataForm.id">
+        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="80px">
+          <el-form-item label="教师" prop="bdTeacherId">
+            <el-select v-model="dataForm.bdTeacherId" clearable placeholder="先选择教师，再选择课程" filterable @change="handleITeacherChange">
+              <el-option
+                v-for="item in teacherList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="课程" prop="bdClassesId">
+            <el-select v-model="dataForm.bdClassesId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable">
+              <el-option
+                v-for="item in classList"
+                :key="item.bdClassesId"
+                :label="item.bdClassesName"
+                :value="item.bdClassesId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="课时" prop="num">
+            <el-input v-model="dataForm.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
+          </el-form-item>
+          <el-form-item label="剩余课时" prop="remainNum">
+            <el-input v-model="dataForm.remainNum" placeholder="剩余课时" :disabled="true" type="number"></el-input>
+          </el-form-item>
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
+    </el-tabs>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
@@ -78,6 +137,13 @@
   import moment from 'moment'
   export default {
     data () {
+      var valiNum = (rule, value, callback) => {
+        if (value <= 0) {
+          callback(new Error('课时不能小于等于0'))
+        } else {
+          callback()
+        }
+      }
       var validateMobile = (rule, value, callback) => {
         if (value && !isMobile(value)) {
           callback(new Error('手机号格式错误'))
@@ -87,7 +153,9 @@
       }
       return {
         visible: false,
+        isNew: true,
         dataForm: {
+          // 学员信息
           id: 0,
           nickname: '',
           sex: 0,
@@ -100,11 +168,18 @@
           mobile2: '',
           mobile3: '',
           email: '',
+          entryTime: '',
           bdAreaId: '',
           bdStudentLevelId: '',
           bdOrgId: 0,
           status: '',
-          createTime: ''
+          createTime: '',
+          // 购买课时
+          bdClassesId: '',
+          bdTeacherId: '',
+          num: 0,
+          remainNum: 0,
+          remark: ''
         },
         areaList: [],
         studentLevelList: [],
@@ -137,48 +212,87 @@
           ],
           mobile3: [
             { validator: validateMobile, trigger: 'blur' }
+          ],
+          bdClassesId: [
+            { required: true, message: '课程不能为空', trigger: 'blur' }
+          ],
+          num: [
+            { required: true, message: '课时数量不能为空', trigger: 'blur' },
+            { validator: valiNum, trigger: 'blur' }
           ]
-        }
+        },
+        // 课程购买的相关参数
+        activeName: 'editInfo',
+        // 教师
+        teacherList: [],
+        // 课程
+        classList: [],
+        classSelectDisable: true
       }
     },
     methods: {
       init (id) {
         this.dataForm.id = id
         this.visible = true
+        this.isNew = !this.dataForm.id;
         this.getAreaList()
         this.getStudentLevelList()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
-        })
-        if (this.dataForm.id) {
-          this.$http({
-            url: this.$http.adornUrl(`/business/student/info/${this.dataForm.id}`),
-            method: 'get',
-            params: this.$http.adornParams()
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              this.dataForm.nickname = data.student.nickname
-              this.dataForm.sex = data.student.sex
-              this.dataForm.year = data.student.year
-              this.dataForm.month = data.student.month
-              this.dataForm.day = data.student.day
-              this.dataForm.mobile = data.student.mobile
-              this.dataForm.mobile2 = data.student.mobile2
-              this.dataForm.mobile3 = data.student.mobile3
-              this.dataForm.email = data.student.email
-              this.dataForm.bdAreaId = data.student.bdAreaId
-              this.dataForm.bdStudentLevelId = data.student.bdStudentLevelId
-              this.dataForm.bdOrgId = data.student.bdOrgId
-              this.dataForm.status = data.student.status
-              this.dataForm.createTime = data.student.createTime
-              // 拼装出生年月日
-              if (this.dataForm.year) {
-                this.dataForm.birthday = moment(this.dataForm.year + '-' + this.dataForm.month + '-' + this.dataForm.day)
-              } else {
-                this.dataForm.birthday = ''
+          if (this.dataForm.id) {
+            this.$http({
+              url: this.$http.adornUrl(`/business/student/info/${this.dataForm.id}`),
+              method: 'get',
+              params: this.$http.adornParams()
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.dataForm.nickname = data.student.nickname
+                this.dataForm.sex = data.student.sex
+                this.dataForm.year = data.student.year
+                this.dataForm.month = data.student.month
+                this.dataForm.day = data.student.day
+                this.dataForm.mobile = data.student.mobile
+                this.dataForm.mobile2 = data.student.mobile2
+                this.dataForm.mobile3 = data.student.mobile3
+                this.dataForm.email = data.student.email
+                this.dataForm.entryTime = data.student.entryTime
+                this.dataForm.bdAreaId = data.student.bdAreaId
+                this.dataForm.bdStudentLevelId = data.student.bdStudentLevelId
+                this.dataForm.bdOrgId = data.student.bdOrgId
+                this.dataForm.status = data.student.status
+                this.dataForm.createTime = data.student.createTime
+                // 拼装出生年月日
+                if (this.dataForm.year) {
+                  this.dataForm.birthday = moment(this.dataForm.year + '-' + this.dataForm.month + '-' + this.dataForm.day)
+                } else {
+                  this.dataForm.birthday = ''
+                }
               }
-            }
-          })
+            })
+          } else {
+            this.$http({
+              url: this.$http.adornUrl('/business/teacher/list'),
+              method: 'get',
+              params: this.$http.adornParams({
+                'page': 1,
+                'limit': 1000,
+                'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+              })
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.teacherList = data.page.list
+              } else {
+                this.teacherList = []
+              }
+            })
+          }
+        })
+        // 组件看不见时调用，清空数组
+        this.over = () => {
+          this.activeName = 'editInfo'
+          this.teacherList = []
+          this.classList = []
+          this.classSelectDisable = true
         }
       },
       // 获取地区ID
@@ -214,7 +328,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/business/student/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/business/student/${!this.dataForm.id ? 'saveAndGetId' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
@@ -227,28 +341,92 @@
                 'mobile2': this.dataForm.mobile2,
                 'mobile3': this.dataForm.mobile3,
                 'email': this.dataForm.email,
+                'entryTime': moment(this.dataForm.entryTime).format('YYYY-MM-DD'),
                 'bdAreaId': this.dataForm.bdAreaId,
                 'bdStudentLevelId': this.dataForm.bdStudentLevelId,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
                 'status': this.dataForm.status
               })
             }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.$message({
-                  message: '操作成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                    this.$emit('refreshDataList')
+              if (data.id > 0) {
+                this.dataForm.id = data.id
+              }
+              // 新增时才对购买课时进行保存
+              if (this.dataForm.id && this.isNew) {
+                this.$http({
+                  url: this.$http.adornUrl('/business/classesstudent/save'),
+                  method: 'post',
+                  data: this.$http.adornData({
+                    'bdStudentId': this.dataForm.id,
+                    'bdClassesId': this.dataForm.bdClassesId,
+                    'bdTeacherId': this.dataForm.bdTeacherId,
+                    'num': this.dataForm.num,
+                    'remainNum': this.dataForm.remainNum,
+                    'remark': this.dataForm.remark
+                  })
+                }).then(({data}) => {
+                  if (data && data.code === 0) {
+                    this.$message({
+                      message: '操作成功',
+                      type: 'success',
+                      duration: 1500,
+                      onClose: () => {
+                        this.visible = false
+                        this.$emit('refreshDataList')
+                      }
+                    })
+                  } else {
+                    this.$message.error(data.msg)
                   }
                 })
               } else {
-                this.$message.error(data.msg)
+                if (data && data.code === 0) {
+                  this.$message({
+                    message: '操作成功',
+                    type: 'success',
+                    duration: 1500,
+                    onClose: () => {
+                      this.visible = false
+                      this.$emit('refreshDataList')
+                    }
+                  })
+                } else {
+                  this.$message.error(data.msg)
+                }
               }
             })
           }
         })
+      },
+      // 课时变更时，同步变更剩余课时
+      numChange () {
+        this.dataForm.remainNum = this.dataForm.num
+      },
+      // 教师选择器变更选择时的事件
+      handleITeacherChange () {
+        if (this.dataForm.bdTeacherId != null && this.dataForm.bdTeacherId !== '') {
+          this.classSelectDisable = false
+          this.$http({
+            url: this.$http.adornUrl('/business/classesteacher/listClassesByTeacherId'),
+            method: 'post',
+            data: this.$http.adornData({
+              'bdTeacherId': this.dataForm.bdTeacherId
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.classList = data.list
+            } else {
+              this.classList = []
+            }
+          })
+        } else {
+          this.classSelectDisable = true
+          this.classList = []
+        }
+      },
+      // 关闭时的逻辑
+      closeDialog () {
+        this.over()
       }
     }
   }

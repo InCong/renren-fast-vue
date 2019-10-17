@@ -87,7 +87,7 @@
           })
         } else {
           this.$http({
-            url: this.$http.adornUrl('/business/classesteacher/saveTeacherId'),
+            url: this.$http.adornUrl('/business/classesteacher/saveByClassId'),
             method: 'post',
             data: this.$http.adornData({
               'preValue': this.preValue,
