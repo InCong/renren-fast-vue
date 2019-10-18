@@ -16,8 +16,11 @@
       <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">自动提醒</span></el-divider>
       <div style="margin-top: 30px;margin-bottom: 30px">
         <el-switch
-          v-model="isAutoRemind"
-          active-text="是否自动提醒">
+          v-model="isAutoNotice"
+          active-text="是否自动提醒"
+          inactive-value="0"
+          active-value="1"
+          @change="changeAutoNotice">
         </el-switch>
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">发送通知</span></el-divider>
@@ -74,11 +77,11 @@
         classArrangeWechatSignVisible: false,
         remark: '',
         checkList: ['学员', '教师'],
-        isAutoRemind: false
+        isAutoNotice: '0'
       }
     },
     methods: {
-      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length, remark) {
+      init (id, bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length, remark, isAutoNotice) {
         this.visible = true
         this.id = id
         this.bdClassesStudentId = bdClassesStudentId
@@ -90,6 +93,8 @@
         this.arrangeDate = arrangeDate
         this.length = length
         this.remark = remark
+        this.isAutoNotice = isAutoNotice.toString()
+        console.log(this.isAutoNotice)
         // 组件看不见时调用，清空数组
         this.over = () => {
           this.visible = false
@@ -103,7 +108,7 @@
           this.type = ''
           this.isModify = false
           this.noticeText = ''
-          this.isAutoRemind = false
+          this.isAutoNotice = '0'
         }
       },
       // 关闭时的逻辑
@@ -248,6 +253,41 @@
         this.startTime = startTime
         this.endTime = endTime
         this.length = length
+      },
+      // 变更自动提醒
+      changeAutoNotice () {
+        this.$http({
+          url: this.$http.adornUrl('/business/studentclassarrange/update'),
+          method: 'post',
+          data: this.$http.adornData({
+            'id': this.id,
+            'isAutoNotice': this.isAutoNotice
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.type = 'modify'
+            this.isModify = true
+            if (this.isAutoNotice === '1') {
+              this.$message({
+                message: '设置成功，将在上课前一天自动微信通知相关学员、家长和教师！',
+                type: 'success',
+                duration: 3000
+              })
+            } else {
+              this.$message({
+                message: '取消成功，将取消自动微信提醒！',
+                type: 'success',
+                duration: 3000
+              })
+            }
+          } else {
+            this.$message({
+              message: data.msg,
+              type: 'error',
+              duration: 5000
+            })
+          }
+        })
       }
     }
   }

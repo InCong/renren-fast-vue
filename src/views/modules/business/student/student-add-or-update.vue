@@ -234,7 +234,7 @@
       init (id) {
         this.dataForm.id = id
         this.visible = true
-        this.isNew = !this.dataForm.id;
+        this.isNew = !this.dataForm.id
         this.getAreaList()
         this.getStudentLevelList()
         this.$nextTick(() => {

@@ -99,6 +99,16 @@
       <div style="text-align: center;margin-bottom: 10px">
         <span v-if="count !== ''">已安排学员数量：{{count}}</span>
       </div>
+      <el-divider content-position="left"><span style="color: #00a0e9">自动提醒</span></el-divider>
+      <div style="margin-top: 30px;margin-bottom: 30px;text-align: center">
+        <el-switch
+          v-model="isAutoNotice"
+          active-text="是否自动提醒"
+          inactive-value="0"
+          active-value="1"
+          @change="changeAutoNotice">
+        </el-switch>
+      </div>
       <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
       <div style="text-align: center;margin-top: 30px">
         <el-input type="text" v-model="dataForm.remark" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%"></el-input>
@@ -149,6 +159,7 @@
         radioClassWay: '',
         radioClassWayType: '',
         radioType: '1',
+        isAutoNotice: '0',
         // 以下是表单变量
         dataForm: {
           arrangeDate: '',
@@ -216,6 +227,7 @@
           this.hours = ''
           this.minutes = ''
           this.isTimeChange = false
+          this.isAutoNotice = '0'
           this.$emit('refreshClassArrange')
         }
       },
@@ -293,6 +305,7 @@
                       'endTime': this.dataForm.endTime,
                       'remark': this.dataForm.remark,
                       'num': num,
+                      'isAutoNotice': this.isAutoNotice,
                       'createUserId': this.$store.state.user.id,
                       'bdTeacherId': this.bdTeacherId
                     })
@@ -316,6 +329,7 @@
                       this.minutes = ''
                       this.isTimeChange = false
                       this.classLength = 0
+                      this.isAutoNotice = '0'
                     } else {
                       this.$message({
                         message: data.msg,
@@ -358,6 +372,7 @@
                       this.minutes = ''
                       this.isTimeChange = false
                       this.classLength = 0
+                      this.isAutoNotice = '0'
                     } else {
                       this.$message({
                         message: data.msg,
@@ -553,6 +568,10 @@
           let date = moment(this.dataForm.arrangeDate + ' ' + this.dataForm.startTime)
           this.dataForm.endTime = date.add(this.classLength, 'minutes').format('HH:mm')
         }
+      },
+      // 变更自动提醒
+      changeAutoNotice () {
+
       }
     }
   }

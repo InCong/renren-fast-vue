@@ -188,7 +188,7 @@
                           <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                           <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                         </div>
-                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList1[index - 1] != null ? ((item.diffTime - dayList1[index - 1].diffTime - dayList1[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
+                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList1[index - 1] != null ? ((item.diffTime - dayList1[index - 1].diffTime - dayList1[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark, item.isAutoNotice)">
                           <div class="centerContent" contenteditable="false">
                             <el-row style="margin-bottom: 5px">
                               {{item.studentName}}（{{item.className}}）
@@ -212,7 +212,7 @@
                           <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                           <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                         </div>
-                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList2[index - 1] != null ? ((item.diffTime - dayList2[index - 1].diffTime - dayList2[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
+                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList2[index - 1] != null ? ((item.diffTime - dayList2[index - 1].diffTime - dayList2[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark, item.isAutoNotice)">
                           <div class="centerContent">
                             <el-row style="margin-bottom: 5px">
                               {{item.studentName}}（{{item.className}}）
@@ -236,7 +236,7 @@
                           <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                           <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                         </div>
-                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList3[index - 1] != null ? ((item.diffTime - dayList3[index - 1].diffTime - dayList3[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
+                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList3[index - 1] != null ? ((item.diffTime - dayList3[index - 1].diffTime - dayList3[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark, item.isAutoNotice)">
                           <div class="centerContent">
                             <el-row style="margin-bottom: 5px">
                               {{item.studentName}}（{{item.className}}）
@@ -260,7 +260,7 @@
                           <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                           <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                         </div>
-                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList4[index - 1] != null ? ((item.diffTime - dayList4[index - 1].diffTime - dayList4[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
+                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList4[index - 1] != null ? ((item.diffTime - dayList4[index - 1].diffTime - dayList4[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark, item.isAutoNotice)">
                           <div class="centerContent">
                             <el-row style="margin-bottom: 5px">
                               {{item.studentName}}（{{item.className}}）
@@ -284,7 +284,7 @@
                           <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                           <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                         </div>
-                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList5[index - 1] != null ? ((item.diffTime - dayList5[index - 1].diffTime - dayList5[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
+                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList5[index - 1] != null ? ((item.diffTime - dayList5[index - 1].diffTime - dayList5[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark, item.isAutoNotice)">
                           <div class="centerContent">
                             <el-row style="margin-bottom: 5px">
                               {{item.studentName}}（{{item.className}}）
@@ -308,7 +308,7 @@
                           <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                           <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                         </div>
-                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList6[index - 1] != null ? ((item.diffTime - dayList6[index - 1].diffTime - dayList6[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
+                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList6[index - 1] != null ? ((item.diffTime - dayList6[index - 1].diffTime - dayList6[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark, item.isAutoNotice)">
                           <div class="centerContent">
                             <el-row style="margin-bottom: 5px">
                               {{item.studentName}}（{{item.className}}）
@@ -332,7 +332,7 @@
                           <el-row><i class="el-icon-finished toolTipsContent"></i>{{item.signTime}}</el-row>
                           <el-row><i class="el-icon-tickets toolTipsContent"></i>{{item.remark}}</el-row>
                         </div>
-                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList7[index - 1] != null ? ((item.diffTime - dayList7[index - 1].diffTime - dayList7[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark)">
+                        <div style="cursor: pointer" v-bind:class="{contentBlock :!item.signType, contentBlockSign: item.signType, contentBlockSignOver: !item.signType && isSignOver(item.arrangeDate, item.endTime)}" :style="'height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList7[index - 1] != null ? ((item.diffTime - dayList7[index - 1].diffTime - dayList7[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.id, item.className, item.startTime, item.endTime, item.arrangeDate, item.bdClassesStudentId, item.bdStudentId, item.length, item.remark, item.isAutoNotice)">
                           <div class="centerContent">
                             <el-row style="margin-bottom: 5px">
                               {{item.studentName}}（{{item.className}}）
@@ -638,10 +638,10 @@
         }
       },
       // 课程点击
-      classClick (id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId, length, remark) {
+      classClick (id, className, startTime, endTime, arrangeDate, bdClassesStudentId, bdStudentId, length, remark, isAutoNotice) {
         this.classArrangeOperaVisible = true
         this.$nextTick(() => {
-          this.$refs.classArrangeOpera.init(id, this.bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length, remark)
+          this.$refs.classArrangeOpera.init(id, this.bdTeacherId, bdStudentId, className, startTime, endTime, arrangeDate, bdClassesStudentId, length, remark, isAutoNotice)
         })
       },
       // 判断是否超时但未签到
