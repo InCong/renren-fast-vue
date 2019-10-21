@@ -39,7 +39,7 @@
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
-              <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}
+              <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}（{{ orgName }}）
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="addOrUpdateHandle()">个人设置</el-dropdown-item>
@@ -97,6 +97,9 @@
       },
       userId: {
         get () { return this.$store.state.user.id }
+      },
+      orgName: {
+        get () { return this.$store.state.user.orgName }
       }
       // headImgUrl: {
       //   get () { return this.$store.state.user.headImgUrl }

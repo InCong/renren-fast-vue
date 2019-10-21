@@ -53,15 +53,16 @@
       },
       webSocketOnMessage: function (e) {
         if (e.data === 'subscribe_success') {
-          console.log(e.data)
-          this.visible = false
           this.$message({
             message: '已关注公众号，绑定成功！',
-            type: 'sucess',
-            duration: 3000
+            type: 'success',
+            duration: 3000,
+            onClose: () => {
+              this.visible = false
+              this.$emit('refreshDataList')
+            }
           })
         } else if (e.data === 'subscribe_fail') {
-          console.log(e.data)
           this.$message({
             message: '绑定失败！请尝试取消关注再重新关注，如果还没成功，请联系管理员！！！',
             type: 'error',
@@ -69,7 +70,6 @@
           })
         } else if (e.data === 'is_subscribed') {
           this.visible = false
-          console.log(e.data)
           this.$message({
             message: '已绑定，无需再次绑定！！！',
             type: 'warning',

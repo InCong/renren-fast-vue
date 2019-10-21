@@ -91,12 +91,6 @@
         label="手机号码">
       </el-table-column>
       <el-table-column
-        prop="email"
-        header-align="center"
-        align="center"
-        label="邮箱地址">
-      </el-table-column>
-      <el-table-column
         prop="status"
         header-align="center"
         align="center"
@@ -128,6 +122,16 @@
         align="center"
         :formatter="formatStudentLevel"
         label="学习水平">
+      </el-table-column>
+      <el-table-column
+        prop="isBindWechat"
+        header-align="center"
+        align="center"
+        label="是否绑定微信">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isBindWechat === 0" size="small" type="danger">否</el-tag>
+          <el-tag v-if="scope.row.isBindWechat === 1" size="small">是</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="bdOrgId"
@@ -166,7 +170,7 @@
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     <!-- 弹窗, 绑定微信 -->
-    <studentBindingWechat v-if="studentBindingWechatVisible" ref="studentBindingWechat"></studentBindingWechat>
+    <studentBindingWechat v-if="studentBindingWechatVisible" ref="studentBindingWechat" @refreshDataList="getDataList"></studentBindingWechat>
     <!-- 弹窗，查看指定学员的课时情况 -->
     <studentClassesQuery v-if="studentClassesQueryVisible" ref="studentClassesQuery"></studentClassesQuery>
   </div>

@@ -4,7 +4,8 @@ export default {
     id: 0,
     name: '',
     headImgUrl: '',
-    bdOrgId: -1
+    bdOrgId: -1,
+    orgName: ''
   },
   mutations: {
     updateId (state, id) {
@@ -18,6 +19,9 @@ export default {
     },
     updateBdOrgId (state, bdOrgId) {
       state.bdOrgId = bdOrgId
+    },
+    updateOrgName (state, orgName) {
+      state.orgName = orgName
     }
   }
 }

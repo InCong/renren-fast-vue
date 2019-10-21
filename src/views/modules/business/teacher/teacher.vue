@@ -104,6 +104,16 @@
         label="拥有学生">
       </el-table-column>
       <el-table-column
+        prop="isBindWechat"
+        header-align="center"
+        align="center"
+        label="是否绑定微信">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isBindWechat === 0" size="small" type="danger">否</el-tag>
+          <el-tag v-if="scope.row.isBindWechat === 1" size="small">是</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="remark"
         header-align="center"
         align="center"
@@ -147,7 +157,7 @@
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
     <!-- 弹窗, 绑定微信 -->
-    <teacherBindingWechat v-if="teacherBindingWechatVisible" ref="teacherBindingWechat"></teacherBindingWechat>
+    <teacherBindingWechat v-if="teacherBindingWechatVisible" ref="teacherBindingWechat" @refreshDataList="getDataList"></teacherBindingWechat>
     <!-- 弹窗，上传图片与视频 -->
     <teacherUploadMultimedia v-if="teacherUploadMultimediaVisible" ref="teacherUploadMultimedia"></teacherUploadMultimedia>
     <!-- 弹窗，课程结算汇总 -->

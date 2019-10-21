@@ -52,6 +52,10 @@
       bdOrgId: {
         get () { return this.$store.state.user.bdOrgId },
         set (val) { this.$store.commit('user/updateBdOrgId', val) }
+      },
+      orgName: {
+        get () { return this.$store.state.user.orgName },
+        set (val) { this.$store.commit('user/updateOrgName', val) }
       }
     },
     created () {
@@ -82,6 +86,14 @@
             this.userName = data.user.username
             this.bdOrgId = data.user.bdOrgId
           }
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl(`/business/org/info/${this.bdOrgId}`),
+            method: 'get',
+            params: this.$http.adornParams()
+          }).then(({data}) => {
+            this.orgName = data.org.name
+          })
         })
         //   .then(() => {
         //   this.$http({
