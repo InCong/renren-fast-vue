@@ -129,7 +129,8 @@
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'name': this.dataForm.name
+            'name': this.dataForm.name,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -239,7 +240,7 @@
             }
           }
         })
-      },
+      }
     }
   }
 </script>

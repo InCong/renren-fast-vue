@@ -8,6 +8,7 @@
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('business:classes:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button v-if="isAuth('business:classes:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="packageManage()">套餐管理</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -119,6 +120,8 @@
     <classes-teacher v-if="classesTeacherVisible" ref="classesTeacher"></classes-teacher>
     <!-- 弹窗, 与教师绑定 -->
     <classes-student v-if="classesStudentVisible" ref="classesStudent"></classes-student>
+    <!-- 弹窗，显示套餐管理界面 -->
+    <package v-if="packageVisible" ref="package"></package>
   </div>
 </template>
 
@@ -126,6 +129,7 @@
   import AddOrUpdate from './classes-add-or-update'
   import ClassesTeacher from './classesTeacher'
   import ClassesStudent from './classesStudent'
+  import Package from './package'
   export default {
     data () {
       return {
@@ -142,13 +146,15 @@
         classTypeList: [],
         classWayList: [],
         classesTeacherVisible: false,
-        classesStudentVisible: false
+        classesStudentVisible: false,
+        packageVisible: false
       }
     },
     components: {
       ClassesTeacher,
       ClassesStudent,
-      AddOrUpdate
+      AddOrUpdate,
+      Package
     },
     activated () {
       this.getDataList()
@@ -299,6 +305,12 @@
         this.classesStudentVisible = true
         this.$nextTick(() => {
           this.$refs.classesStudent.init(id)
+        })
+      },
+      packageManage () {
+        this.packageVisible = true
+        this.$nextTick(() => {
+          this.$refs.package.init()
         })
       }
     }
