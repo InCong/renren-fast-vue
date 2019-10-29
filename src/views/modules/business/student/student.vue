@@ -153,7 +153,7 @@
           </el-row>
           <el-row>
             <el-col :span="12"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
-            <el-col :span="12"><el-button size="mini" type="primary" @click="StudentClassesQuery(scope.row.id)">课时</el-button></el-col>
+            <el-col :span="12"><el-button size="mini" type="primary" @click="StudentClassesQuery(scope.row.id)">买课</el-button></el-col>
           </el-row>
         </template>
       </el-table-column>

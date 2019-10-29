@@ -77,7 +77,7 @@
           createUserId: '',
           createTime: '',
           remark: '',
-          bdTeacherId: '',
+          bdTeacherId: ''
         },
         dataRule: {
           num: [

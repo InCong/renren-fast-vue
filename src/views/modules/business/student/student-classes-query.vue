@@ -7,6 +7,7 @@
     :visible.sync="visible">
     <div style="margin-bottom: 10px">
       <el-button type="primary" @click="buyClass()">购买课程</el-button>
+      <el-button type="primary" @click="buyPackage()">购买套餐</el-button>
     </div>
     <div class="mod-config">
       <el-table
@@ -39,7 +40,13 @@
           prop="price"
           header-align="center"
           align="center"
-          label="单价(元/课时)">
+          label="原价(元/课时)">
+        </el-table-column>
+        <el-table-column
+          prop="currentPrice"
+          header-align="center"
+          align="center"
+          label="现价(元/课时)">
         </el-table-column>
         <el-table-column
           prop="num"
@@ -59,6 +66,7 @@
           prop="createTime"
           header-align="center"
           align="center"
+          show-overflow-tooltip
           label="创建时间">
         </el-table-column>
         <el-table-column
@@ -97,6 +105,8 @@
       <student-buy-classes v-if="studentBuyClassesVisible" ref="studentBuyClasses" @refreshDataList="init(studentId)"></student-buy-classes>
       <!-- 弹窗，修改课时 -->
       <student-update-classes-num v-if="studentUpdateClassesNumVisible" ref="studentUpdateClassesNum" @refreshDataList="init(studentId)"></student-update-classes-num>
+      <!--  弹窗，购买套餐  -->
+      <student-buy-package v-if="studentBuyPackageVisible" ref="studentBuyPackage" @refreshDataList="init(studentId)"></student-buy-package>
     </div>
   </el-dialog>
 </template>
@@ -104,8 +114,13 @@
 <script>
   import StudentBuyClasses from './student-buy-classes'
   import StudentUpdateClassesNum from './student-update-classes-num'
+  import StudentBuyPackage from './student-buy-package'
   export default {
-    components: {StudentBuyClasses, StudentUpdateClassesNum},
+    components: {
+      StudentBuyClasses,
+      StudentUpdateClassesNum,
+      StudentBuyPackage
+    },
     data () {
       return {
         studentId: 0,
@@ -116,7 +131,8 @@
         pageSize: 100,
         totalPage: 0,
         studentBuyClassesVisible: false,
-        studentUpdateClassesNumVisible: false
+        studentUpdateClassesNumVisible: false,
+        studentBuyPackageVisible: false
       }
     },
     methods: {
@@ -194,6 +210,13 @@
         this.studentUpdateClassesNumVisible = true
         this.$nextTick(() => {
           this.$refs.studentUpdateClassesNum.init(id, teacherName, className, bdClassesId, bdTeacherId)
+        })
+      },
+      // 购买套餐
+      buyPackage () {
+        this.studentBuyPackageVisible = true
+        this.$nextTick(() => {
+          this.$refs.studentBuyPackage.init(this.studentId)
         })
       }
     }
