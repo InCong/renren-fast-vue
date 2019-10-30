@@ -92,37 +92,127 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="课程购买" name="buyClass" v-if="!dataForm.id">
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="80px">
-          <el-form-item label="教师" prop="bdTeacherId">
-            <el-select v-model="dataForm.bdTeacherId" clearable placeholder="先选择教师，再选择课程" filterable @change="handleITeacherChange">
-              <el-option
-                v-for="item in teacherList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="课程" prop="bdClassesId">
-            <el-select v-model="dataForm.bdClassesId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable">
-              <el-option
-                v-for="item in classList"
-                :key="item.bdClassesId"
-                :label="item.bdClassesName"
-                :value="item.bdClassesId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="课时" prop="num">
-            <el-input v-model="dataForm.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
-          </el-form-item>
-          <el-form-item label="剩余课时" prop="remainNum">
-            <el-input v-model="dataForm.remainNum" placeholder="剩余课时" :disabled="true" type="number"></el-input>
-          </el-form-item>
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
-          </el-form-item>
-        </el-form>
+        <div style="margin-bottom: 20px;margin-left: 20px">
+          <el-switch
+            v-model="buyMode"
+            active-text="单节购买"
+            active-value="1"
+            inactive-text="套餐购买"
+            inactive-value="2"
+            @change="buyModeChange">
+          </el-switch>
+        </div>
+        <div v-if="buyMode === '1'">
+          <el-form :model="dataForm1" ref="dataForm1" label-width="80px">
+            <el-form-item label="教师" prop="bdTeacherId">
+              <el-select v-model="dataForm1.bdTeacherId" clearable placeholder="先选择教师，再选择课程" filterable @change="handleITeacherChange">
+                <el-option
+                  v-for="item in teacherList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="课程" prop="bdClassesId">
+              <el-select v-model="dataForm1.bdClassesId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable">
+                <el-option
+                  v-for="item in classList"
+                  :key="item.bdClassesId"
+                  :label="item.bdClassesName"
+                  :value="item.bdClassesId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="课时" prop="num">
+              <el-input v-model="dataForm1.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
+            </el-form-item>
+            <el-form-item label="剩余课时" prop="remainNum">
+              <el-input v-model="dataForm1.remainNum" placeholder="剩余课时" :disabled="true" type="number"></el-input>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="dataForm1.remark" placeholder="备注"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div v-if="buyMode === '2'">
+          <div style="margin-bottom: 10px">
+            <el-row :gutter="10">
+              <el-col :span="4">
+                <el-input v-model="name" placeholder="名称" clearable></el-input>
+              </el-col>
+              <el-col :span="20">
+                <el-button @click="getDataList()" type="primary">查询</el-button>
+              </el-col>
+            </el-row>
+          </div>
+          <div>
+            <el-table
+              :data="packageList"
+              border
+              highlight-current-row
+              @current-change="handleCurrentChange"
+              v-loading="dataListLoading"
+              style="width: 100%;">
+              <el-table-column
+                prop="id"
+                header-align="center"
+                align="center"
+                label="id"
+                width="50">
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                header-align="center"
+                align="center"
+                label="名称">
+              </el-table-column>
+              <el-table-column
+                prop="originalAmount"
+                header-align="center"
+                align="center"
+                label="原金额">
+              </el-table-column>
+              <el-table-column
+                prop="amount"
+                header-align="center"
+                align="center"
+                label="实际金额">
+              </el-table-column>
+              <el-table-column
+                prop="num"
+                header-align="center"
+                align="center"
+                label="总课时">
+              </el-table-column>
+              <el-table-column
+                prop="createTime"
+                header-align="center"
+                align="center"
+                show-overflow-tooltip
+                label="创建时间">
+              </el-table-column>
+              <el-table-column
+                prop="remark"
+                header-align="center"
+                align="center"
+                show-overflow-tooltip
+                label="备注">
+              </el-table-column>
+            </el-table>
+            <el-pagination
+              @size-change="sizeChangeHandle"
+              @current-change="currentChangeHandle"
+              :current-page="pageIndex"
+              :hide-on-single-page="true"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="pageSize"
+              :total="totalPage"
+              layout="total, sizes, prev, pager, next, jumper"
+              style="margin-top: 10px;text-align: right">
+            </el-pagination>
+          </div>
+        </div>
       </el-tab-pane>
     </el-tabs>
     <span slot="footer" class="dialog-footer">
@@ -173,7 +263,9 @@
           bdStudentLevelId: '',
           bdOrgId: 0,
           status: '',
-          createTime: '',
+          createTime: ''
+        },
+        dataForm1: {
           // 购买课时
           bdClassesId: '',
           bdTeacherId: '',
@@ -212,13 +304,6 @@
           ],
           mobile3: [
             { validator: validateMobile, trigger: 'blur' }
-          ],
-          bdClassesId: [
-            { required: true, message: '课程不能为空', trigger: 'blur' }
-          ],
-          num: [
-            { required: true, message: '课时数量不能为空', trigger: 'blur' },
-            { validator: valiNum, trigger: 'blur' }
           ]
         },
         // 课程购买的相关参数
@@ -227,7 +312,17 @@
         teacherList: [],
         // 课程
         classList: [],
-        classSelectDisable: true
+        classSelectDisable: true,
+        // 购买模式
+        buyMode: '1',
+        // 套餐相关
+        name: '',
+        packageList: [],
+        pageIndex: 1,
+        pageSize: 10,
+        totalPage: 0,
+        dataListLoading: false,
+        currentRow: null
       }
     },
     methods: {
@@ -239,6 +334,7 @@
         this.getStudentLevelList()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
+          this.$refs['dataForm1'].resetFields()
           if (this.dataForm.id) {
             this.$http({
               url: this.$http.adornUrl(`/business/student/info/${this.dataForm.id}`),
@@ -293,6 +389,8 @@
           this.teacherList = []
           this.classList = []
           this.classSelectDisable = true
+          this.buyMode = '1'
+          this.currentRow = null
         }
       },
       // 获取地区ID
@@ -353,18 +451,59 @@
               }
               // 新增时才对购买课时进行保存
               if (this.dataForm.id && this.isNew) {
-                this.$http({
-                  url: this.$http.adornUrl('/business/classesstudent/save'),
-                  method: 'post',
-                  data: this.$http.adornData({
-                    'bdStudentId': this.dataForm.id,
-                    'bdClassesId': this.dataForm.bdClassesId,
-                    'bdTeacherId': this.dataForm.bdTeacherId,
-                    'num': this.dataForm.num,
-                    'remainNum': this.dataForm.remainNum,
-                    'remark': this.dataForm.remark
+                // 选择单节购买
+                if (this.buyMode === '1') {
+                  this.$http({
+                    url: this.$http.adornUrl('/business/classesstudent/save'),
+                    method: 'post',
+                    data: this.$http.adornData({
+                      'bdStudentId': this.dataForm.id,
+                      'bdClassesId': this.dataForm.bdClassesId,
+                      'bdTeacherId': this.dataForm.bdTeacherId,
+                      'num': this.dataForm.num,
+                      'remainNum': this.dataForm.remainNum,
+                      'remark': this.dataForm.remark
+                    })
+                  }).then(({data}) => {
+                    if (data && data.code === 0) {
+                      this.$message({
+                        message: '操作成功',
+                        type: 'success',
+                        duration: 1500,
+                        onClose: () => {
+                          this.visible = false
+                          this.$emit('refreshDataList')
+                        }
+                      })
+                    } else {
+                      this.$message.error(data.msg)
+                    }
                   })
-                }).then(({data}) => {
+                } else if (this.buyMode === '2') {
+                  let bdPackageId = this.currentRow.id
+                  this.$http({
+                    url: this.$http.adornUrl('/business/studentpackage/save'),
+                    method: 'post',
+                    data: this.$http.adornData({
+                      'bdStudentId': this.dataForm.id,
+                      'bdPackageId': bdPackageId
+                    })
+                  }).then(({data}) => {
+                    if (data && data.code === 0) {
+                      this.$message({
+                        message: '操作成功',
+                        type: 'success',
+                        duration: 1500,
+                        onClose: () => {
+                          this.visible = false
+                          this.$emit('refreshDataList')
+                        }
+                      })
+                    } else {
+                      this.$message.error(data.msg)
+                    }
+                  })
+                } else {
                   if (data && data.code === 0) {
                     this.$message({
                       message: '操作成功',
@@ -378,7 +517,7 @@
                   } else {
                     this.$message.error(data.msg)
                   }
-                })
+                }
               } else {
                 if (data && data.code === 0) {
                   this.$message({
@@ -424,6 +563,50 @@
           this.classList = []
         }
       },
+      getDataList () {
+        this.dataListLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/business/package/list'),
+          method: 'get',
+          params: this.$http.adornParams({
+            'page': this.pageIndex,
+            'limit': this.pageSize,
+            'name': this.name,
+            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.packageList = data.page.list
+            this.totalPage = data.page.totalCount
+          } else {
+            this.packageList = []
+            this.totalPage = 0
+          }
+          this.dataListLoading = false
+        })
+      },
+      // 每页数
+      sizeChangeHandle (val) {
+        this.pageSize = val
+        this.pageIndex = 1
+        this.getDataList()
+      },
+      // 当前页
+      currentChangeHandle (val) {
+        this.pageIndex = val
+        this.getDataList()
+      },
+      // 单选变更
+      handleCurrentChange (val) {
+        this.currentRow = val
+      },
+      // 购买模式变更
+      buyModeChange (val) {
+        // 如果是购买套餐，则刷新套餐界面
+        if (val === '2') {
+          this.getDataList()
+        }
+      },
       // 关闭时的逻辑
       closeDialog () {
         this.over()
@@ -431,3 +614,10 @@
     }
   }
 </script>
+
+<style>
+  .el-table__body tr.current-row>td{
+    background-color: mediumseagreen !important;
+    color: wheat;
+  }
+</style>

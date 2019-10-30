@@ -63,6 +63,16 @@
           label="剩余课时">
         </el-table-column>
         <el-table-column
+          prop="otherType"
+          header-align="center"
+          align="center"
+          label="类型">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.otherType === 1" size="small">普通</el-tag>
+            <el-tag v-if="scope.row.otherType === 2" size="small">赠送</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="createTime"
           header-align="center"
           align="center"

@@ -92,9 +92,9 @@
   export default {
     data () {
       return {
+        visible: false,
         studentId: 0,
         name: '',
-        visible: false,
         packageList: [],
         pageIndex: 1,
         pageSize: 10,
@@ -191,6 +191,9 @@
   }
 </script>
 
-<style scoped>
-
+<style>
+  .el-table__body tr.current-row>td{
+    background-color: mediumseagreen !important;
+    color: wheat;
+  }
 </style>
