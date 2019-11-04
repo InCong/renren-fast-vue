@@ -227,13 +227,6 @@
   import moment from 'moment'
   export default {
     data () {
-      var valiNum = (rule, value, callback) => {
-        if (value <= 0) {
-          callback(new Error('课时不能小于等于0'))
-        } else {
-          callback()
-        }
-      }
       var validateMobile = (rule, value, callback) => {
         if (value && !isMobile(value)) {
           callback(new Error('手机号格式错误'))

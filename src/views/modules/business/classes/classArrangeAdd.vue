@@ -159,7 +159,7 @@
         radioClassWay: '',
         radioClassWayType: '',
         radioType: '1',
-        isAutoNotice: '0',
+        isAutoNotice: '1',
         // 以下是表单变量
         dataForm: {
           arrangeDate: '',
@@ -227,7 +227,7 @@
           this.hours = ''
           this.minutes = ''
           this.isTimeChange = false
-          this.isAutoNotice = '0'
+          this.isAutoNotice = '1'
           this.$emit('refreshClassArrange')
         }
       },
@@ -329,7 +329,7 @@
                       this.minutes = ''
                       this.isTimeChange = false
                       this.classLength = 0
-                      this.isAutoNotice = '0'
+                      this.isAutoNotice = '1'
                     } else {
                       this.$message({
                         message: data.msg,
@@ -372,7 +372,7 @@
                       this.minutes = ''
                       this.isTimeChange = false
                       this.classLength = 0
-                      this.isAutoNotice = '0'
+                      this.isAutoNotice = '1'
                     } else {
                       this.$message({
                         message: data.msg,

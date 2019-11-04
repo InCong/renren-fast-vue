@@ -92,7 +92,9 @@
             method: 'get',
             params: this.$http.adornParams()
           }).then(({data}) => {
-            this.orgName = data.org.name
+            if (data.org) {
+              this.orgName = data.org.name
+            }
           })
         })
         //   .then(() => {
