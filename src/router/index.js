@@ -48,18 +48,28 @@ const mainRoutes = {
   }
 }
 
+// 微信网页路由
+const wechatRoutes = [fnAddWechatRoutes('课程满意度调查', 'satisfaction/classSatisfaction')]
+
 const router = new Router({
   mode: 'hash',
   scrollBehavior: () => ({ y: 0 }),
   isAddDynamicMenuRoutes: false, // 是否已经添加动态(菜单)路由
-  routes: globalRoutes.concat(mainRoutes)
+  isAddWechatRoutes: false, // 是否已经添加微信网页路由
+  routes: globalRoutes.concat(mainRoutes).concat(wechatRoutes)
 })
 
 router.beforeEach((to, from, next) => {
   // 添加动态(菜单)路由
   // 1. 已经添加 or 全局路由, 直接访问
-  // 2. 获取菜单列表, 添加并保存本地存储
+  // 2. 微信网页路由，直接访问
+  // 3. 获取菜单列表, 添加并保存本地存储
+  console.log(router)
   if (router.options.isAddDynamicMenuRoutes || fnCurrentRouteType(to, globalRoutes) === 'global') {
+    console.log('全局路由')
+    next()
+  } else if (window.navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1 && fnIsWechatRoute(to, wechatRoutes) === 'wechat') {
+    console.log('微信网页路由')
     next()
   } else {
     http({
@@ -99,6 +109,15 @@ function fnCurrentRouteType (route, globalRoutes = []) {
     }
   }
   return temp.length >= 1 ? fnCurrentRouteType(route, temp) : 'main'
+}
+
+function fnIsWechatRoute (route, wechatRoutes) {
+  for (var i = 0; i < wechatRoutes.length; i++) {
+    if (route.path === wechatRoutes[i].path) {
+      return 'wechat'
+    }
+  }
+  return 'other'
 }
 
 /**
@@ -153,6 +172,18 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
     console.log(mainRoutes.children)
     console.log('%c!<-------------------- 动态(菜单)路由 e -------------------->', 'color:blue')
   }
+}
+
+function fnAddWechatRoutes (name, url) {
+  var route = {
+    path: '/' + url.replace(/^\//, '').replace('/', '-'),
+    component: _import(`wechat/${url}`),
+    name: url.replace(/^\//, '').replace('/', '-'),
+    meta: {
+      title: name
+    }
+  }
+  return route
 }
 
 export default router
