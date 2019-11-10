@@ -288,9 +288,6 @@
           sex: [
             { required: true, message: '性别，1-男，0-女不能为空', trigger: 'blur' }
           ],
-          birthday: [
-            { required: true, message: '出生年月日不能为空', trigger: 'blur' }
-          ],
           mobile: [
             { required: true, message: '手机号码不能为空', trigger: 'blur' },
             { validator: validateMobile, trigger: 'blur' }
@@ -327,7 +324,6 @@
         this.getStudentLevelList()
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
-          this.$refs['dataForm1'].resetFields()
           if (this.dataForm.id) {
             this.$http({
               url: this.$http.adornUrl(`/business/student/info/${this.dataForm.id}`),
@@ -425,14 +421,14 @@
                 'id': this.dataForm.id || undefined,
                 'nickname': this.dataForm.nickname,
                 'sex': this.dataForm.sex,
-                'year': moment(this.dataForm.birthday).year(),
-                'month': moment(this.dataForm.birthday).month() + 1,
-                'day': moment(this.dataForm.birthday).date(),
+                'year': this.dataForm.birthday ? moment(this.dataForm.birthday).year() : '',
+                'month': this.dataForm.birthday ? moment(this.dataForm.birthday).month() + 1 : '',
+                'day': this.dataForm.birthday ? moment(this.dataForm.birthday).date() : '',
                 'mobile': this.dataForm.mobile,
                 'mobile2': this.dataForm.mobile2,
                 'mobile3': this.dataForm.mobile3,
                 'email': this.dataForm.email,
-                'entryTime': moment(this.dataForm.entryTime).format('YYYY-MM-DD'),
+                'entryTime': this.dataForm.entryTime ? moment(this.dataForm.entryTime).format('YYYY-MM-DD') : '1900-01-01',
                 'bdAreaId': this.dataForm.bdAreaId,
                 'bdStudentLevelId': this.dataForm.bdStudentLevelId,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
@@ -451,11 +447,11 @@
                     method: 'post',
                     data: this.$http.adornData({
                       'bdStudentId': this.dataForm.id,
-                      'bdClassesId': this.dataForm.bdClassesId,
-                      'bdTeacherId': this.dataForm.bdTeacherId,
-                      'num': this.dataForm.num,
-                      'remainNum': this.dataForm.remainNum,
-                      'remark': this.dataForm.remark
+                      'bdClassesId': this.dataForm1.bdClassesId,
+                      'bdTeacherId': this.dataForm1.bdTeacherId,
+                      'num': this.dataForm1.num,
+                      'remainNum': this.dataForm1.remainNum,
+                      'remark': this.dataForm1.remark
                     })
                   }).then(({data}) => {
                     if (data && data.code === 0) {
@@ -532,17 +528,17 @@
       },
       // 课时变更时，同步变更剩余课时
       numChange () {
-        this.dataForm.remainNum = this.dataForm.num
+        this.dataForm1.remainNum = this.dataForm1.num
       },
       // 教师选择器变更选择时的事件
       handleITeacherChange () {
-        if (this.dataForm.bdTeacherId != null && this.dataForm.bdTeacherId !== '') {
+        if (this.dataForm1.bdTeacherId != null && this.dataForm1.bdTeacherId !== '') {
           this.classSelectDisable = false
           this.$http({
             url: this.$http.adornUrl('/business/classesteacher/listClassesByTeacherId'),
             method: 'post',
             data: this.$http.adornData({
-              'bdTeacherId': this.dataForm.bdTeacherId
+              'bdTeacherId': this.dataForm1.bdTeacherId
             })
           }).then(({data}) => {
             if (data && data.code === 0) {

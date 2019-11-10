@@ -234,7 +234,7 @@
                 'email': this.dataForm.email,
                 'isFullTime': this.dataForm.isFullTime,
                 'status': this.dataForm.status,
-                'entryTime': moment(this.dataForm.entryTime).format('YYYY-MM-DD'),
+                'entryTime': this.dataForm.entryTime ? moment(this.dataForm.entryTime).format('YYYY-MM-DD') : '1900-01-01',
                 'descImgUrl': this.dataForm.descImgUrl,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
                 'createUserId': this.dataForm.createUserId,
