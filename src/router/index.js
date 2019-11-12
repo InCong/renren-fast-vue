@@ -64,12 +64,11 @@ router.beforeEach((to, from, next) => {
   // 1. 已经添加 or 全局路由, 直接访问
   // 2. 微信网页路由，直接访问
   // 3. 获取菜单列表, 添加并保存本地存储
-  console.log(router)
   if (router.options.isAddDynamicMenuRoutes || fnCurrentRouteType(to, globalRoutes) === 'global') {
-    console.log('全局路由')
+    // console.log('全局路由')
     next()
   } else if (window.navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1 && fnIsWechatRoute(to, wechatRoutes) === 'wechat') {
-    console.log('微信网页路由')
+    // console.log('微信网页路由')
     next()
   } else {
     http({

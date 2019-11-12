@@ -278,7 +278,10 @@
           // 先检查选定的学生课程所剩课时足不足够，若足够再保存
           let num = this.dataForm.endTime.substr(0, 2) - this.dataForm.startTime.substr(0, 2) + (this.dataForm.endTime.substr(3, 2) - this.dataForm.startTime.substr(3, 2)) / 60
           // 四舍五入取整
-          num = Math.ceil(num)
+          // num = Math.ceil(num)
+          // 截取小数点后2位
+          num = parseFloat(num).toFixed(2)
+          console.log(num)
           let remainNum = 0
           this.$http({
             url: this.$http.adornUrl(`/business/classesstudent/info/${this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_'))}`),
@@ -305,6 +308,7 @@
                       'endTime': this.dataForm.endTime,
                       'remark': this.dataForm.remark,
                       'num': num,
+                      'length': this.classLength,
                       'isAutoNotice': this.isAutoNotice,
                       'createUserId': this.$store.state.user.id,
                       'bdTeacherId': this.bdTeacherId
@@ -349,6 +353,7 @@
                       'endTime': this.dataForm.endTime,
                       'remark': this.dataForm.remark,
                       'num': num,
+                      'length': this.classLength,
                       'createUserId': this.$store.state.user.id,
                       'bdTeacherId': this.bdTeacherId,
                       'remainNum': remainNum

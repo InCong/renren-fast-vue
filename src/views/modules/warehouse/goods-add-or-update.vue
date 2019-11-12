@@ -13,20 +13,10 @@
     <el-form-item label="编号" prop="code">
       <el-input v-model="dataForm.code" placeholder="编号"></el-input>
     </el-form-item>
-    <el-form-item label="商品类型" prop="wdGoodsTypeId">
-      <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型" @change="typeChange">
+    <el-form-item label="商品种类" prop="wdGoodsTypeId">
+      <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型">
         <el-option
           v-for="item in typeList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="商品型号" prop="wdGoodsModelId">
-      <el-select v-model="dataForm.wdGoodsModelId" clearable placeholder="商品型号" :disabled="modelDisable">
-        <el-option
-          v-for="item in modelList"
           :key="item.id"
           :label="item.name"
           :value="item.id">
@@ -71,19 +61,11 @@
           price: [
             { required: true, message: '参考单价不能为空', trigger: 'blur' }
           ],
-          code: [
-            { required: true, message: '编号不能为空', trigger: 'blur' }
-          ],
           wdGoodsTypeId: [
-            { required: true, message: '商品类型不能为空', trigger: 'blur' }
-          ],
-          wdGoodsModelId: [
-            { required: true, message: '商品型号不能为空', trigger: 'blur' }
+            { required: true, message: '商品种类不能为空', trigger: 'blur' }
           ]
         },
-        typeList: [],
-        modelList: [],
-        modelDisable: true
+        typeList: []
       }
     },
     methods: {
@@ -104,7 +86,6 @@
                 this.dataForm.price = data.goods.price
                 this.dataForm.code = data.goods.code
                 this.dataForm.wdGoodsTypeId = data.goods.wdGoodsTypeId
-                this.dataForm.wdGoodsModelId = data.goods.wdGoodsModelId
                 this.dataForm.bdOrgId = data.goods.bdOrgId
                 this.dataForm.createUserId = data.goods.createUserId
                 this.dataForm.createTime = data.goods.createTime
@@ -131,7 +112,6 @@
                 'price': this.dataForm.price,
                 'code': this.dataForm.code,
                 'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-                'wdGoodsModelId': this.dataForm.wdGoodsModelId,
                 'bdOrgId': this.dataForm.bdOrgId || this.$store.state.user.bdOrgId,
                 'createUserId': this.dataForm.createUserId || this.$store.state.user.id,
                 'remark': this.dataForm.remark
@@ -154,7 +134,7 @@
           }
         })
       },
-      // 获取商品类型ID
+      // 获取商品种类ID
       getTypeList () {
         this.$http({
           url: this.$http.adornUrl('/warehouse/goodstype/list'),
@@ -167,32 +147,6 @@
         }).then(({data}) => {
           this.typeList = data.page.list
         })
-      },
-      // 获取商品型号ID
-      getModelList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelList = data.page.list
-        })
-      },
-      // 商品类型变更
-      typeChange () {
-        this.dataForm.wdGoodsModelId = ''
-        if (this.dataForm.wdGoodsTypeId) {
-          this.modelDisable = false
-          this.getModelList()
-        } else {
-          this.modelDisable = true
-          this.modelList = []
-        }
       }
     }
   }

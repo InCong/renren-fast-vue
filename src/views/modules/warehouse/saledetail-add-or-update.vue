@@ -5,7 +5,7 @@
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="80px">
       <el-form-item label="商品" prop="wdGoodsId">
-        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px">
+        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px" @change="changeGoodsSelect()">
           <el-option
             v-for="item in goodsList"
             :key="item.id"
@@ -163,6 +163,16 @@
         if (this.dataForm.qty && this.dataForm.price) {
           this.dataForm.totalPrice = this.dataForm.qty * this.dataForm.price
         }
+      },
+      changeGoodsSelect () {
+        for (let i = 0; i < this.goodsList.length; i++) {
+          let item = this.goodsList[i]
+          if (item.id === this.dataForm.wdGoodsId) {
+            this.dataForm.price = item.price
+            break
+          }
+        }
+        this.changeTotalPrice()
       }
     }
   }

@@ -157,6 +157,7 @@
                   'startTime': this.startTime,
                   'endTime': this.endTime,
                   'num': num,
+                  'length': this.length,
                   'bdTeacherId': this.bdTeacherId,
                   'remark': this.remark
                 })

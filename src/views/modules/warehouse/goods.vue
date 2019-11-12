@@ -61,14 +61,7 @@
         header-align="center"
         align="center"
         :formatter="formatType"
-        label="商品类型">
-      </el-table-column>
-      <el-table-column
-        prop="wdGoodsModelId"
-        header-align="center"
-        align="center"
-        :formatter="formatModel"
-        label="商品型号">
+        label="商品种类">
       </el-table-column>
       <el-table-column
         prop="remark"
@@ -185,7 +178,7 @@
           }
         })
       },
-      // 获取商品类型ID
+      // 获取商品种类ID
       getTypeList () {
         this.$http({
           url: this.$http.adornUrl('/warehouse/goodstype/list'),
@@ -197,20 +190,6 @@
           })
         }).then(({data}) => {
           this.typeList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelList = data.page.list
         })
       },
       // 每页数
@@ -290,19 +269,6 @@
           }
         }
         return typeName
-      },
-      formatModel: function (row, column) {
-        let modelName = '未知'
-        if (this.modelList != null) {
-          for (let i = 0; i < this.modelList.length; i++) {
-            let item = this.modelList[i]
-            if (item.id === row.wdGoodsModelId) {
-              modelName = item.name
-              break
-            }
-          }
-        }
-        return modelName
       }
     }
   }

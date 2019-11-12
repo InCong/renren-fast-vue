@@ -372,7 +372,7 @@
             })
           }
         })
-        // 组件看不见时调用，清空数组
+        // 组件看不见时调用
         this.over = () => {
           this.activeName = 'editInfo'
           this.teacherList = []
@@ -380,6 +380,11 @@
           this.classSelectDisable = true
           this.buyMode = '1'
           this.currentRow = null
+          this.dataForm1.bdTeacherId = ''
+          this.dataForm1.bdClassesId = ''
+          this.dataForm1.num = 0
+          this.dataForm1.remainNum = 0
+          this.dataForm1.remark = ''
         }
       },
       // 获取地区ID
@@ -441,7 +446,7 @@
               // 新增时才对购买课时进行保存
               if (this.dataForm.id && this.isNew) {
                 // 选择单节购买
-                if (this.buyMode === '1') {
+                if (this.buyMode === '1' && this.dataForm1.bdTeacherId) {
                   this.$http({
                     url: this.$http.adornUrl('/business/classesstudent/save'),
                     method: 'post',
@@ -468,7 +473,7 @@
                       this.$message.error(data.msg)
                     }
                   })
-                } else if (this.buyMode === '2') {
+                } else if (this.buyMode === '2' && this.currentRow) {
                   let bdPackageId = this.currentRow.id
                   this.$http({
                     url: this.$http.adornUrl('/business/studentpackage/save'),
@@ -591,6 +596,7 @@
       },
       // 购买模式变更
       buyModeChange (val) {
+        this.currentRow = null
         // 如果是购买套餐，则刷新套餐界面
         if (val === '2') {
           this.getDataList()
