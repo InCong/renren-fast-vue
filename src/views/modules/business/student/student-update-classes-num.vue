@@ -26,6 +26,9 @@
       <el-form-item label="课程" prop="">
         <el-input placeholder="课程" :disabled="true" :value="classesName"></el-input>
       </el-form-item>
+      <el-form-item label="现价(元)" prop="currentPrice">
+        <el-input-number v-model="dataForm.currentPrice" placeholder="限价" :min="0" :step="1" :precision="2" :disabled="true"></el-input-number>
+      </el-form-item>
       <el-form-item label="课时" prop="num">
         <el-input v-model="dataForm.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
       </el-form-item>
@@ -63,6 +66,7 @@
         originalRemainNum: 0,
         dataForm: {
           id: 0,
+          currentPrice: 0,
           num: 0,
           remainNum: 0,
           remark: ''
@@ -103,6 +107,7 @@
             params: this.$http.adornParams()
           }).then(({data}) => {
             if (data && data.code === 0) {
+              this.dataForm.currentPrice = data.classesStudent.currentPrice
               this.dataForm.num = data.classesStudent.num
               this.dataForm.remainNum = data.classesStudent.remainNum
               this.dataForm.remark = data.classesStudent.remark

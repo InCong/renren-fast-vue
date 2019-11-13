@@ -17,7 +17,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="课程" prop="bdClassesId">
-        <el-select v-model="dataForm.bdClassesId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable">
+        <el-select v-model="dataForm.bdClassesId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable" @change="changeClassSelect()">
           <el-option
             v-for="item in classList"
             :key="item.bdClassesId"
@@ -25,6 +25,9 @@
             :value="item.bdClassesId">
           </el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="现价(元)" prop="currentPrice">
+        <el-input-number v-model="dataForm.currentPrice" placeholder="限价" :min="0" :step="1" :precision="2"></el-input-number>
       </el-form-item>
       <el-form-item label="课时" prop="num">
         <el-input v-model="dataForm.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
@@ -59,6 +62,7 @@
         dataForm: {
           bdClassesId: '',
           bdTeacherId: '',
+          currentPrice: 0,
           num: 0,
           remainNum: 0,
           remark: ''
@@ -70,6 +74,9 @@
           num: [
             { required: true, message: '课时数量不能为空', trigger: 'blur' },
             { validator: valiNum, trigger: 'blur' }
+          ],
+          currentPrice: [
+            { required: true, message: '现价不能为空', trigger: 'blur' }
           ]
         },
         // 教师
@@ -120,6 +127,7 @@
                 'bdClassesId': this.dataForm.bdClassesId,
                 'bdTeacherId': this.dataForm.bdTeacherId,
                 'num': this.dataForm.num,
+                'currentPrice': this.dataForm.currentPrice,
                 'remainNum': this.dataForm.remainNum,
                 'remark': this.dataForm.remark
               })
@@ -170,6 +178,16 @@
       // 关闭时的逻辑
       closeDialog () {
         this.over()
+      },
+      // 课程选择变更
+      changeClassSelect () {
+        for (let i = 0; i < this.classList.length; i++) {
+          let item = this.classList[i]
+          if (item.bdClassesId === this.dataForm.bdClassesId) {
+            this.dataForm.currentPrice = item.price
+            break
+          }
+        }
       }
     }
   }

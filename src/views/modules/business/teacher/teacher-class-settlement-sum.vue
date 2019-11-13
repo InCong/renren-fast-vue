@@ -53,6 +53,12 @@
           label="课程">
         </el-table-column>
         <el-table-column
+          prop="totalCount"
+          header-align="center"
+          align="center"
+          label="已排课数量">
+        </el-table-column>
+        <el-table-column
           prop="unSignCount"
           header-align="center"
           align="center"
@@ -71,9 +77,15 @@
           label="已结算数量">
         </el-table-column>
         <el-table-column
+          prop="settlementAmount"
+          header-align="center"
+          align="center"
+          label="已结算金额">
+        </el-table-column>
+        <el-table-column
           fixed="right"
           header-align="center"
-          width="150"
+          width="100"
           label="操作">
           <template slot-scope="scope">
             <div style="text-align: center"><el-button size="mini" type="primary" @click="settlementManage(scope.row.bdClassesId)">结算管理</el-button></div>
@@ -118,7 +130,7 @@
               return time.getTime() < minTime || time.getTime() > maxTime
             }
           }
-        },
+        }
       }
     },
     methods: {
@@ -161,7 +173,7 @@
         columns.forEach((column, index) => {
           if (index === 0) {
             sums[index] = '总计'
-          } else if (index === 2 || index === 3 || index === 4) {
+          } else if (index === 2 || index === 3 || index === 4 || index === 5 || index === 6) {
             const values = data.map(item => Number(item[column.property]))
             if (!values.every(value => isNaN(value))) {
               sums[index] = values.reduce((prev, curr) => {
