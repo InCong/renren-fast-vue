@@ -17,6 +17,7 @@
         value-format="yyyy-MM-dd"
         :default-time="['00:00:00', '23:59:59']"
         :picker-options="pickerOptions"
+        :clearable="false"
         @change="changeRangeDate">
       </el-date-picker>
       <el-button

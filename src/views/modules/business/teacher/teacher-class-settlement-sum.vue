@@ -3,6 +3,33 @@
     title="课程结算概况"
     :close-on-click-modal="false"
     :visible.sync="visible">
+    <div style="text-align: center;margin-bottom: 10px">
+      <el-button
+        type="primary"
+        @click="lastWeekClick"
+        style="margin-right: 10px">
+        上一月
+      </el-button>
+      <el-date-picker
+        v-model="rangeDate"
+        type="daterange"
+        align="center"
+        range-separator="——"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        value-format="yyyy-MM-dd"
+        :default-time="['00:00:00', '23:59:59']"
+        :picker-options="pickerOptions"
+        :clearable="false"
+        @change="getSumList">
+      </el-date-picker>
+      <el-button
+        type="primary"
+        @click="nextWeekClick"
+        style="margin-left: 10px">
+        下一月
+      </el-button>
+    </div>
     <div>
       <el-table
         :data="dataList"
@@ -16,6 +43,7 @@
           prop="bdClassesId"
           header-align="center"
           align="center"
+          width="50"
           label="课程ID">
         </el-table-column>
         <el-table-column
@@ -59,6 +87,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import TeacherClassSettlement from './teacher-class-settlement'
   export default {
     components: {
@@ -70,7 +99,26 @@
         bdTeacherId: '',
         dataList: [],
         dataListLoading: false,
-        teacherClassSettlementVisible: false
+        teacherClassSettlementVisible: false,
+        // 以下几个都是范围日期控件的参数
+        rangeDate: [moment().startOf('month').format('YYYY-MM-D'), moment().endOf('month').format('YYYY-MM-D')],
+        choiceDate: '',
+        pickerOptions: {
+          onPick: ({ maxDate, minDate }) => {
+            this.choiceDate = minDate.getTime()
+            if (maxDate) {
+              this.choiceDate = ''
+            }
+          },
+          disabledDate: (time) => {
+            if (this.choiceDate != null && this.choiceDate !== '') {
+              const one = 6 * 24 * 3600 * 1000
+              const minTime = this.choiceDate - one
+              const maxTime = this.choiceDate + one
+              return time.getTime() < minTime || time.getTime() > maxTime
+            }
+          }
+        },
       }
     },
     methods: {
@@ -81,11 +129,16 @@
       },
       getSumList () {
         this.dataListLoading = true
+        let startDate = this.rangeDate[0]
+        let endDate = this.rangeDate[1]
+        console.log(this.rangeDate)
         this.$http({
           url: this.$http.adornUrl('/business/teacherclasssettlement/listTeacherClassSettlementSum'),
           method: 'post',
           data: this.$http.adornData({
-            'bdTeacherId': this.bdTeacherId
+            'bdTeacherId': this.bdTeacherId,
+            'startDate': startDate,
+            'endDate': endDate
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -127,6 +180,20 @@
           }
         })
         return sums
+      },
+      // 快速选择上一周
+      lastWeekClick () {
+        let startDate = this.rangeDate[0]
+        let endDate = this.rangeDate[1]
+        this.rangeDate = [moment(startDate).startOf('month').subtract(1, 'month').format('YYYY-MM-D'), moment(endDate).endOf('month').subtract(1, 'month').format('YYYY-MM-D')]
+        this.getSumList()
+      },
+      // 快速选择下一周
+      nextWeekClick () {
+        let startDate = this.rangeDate[0]
+        let endDate = this.rangeDate[1]
+        this.rangeDate = [moment(startDate).startOf('month').add(1, 'month').format('YYYY-MM-D'), moment(endDate).endOf('month').add(1, 'month').format('YYYY-MM-D')]
+        this.getSumList()
       }
     }
   }
