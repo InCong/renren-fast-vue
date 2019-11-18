@@ -142,7 +142,19 @@
         bdStudentId: null,
         title: '',
         dayList: [],
-        classWayList: [],
+        classWayList: [{
+          id: 1,
+          name: '一对一'
+        }, {
+          id: 2,
+          name: '一对多'
+        }, {
+          id: 3,
+          name: '多对一'
+        }, {
+          id: 4,
+          name: '多对多'
+        }],
         classesList: [],
         // classDisabled: true,
         classLength: 0,
@@ -157,7 +169,6 @@
         isTimeChange: false,
         // 以下是单选的变量
         radioClassWay: '',
-        radioClassWayType: '',
         radioType: '1',
         isAutoNotice: '1',
         // 以下是表单变量
@@ -192,22 +203,6 @@
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
         })
-        this.$http({
-          url: this.$http.adornUrl('/basic/classway/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 0,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.classWayList = data.page.list
-          } else {
-            this.classWayList = []
-          }
-        })
-
         // 组件看不见时调用，清空数组
         this.over = () => {
           this.classesList = []
@@ -217,7 +212,6 @@
           this.dataForm.bdClassesStudentId = ''
           this.dataForm.remark = ''
           this.radioClassWay = ''
-          this.radioClassWayType = ''
           this.visible = false
           // this.classDisabled = true
           this.classLength = 0
@@ -268,7 +262,7 @@
             type: 'warning',
             duration: 1500
           })
-        } else if (this.radioClassWayType === 1 && this.count > 0) {
+        } else if (this.radioClassWay === 1 && this.count > 0) {
           this.$message({
             message: '该教师在该日期时间内已安排一对一的课程，无法再安排其它一对一课程！！',
             type: 'warning',
@@ -327,7 +321,6 @@
                       this.dataForm.bdClassesStudentId = ''
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
-                      this.radioClassWayType = ''
                       // this.classDisabled = true
                       this.hours = ''
                       this.minutes = ''
@@ -372,7 +365,6 @@
                       this.dataForm.bdClassesStudentId = ''
                       this.dataForm.remark = ''
                       this.radioClassWay = ''
-                      this.radioClassWayType = ''
                       this.hours = ''
                       this.minutes = ''
                       this.isTimeChange = false
@@ -424,7 +416,6 @@
       classWayChange () {
         this.clearClassSelect()
         let classWay = this.radioClassWay.id
-        this.radioClassWayType = this.radioClassWay.type
         this.$http({
           url: this.$http.adornUrl('/business/studentclassarrange/targetClassArrange'),
           method: 'post',
@@ -503,7 +494,6 @@
         this.dataForm.endTime = ''
         this.dataForm.bdClassesStudentId = ''
         this.radioClassWay = ''
-        this.radioClassWayType = ''
         this.classLength = 0
         // this.classDisabled = true
         this.$http({

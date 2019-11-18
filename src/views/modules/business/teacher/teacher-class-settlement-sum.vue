@@ -143,7 +143,6 @@
         this.dataListLoading = true
         let startDate = this.rangeDate[0]
         let endDate = this.rangeDate[1]
-        console.log(this.rangeDate)
         this.$http({
           url: this.$http.adornUrl('/business/teacherclasssettlement/listTeacherClassSettlementSum'),
           method: 'post',
