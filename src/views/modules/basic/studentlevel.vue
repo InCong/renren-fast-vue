@@ -7,6 +7,7 @@
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('basic:studentlevel:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('basic:studentlevel:save')" type="primary" @click="multiAdd">批量新增</el-button>
         <el-button v-if="isAuth('basic:studentlevel:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
@@ -77,11 +78,14 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 弹窗，批量新增 -->
+    <multi-add v-if="multiAddVisible" ref="multiAdd" @refreshDataList="getDataList"></multi-add>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './studentlevel-add-or-update'
+  import MultiAdd from './studentlevel-multi-add'
   export default {
     data () {
       return {
@@ -95,11 +99,13 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
+        multiAddVisible: false,
         orgList: []
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      MultiAdd
     },
     activated () {
       this.getDataList()
@@ -207,6 +213,12 @@
           }
         }
         return orgName
+      },
+      multiAdd () {
+        this.multiAddVisible = true
+        this.$nextTick(() => {
+          this.$refs.multiAdd.init()
+        })
       }
     }
   }
