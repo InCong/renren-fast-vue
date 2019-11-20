@@ -8,7 +8,7 @@
         <el-input v-model="dataForm.name" placeholder="课程名称"></el-input>
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input v-model="dataForm.price" placeholder="价格" type="decimal"></el-input>
+        <el-input-number v-model="dataForm.price" placeholder="价格" :min="0" :step="10" :precision="2"></el-input-number>
       </el-form-item>
       <el-form-item label="时长" prop="length">
         <el-input-number v-model="dataForm.length" :step="15"></el-input-number>

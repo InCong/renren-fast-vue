@@ -7,6 +7,7 @@
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('business:classes:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="multiAdd()">批量新增</el-button>
         <el-button v-if="isAuth('business:classes:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
         <el-button v-if="isAuth('business:classes:save')" type="primary" @click="packageManage()">套餐管理</el-button>
       </el-form-item>
@@ -121,6 +122,8 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 弹窗, 批量新增 -->
+    <multi-add v-if="multiAddVisible" ref="multiAdd" @refreshDataList="getDataList"></multi-add>
     <!-- 弹窗, 与教师绑定 -->
     <classes-teacher v-if="classesTeacherVisible" ref="classesTeacher"></classes-teacher>
     <!-- 弹窗, 与教师绑定 -->
@@ -132,6 +135,7 @@
 
 <script>
   import AddOrUpdate from './classes-add-or-update'
+  import MultiAdd from './classes-multi-add'
   import ClassesTeacher from './classesTeacher'
   import ClassesStudent from './classesStudent'
   import Package from './package'
@@ -148,6 +152,7 @@
         dataListLoading: false,
         dataListSelections: [],
         addOrUpdateVisible: false,
+        multiAddVisible: false,
         classTypeList: [],
         classesTeacherVisible: false,
         classesStudentVisible: false,
@@ -158,12 +163,12 @@
       ClassesTeacher,
       ClassesStudent,
       AddOrUpdate,
-      Package
+      Package,
+      MultiAdd
     },
     activated () {
       this.getDataList()
       this.getClassTypeList()
-      this.getClassWyList()
     },
     methods: {
       // 获取数据列表
@@ -288,6 +293,12 @@
         this.packageVisible = true
         this.$nextTick(() => {
           this.$refs.package.init()
+        })
+      },
+      multiAdd () {
+        this.multiAddVisible = true
+        this.$nextTick(() => {
+          this.$refs.multiAdd.init()
         })
       }
     }

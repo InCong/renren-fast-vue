@@ -3,7 +3,8 @@
       title="批量新增"
       :close-on-click-modal="false"
       :visible.sync="visible"
-      width="30%">
+      width="30%"
+      @close="closeDialog">
       <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
         <el-form-item label="名称" prop="name">
           <el-input v-model="dataForm.name" placeholder="级别名称" style="width: 200px"></el-input>
@@ -36,13 +37,13 @@
         visible: false,
         isShowMaxLevel: true,
         typeList: [{
-            value: 1,
-            label: '数字（如1级、2级...）'
-          },
-          {
-            value: 2,
-            label: '中文（如初级、中级...）'
-          }
+          value: 1,
+          label: '数字（如1级、2级...）'
+        },
+        {
+          value: 2,
+          label: '中文（如初级、中级...）'
+        }
         ],
         dataForm: {
           id: 0,
@@ -66,6 +67,10 @@
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
         })
+        // 组件看不见时调用
+        this.over = () => {
+          this.isShowMaxLevel = true
+        }
       },
       // 表单提交
       dataFormSubmit () {
@@ -100,8 +105,11 @@
         })
       },
       typeChange () {
-        console.log(this.dataForm.type)
-        this.isShowMaxLevel = this.dataForm.type === 1;
+        this.isShowMaxLevel = this.dataForm.type === 1
+      },
+      // 关闭时的逻辑
+      closeDialog () {
+        this.over()
       }
     }
   }
