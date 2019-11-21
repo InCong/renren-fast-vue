@@ -212,6 +212,7 @@
           this.dataForm.bdClassesStudentId = ''
           this.dataForm.remark = ''
           this.radioClassWay = ''
+          this.radioType = '1'
           this.visible = false
           // this.classDisabled = true
           this.classLength = 0

@@ -46,7 +46,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="最大数量" prop="maxLevel" v-if="isShowMaxLevel">
-        <el-input v-model="dataForm.maxLevel" placeholder="最高级别" type="number" style="width: 200px"></el-input>
+        <el-input-number v-model="dataForm.maxLevel" placeholder="最高级别" :min="1" :step="1"></el-input-number>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -143,9 +143,9 @@
                 'name': this.dataForm.bdClassTypeName,
                 'bdClassTypeId': this.dataForm.bdClassTypeId,
                 'bdClassWayId': this.dataForm.bdClassWayId,
-                'minPrice': this.dataForm.minPrice,
-                'priceStep': this.dataForm.priceStep,
-                'maxLevel': this.dataForm.maxLevel,
+                'minPrice': this.dataForm.minPrice.toString(),
+                'priceStep': this.dataForm.priceStep.toString(),
+                'maxLevel': this.dataForm.maxLevel.valueOf(),
                 'length': this.dataForm.length,
                 'type': this.dataForm.type,
                 'bdOrgId': this.$store.state.user.bdOrgId,

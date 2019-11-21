@@ -12,6 +12,7 @@
         <el-button type="primary" @click="artificialSignButtonClick">人工签到</el-button>
         <el-button type="primary" @click="modifyButtonClick">课程修改</el-button>
         <el-button type="danger" @click="deleteButtonClick">删除课程</el-button>
+        <el-button type="danger" @click="multiDeleteButtonClick">批量删除</el-button>
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">自动提醒</span></el-divider>
       <div style="margin-top: 30px;margin-bottom: 30px">
@@ -221,7 +222,6 @@
       },
       // 删除课程
       deleteButtonClick () {
-        this.type = 'delete'
         this.$confirm(`确定对该课程进行删除操作？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -233,6 +233,7 @@
             data: this.$http.adornData([this.id], false)
           }).then(({data}) => {
             if (data && data.code === 0) {
+              this.type = 'delete'
               this.$message({
                 message: '删除成功！',
                 type: 'success',
@@ -287,6 +288,38 @@
               duration: 5000
             })
           }
+        })
+      },
+      // 批量删除该批循环产生的课程
+      multiDeleteButtonClick () {
+        this.$confirm('此操作将会批量删除与该课程一同循环产生的课程，是否继续', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/business/studentclassarrange/multiDelete'),
+            method: 'post',
+            data: this.$http.adornData({
+              'id': this.id
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.type = 'delete'
+              this.$message({
+                message: '删除成功！',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.visible = false
+                }
+              })
+            } else {
+              this.$message.error(data.msg)
+            }
+          })
+        }).catch(() => {
+          console.log('取消批量删除')
         })
       }
     }

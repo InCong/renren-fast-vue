@@ -20,7 +20,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="最高级别" prop="maxLevel" v-if="isShowMaxLevel">
-          <el-input v-model="dataForm.maxLevel" placeholder="最高级别" type="number" style="width: 200px"></el-input>
+          <el-input-number v-model="dataForm.maxLevel" placeholder="最高级别" :min="1" :step="1"></el-input-number>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -82,7 +82,7 @@
               data: this.$http.adornData({
                 'name': this.dataForm.name,
                 'type': this.dataForm.type,
-                'maxLevel': this.dataForm.maxLevel,
+                'maxLevel': this.dataForm.maxLevel.valueOf(),
                 'bdOrgId': this.$store.state.user.bdOrgId,
                 'createUserId': this.$store.state.user.id
               })
