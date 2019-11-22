@@ -3,7 +3,7 @@
     :title="'【' + className + '】 ' + startTime + ' 至 ' + endTime"
     :visible.sync="visible"
     @close="closeDialog"
-    width="30%"
+    width="35%"
     center>
     <div style="text-align: center">
       <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">相关操作</span></el-divider>
@@ -292,7 +292,7 @@
       },
       // 批量删除该批循环产生的课程
       multiDeleteButtonClick () {
-        this.$confirm('此操作将会批量删除与该课程一同循环产生的课程，是否继续', '提示', {
+        this.$confirm('此操作将会批量删除与该课程一起循环产生的课程，是否继续', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

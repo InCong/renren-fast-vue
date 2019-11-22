@@ -276,7 +276,6 @@
           // num = Math.ceil(num)
           // 截取小数点后2位
           num = parseFloat(num).toFixed(2)
-          console.log(num)
           let remainNum = 0
           this.$http({
             url: this.$http.adornUrl(`/business/classesstudent/info/${this.dataForm.bdClassesStudentId.substring(0, this.dataForm.bdClassesStudentId.indexOf('_'))}`),

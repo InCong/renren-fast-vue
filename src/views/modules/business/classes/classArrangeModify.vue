@@ -5,8 +5,13 @@
     :visible.sync="visible"
     @close="closeDialog"
     append-to-body>
+    <el-switch
+      v-model="isMultiModify"
+      active-text="是否批量修改"
+      style="margin-left: 10px; margin-bottom: 10px">
+    </el-switch>
     <el-divider content-position="left"><span style="color: #00a0e9">排课日期与时间</span></el-divider>
-    <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
+    <div style="text-align: center;margin-top: 30px" v-if="!isMultiModify">
       <el-date-picker
         v-model="arrangeDate"
         value-format="yyyy-MM-dd"
@@ -14,7 +19,7 @@
         placeholder="选择排课日期">
       </el-date-picker>
     </div>
-    <div style="text-align: center;margin-bottom: 30px">
+    <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
       <el-switch
         v-model="isTimeSelect"
         active-text="选择时间"
@@ -79,13 +84,14 @@
         @change="classLengthChange">
       </el-input>
     </div>
-    <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
-    <div style="text-align: center;margin-top: 30px">
+    <el-divider content-position="left"><span style="color: #00a0e9" v-if="!isMultiModify">备注</span></el-divider>
+    <div style="text-align: center;margin-top: 30px" v-if="!isMultiModify">
       <el-input type="text" v-model="remark" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%"></el-input>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button type="primary" @click="dataFormSubmit()" v-if="!isMultiModify">确定</el-button>
+      <el-button type="primary" @click="multiModify" v-if="isMultiModify">批量修改</el-button>
     </span>
   </el-dialog>
 </template>
@@ -106,7 +112,8 @@
         isTimeSelect: true,
         hours: '',
         minutes: '',
-        isTimeChange: false
+        isTimeChange: false,
+        isMultiModify: false
       }
     },
     methods: {
@@ -126,66 +133,70 @@
         // 组件看不见时调用
         this.over = () => {
           this.isTimeChange = false
+          this.isMultiModify = false
         }
       },
       dataFormSubmit () {
         let num = this.endTime.substr(0, 2) - this.startTime.substr(0, 2) + (this.endTime.substr(3, 2) - this.startTime.substr(3, 2)) / 60
         // 四舍五入取整
-        num = Math.ceil(num)
-        let remainNum = 0
+        // num = Math.ceil(num)
+        // 截取小数点后2位
+        num = parseFloat(num).toFixed(2)
+        // let remainNum = 0
+        // this.$http({
+        //   url: this.$http.adornUrl(`/business/classesstudent/info/${this.bdClassesStudentId}`),
+        //   method: 'get',
+        //   params: this.$http.adornParams()
+        // }).then(({data}) => {
+        //   if (data && data.code === 0) {
+        //     remainNum = data.classesStudent.remainNum
+        //     if (remainNum < num) {
+        //       this.$message({
+        //         message: '当前剩余课时不足！最新剩余课时：' + remainNum,
+        //         type: 'warning',
+        //         duration: 3000
+        //       })
+        //     } else {
+        //
+        //     }
+        //   } else {
+        //     this.$message({
+        //       message: '无法找到记录！请确认！',
+        //       type: 'warning',
+        //       duration: 3000
+        //     })
+        //   }
+        // })
         this.$http({
-          url: this.$http.adornUrl(`/business/classesstudent/info/${this.bdClassesStudentId}`),
-          method: 'get',
-          params: this.$http.adornParams()
+          url: this.$http.adornUrl('/business/studentclassarrange/updateForOne'),
+          method: 'post',
+          data: this.$http.adornData({
+            'id': this.id,
+            'bdClassesStudentId': this.bdClassesStudentId,
+            'arrangeDate': this.arrangeDate,
+            'startTime': this.startTime,
+            'endTime': this.endTime,
+            'num': num,
+            'length': this.length,
+            'bdTeacherId': this.bdTeacherId,
+            'remark': this.remark
+          })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            remainNum = data.classesStudent.remainNum
-            if (remainNum < num) {
-              this.$message({
-                message: '当前剩余课时不足！最新剩余课时：' + remainNum,
-                type: 'warning',
-                duration: 3000
-              })
-            } else {
-              this.$http({
-                url: this.$http.adornUrl('/business/studentclassarrange/updateForOne'),
-                method: 'post',
-                data: this.$http.adornData({
-                  'id': this.id,
-                  'bdClassesStudentId': this.bdClassesStudentId,
-                  'arrangeDate': this.arrangeDate,
-                  'startTime': this.startTime,
-                  'endTime': this.endTime,
-                  'num': num,
-                  'length': this.length,
-                  'bdTeacherId': this.bdTeacherId,
-                  'remark': this.remark
-                })
-              }).then(({data}) => {
-                if (data && data.code === 0) {
-                  this.$message({
-                    message: '保存成功！',
-                    type: 'success',
-                    duration: 1500,
-                    onClose: () => {
-                      this.visible = false
-                      this.$emit('updateTimeData', this.arrangeDate, this.startTime, this.endTime, this.length)
-                    }
-                  })
-                } else {
-                  this.$message({
-                    message: data.msg,
-                    type: 'error',
-                    duration: 5000
-                  })
-                }
-              })
-            }
+            this.$message({
+              message: '保存成功！',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.$emit('updateTimeData', this.arrangeDate, this.startTime, this.endTime, this.length)
+              }
+            })
           } else {
             this.$message({
-              message: '无法找到记录！请确认！',
-              type: 'warning',
-              duration: 3000
+              message: data.msg,
+              type: 'error',
+              duration: 5000
             })
           }
         })
@@ -240,6 +251,49 @@
       // 关闭时的逻辑
       closeDialog () {
         this.over()
+      },
+      multiModify () {
+        this.$confirm('此操作将会批量修改与该课程一起循环产生的课程，如果时间上与其它课程冲突，则默认不修改时间。是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let num = this.endTime.substr(0, 2) - this.startTime.substr(0, 2) + (this.endTime.substr(3, 2) - this.startTime.substr(3, 2)) / 60
+          num = parseFloat(num).toFixed(2)
+          this.$http({
+            url: this.$http.adornUrl('/business/studentclassarrange/updateForCircle'),
+            method: 'post',
+            data: this.$http.adornData({
+              'id': this.id,
+              'bdClassesStudentId': this.bdClassesStudentId,
+              'startTime': this.startTime,
+              'endTime': this.endTime,
+              'num': num,
+              'length': this.length,
+              'bdTeacherId': this.bdTeacherId
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: data.msg,
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.visible = false
+                  this.$emit('updateTimeData', this.arrangeDate, this.startTime, this.endTime, this.length)
+                }
+              })
+            } else {
+              this.$message({
+                message: data.msg,
+                type: 'error',
+                duration: 5000
+              })
+            }
+          })
+        }).catch(() => {
+          console.log('取消批量删除')
+        })
       }
     }
   }
