@@ -47,12 +47,6 @@
           label="课程名">
         </el-table-column>
         <el-table-column
-          prop="teacherName"
-          header-align="center"
-          align="center"
-          label="教师名">
-        </el-table-column>
-        <el-table-column
           prop="originalPrice"
           header-align="center"
           align="center"
@@ -244,6 +238,7 @@
         } else if (this.active === 2) {
           this.isSubmit = true
           this.visible = false
+          this.$emit('refreshDataList')
         }
       },
       previous () {

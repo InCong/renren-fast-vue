@@ -6,22 +6,32 @@
     :append-to-body="true"
     @close="closeDialog">
     <el-form :model="dataForm1" :rules="dataRule" ref="dataForm1" @keyup.enter.native="dataForm1Submit()" label-width="80px">
-      <el-form-item label="教师" prop="bdTeacherId">
-        <el-select v-model="dataForm1.bdTeacherId" clearable placeholder="先选择教师，再选择课程" filterable @change="handleITeacherChange">
+<!--      <el-form-item label="教师" prop="bdTeacherId">-->
+<!--        <el-select v-model="dataForm1.bdTeacherId" clearable placeholder="先选择教师，再选择课程" filterable @change="handleITeacherChange">-->
+<!--          <el-option-->
+<!--            v-for="item in teacherList"-->
+<!--            :key="item.id"-->
+<!--            :label="item.name"-->
+<!--            :value="item.id">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
+      <el-form-item label="课程种类" prop="classType">
+        <el-select v-model="dataForm1.classType" clearable placeholder="先选择种类，再选择课程" filterable @change="handleClassTypeChange">
           <el-option
-            v-for="item in teacherList"
+            v-for="item in classTypeList"
             :key="item.id"
             :label="item.name"
             :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="课程" prop="bdClassesTeacherId">
-        <el-select v-model="dataForm1.bdClassesTeacherId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable" @change="handleClassChange()">
+      <el-form-item label="课程" prop="bdClassId">
+        <el-select v-model="dataForm1.bdClassId" clearable placeholder="请选择课程" filterable :disabled="classSelectDisable" @change="handleClassChange()">
           <el-option
             v-for="item in classList"
             :key="item.id"
-            :label="item.bdClassesName"
+            :label="item.name"
             :value="item.id">
           </el-option>
         </el-select>
@@ -32,7 +42,7 @@
       <el-form-item label="现价" prop="currentPrice">
         <el-input-number v-model="dataForm1.currentPrice" :precision="2"></el-input-number>
       </el-form-item>
-      <el-form-item label="课时" prop="originalPrice">
+      <el-form-item label="课时" prop="num">
         <el-input-number v-model="dataForm1.num"></el-input-number>
       </el-form-item>
       <el-form-item label="类型" prop="otherType">
@@ -70,9 +80,11 @@
           teacherName: '',
           originalPrice: '',
           currentPrice: '',
-          num: '',
+          num: 1,
           otherType: '',
+          classType: '',
           bdClassesTeacherId: '',
+          bdClassId: '',
           bdPackageId: '',
           createUserId: '',
           createTime: '',
@@ -93,6 +105,7 @@
         // 教师
         teacherList: [],
         // 课程
+        classTypeList: [],
         classList: [],
         classSelectDisable: true,
         // 类型
@@ -125,17 +138,34 @@
                 this.dataForm1.currentPrice = data.packageDetail.currentPrice
                 this.dataForm1.num = data.packageDetail.num
                 this.dataForm1.otherType = data.packageDetail.otherType
-                this.dataForm1.bdClassesTeacherId = data.packageDetail.bdClassesTeacherId
-                this.dataForm1.bdTeacherId = data.packageDetail.bdTeacherId
+                this.dataForm1.classType = data.packageDetail.bdClassTypeId
+                this.dataForm1.bdClassId = data.packageDetail.bdClassId
+                // this.dataForm1.bdClassesTeacherId = data.packageDetail.bdClassesTeacherId
+                // this.dataForm1.bdTeacherId = data.packageDetail.bdTeacherId
                 this.dataForm1.bdPackageId = data.packageDetail.bdPackageId
                 this.dataForm1.createTime = data.packageDetail.createTime
                 this.dataForm1.remark = data.packageDetail.remark
-                this.handleITeacherChange()
+                this.handleClassTypeChange()
               }
             })
           }
+          // this.$http({
+          //   url: this.$http.adornUrl('/business/teacher/list'),
+          //   method: 'get',
+          //   params: this.$http.adornParams({
+          //     'page': 1,
+          //     'limit': 1000,
+          //     'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+          //   })
+          // }).then(({data}) => {
+          //   if (data && data.code === 0) {
+          //     this.teacherList = data.page.list
+          //   } else {
+          //     this.teacherList = []
+          //   }
+          // })
           this.$http({
-            url: this.$http.adornUrl('/business/teacher/list'),
+            url: this.$http.adornUrl('/basic/classtype/list'),
             method: 'get',
             params: this.$http.adornParams({
               'page': 1,
@@ -144,9 +174,9 @@
             })
           }).then(({data}) => {
             if (data && data.code === 0) {
-              this.teacherList = data.page.list
+              this.classTypeList = data.page.list
             } else {
-              this.teacherList = []
+              this.classTypeList = []
             }
           })
         })
@@ -168,13 +198,15 @@
               data: this.$http.adornData({
                 'id': this.dataForm1.id || undefined,
                 'name': this.dataForm1.name,
-                'teacherName': this.dataForm1.teacherName,
+                // 'teacherName': this.dataForm1.teacherName,
+                'bdClassTypeId': this.dataForm1.classType,
+                'bdClassId': this.dataForm1.bdClassId,
                 'originalPrice': this.dataForm1.originalPrice,
                 'currentPrice': this.dataForm1.currentPrice,
                 'num': this.dataForm1.num,
                 'otherType': this.dataForm1.otherType,
-                'bdClassesTeacherId': this.dataForm1.bdClassesTeacherId,
-                'bdTeacherId': this.dataForm1.bdTeacherId,
+                // 'bdClassesTeacherId': this.dataForm1.bdClassesTeacherId,
+                // 'bdTeacherId': this.dataForm1.bdTeacherId,
                 'bdPackageId': this.dataForm1.bdPackageId,
                 'remark': this.dataForm1.remark
               })
@@ -197,14 +229,45 @@
         })
       },
       // 教师选择器变更选择时的事件
-      handleITeacherChange () {
-        if (this.dataForm1.bdTeacherId != null && this.dataForm1.bdTeacherId !== '') {
+      // handleITeacherChange () {
+      //   if (this.dataForm1.bdTeacherId != null && this.dataForm1.bdTeacherId !== '') {
+      //     this.classSelectDisable = false
+      //     this.$http({
+      //       url: this.$http.adornUrl('/business/classesteacher/listClassesByTeacherId'),
+      //       method: 'post',
+      //       data: this.$http.adornData({
+      //         'bdTeacherId': this.dataForm1.bdTeacherId
+      //       })
+      //     }).then(({data}) => {
+      //       if (data && data.code === 0) {
+      //         this.classList = data.list
+      //       } else {
+      //         this.classList = []
+      //       }
+      //     })
+      //   } else {
+      //     this.classSelectDisable = true
+      //     this.classList = []
+      //   }
+      //   for (let i = 0; i < this.teacherList.length; i++) {
+      //     let item = this.teacherList[i]
+      //     if (item.id === this.dataForm1.bdTeacherId) {
+      //       this.dataForm1.teacherName = item.name
+      //       break
+      //     } else {
+      //       this.dataForm1.teacherName = ''
+      //     }
+      //   }
+      // },
+      // 课程种类选择器变更时的操作
+      handleClassTypeChange () {
+        if (this.dataForm1.classType != null && this.dataForm1.classType !== '') {
           this.classSelectDisable = false
           this.$http({
-            url: this.$http.adornUrl('/business/classesteacher/listClassesByTeacherId'),
+            url: this.$http.adornUrl('/business/classes/listByClassType'),
             method: 'post',
             data: this.$http.adornData({
-              'bdTeacherId': this.dataForm1.bdTeacherId
+              'bdClassTypeId': this.dataForm1.classType
             })
           }).then(({data}) => {
             if (data && data.code === 0) {
@@ -217,26 +280,19 @@
           this.classSelectDisable = true
           this.classList = []
         }
-        for (let i = 0; i < this.teacherList.length; i++) {
-          let item = this.teacherList[i]
-          if (item.id === this.dataForm1.bdTeacherId) {
-            this.dataForm1.teacherName = item.name
-            break
-          } else {
-            this.dataForm1.teacherName = ''
-          }
-        }
       },
       handleClassChange () {
         for (let i = 0; i < this.classList.length; i++) {
           let item = this.classList[i]
-          if (item.id === this.dataForm1.bdClassesTeacherId) {
-            this.dataForm1.bdClassesTeacherId = item.id
+          if (item.id === this.dataForm1.bdClassId) {
             this.dataForm1.name = item.name
             this.dataForm1.originalPrice = item.price
+            this.dataForm1.currentPrice = item.price
             break
           } else {
             this.dataForm1.name = ''
+            this.dataForm1.originalPrice = ''
+            this.dataForm1.currentPrice = ''
           }
         }
       },
