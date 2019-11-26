@@ -81,6 +81,78 @@
         style="margin-top: 10px;text-align: right">
       </el-pagination>
     </div>
+    <div v-if="isShowTeacherSelector">
+      <el-divider content-position="left"><span style="color: #00a0e9;margin-bottom: 30px">选择任课教师</span></el-divider>
+      <el-table
+        :data="classesList"
+        border
+        style="width: 100%;">
+        <el-table-column
+          prop="id"
+          header-align="center"
+          align="center"
+          label="id"
+          width="50">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          header-align="center"
+          align="center"
+          label="课程名">
+        </el-table-column>
+        <el-table-column
+          prop="bdTeacherId"
+          header-align="center"
+          align="center"
+          label="任课教师">
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.bdTeacherId" filterable placeholder="请选择任课教师" @change="changeRowTeacher($event, scope.$index)">
+              <el-option
+                v-for="item in teacherList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="originalPrice"
+          header-align="center"
+          align="center"
+          label="原价">
+        </el-table-column>
+        <el-table-column
+          prop="currentPrice"
+          header-align="center"
+          align="center"
+          label="现价">
+        </el-table-column>
+        <el-table-column
+          prop="num"
+          header-align="center"
+          align="center"
+          label="课时">
+        </el-table-column>
+        <el-table-column
+          prop="otherType"
+          header-align="center"
+          align="center"
+          label="类型">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.otherType === 1" size="small">普通</el-tag>
+            <el-tag v-if="scope.row.otherType === 2" size="small">赠送</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="remark"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+          label="备注">
+        </el-table-column>
+      </el-table>
+    </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="submit()">确定</el-button>
@@ -96,11 +168,14 @@
         studentId: 0,
         name: '',
         packageList: [],
+        classesList: [],
+        teacherList: [],
         pageIndex: 1,
         pageSize: 10,
         totalPage: 0,
         dataListLoading: false,
-        currentRow: null
+        currentRow: null,
+        isShowTeacherSelector: false
       }
     },
     methods: {
@@ -108,9 +183,10 @@
         this.visible = true
         this.studentId = id
         this.getDataList()
+        this.getTeacherList()
         // 组件看不见时调用
         this.over = () => {
-
+          this.currentRow = null
         }
       },
       getDataList () {
@@ -155,37 +231,103 @@
             duration: 1500
           })
         } else {
-          let bdPackageId = this.currentRow.id
-          this.$http({
-            url: this.$http.adornUrl('/business/studentpackage/save'),
-            method: 'post',
-            data: this.$http.adornData({
-              'bdStudentId': this.studentId,
-              'bdPackageId': bdPackageId
-            })
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.visible = false
-                  this.$emit('refreshDataList')
-                }
-              })
-            } else {
-              this.$message.error(data.msg)
+          // 检查是否都有选择任课教师
+          let isSelectTeacher = true
+          for (let i = 0; i < this.classesList.length; i++) {
+            if (this.classesList[i].bdTeacherId === null || this.classesList[i].bdTeacherId === '') {
+              isSelectTeacher = false
+              break
             }
-          })
+          }
+          if (isSelectTeacher) {
+            let bdPackageId = this.currentRow.id
+            this.$http({
+              url: this.$http.adornUrl('/business/studentpackage/multiSave'),
+              method: 'post',
+              data: this.$http.adornData({
+                'bdStudentId': this.studentId,
+                'bdPackageId': bdPackageId,
+                'classesList': this.classesList
+              })
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.$message({
+                  message: '操作成功',
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.visible = false
+                    this.$emit('refreshDataList')
+                  }
+                })
+              } else {
+                this.$message.error(data.msg)
+              }
+            })
+          } else {
+            this.$message({
+              message: '请选择课程对应的任课教师！！！',
+              type: 'warning',
+              duration: 3000
+            })
+          }
         }
       },
       // 单选变更
       handleCurrentChange (val) {
         this.currentRow = val
+        if (this.currentRow != null) {
+          this.isShowTeacherSelector = true
+          this.$http({
+            url: this.$http.adornUrl('/business/packagedetail/list'),
+            method: 'get',
+            params: this.$http.adornParams({
+              'page': 1,
+              'limit': 1000,
+              'bdPackageId': this.currentRow.id
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.classesList = data.page.list
+            } else {
+              this.classesList = []
+            }
+          })
+        } else {
+          this.isShowTeacherSelector = false
+          this.classesList = []
+        }
       },
       closeDialog () {
         this.over()
+      },
+      getTeacherList () {
+        this.$http({
+          url: this.$http.adornUrl('/business/teacher/listTeacher'),
+          method: 'post',
+          data: this.$http.adornData({
+            'page': 1,
+            'limit': 1000,
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以获取全部机构部门的列表
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.teacherList = data.page.records
+          } else {
+            this.teacherList = []
+          }
+        })
+      },
+      changeRowTeacher (val, index) {
+        if (this.teacherList != null) {
+          for (let i = 0; i < this.teacherList.length; i++) {
+            let item = this.teacherList[i]
+            if (item.id === val) {
+              this.classesList[index].teacherName = item.name
+              break
+            }
+          }
+        }
       }
     }
   }
