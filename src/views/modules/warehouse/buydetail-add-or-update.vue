@@ -128,12 +128,10 @@
               isLock = data.goodsBook.isLock
               if (isLock === 0) {
                 let wdGoodsTypeId = ''
-                let wdGoodsModelId = ''
                 for (let i = 0; i < this.goodsList.length; i++) {
                   let item = this.goodsList[i]
                   if (item.id === this.dataForm.wdGoodsId) {
                     wdGoodsTypeId = item.wdGoodsTypeId
-                    wdGoodsModelId = item.wdGoodsModelId
                     break
                   }
                 }
@@ -145,7 +143,6 @@
                     'wdGoodsId': this.dataForm.wdGoodsId,
                     'wdSupplierId': this.dataForm.wdSupplierId,
                     'wdGoodsTypeId': wdGoodsTypeId,
-                    'wdGoodsModelId': wdGoodsModelId,
                     'qty': this.dataForm.qty,
                     'price': this.dataForm.price,
                     'totalPrice': this.dataForm.totalPrice,

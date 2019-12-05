@@ -14,7 +14,7 @@
       <el-input v-model="dataForm.code" placeholder="编号"></el-input>
     </el-form-item>
     <el-form-item label="商品种类" prop="wdGoodsTypeId">
-      <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型">
+      <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品种类">
         <el-option
           v-for="item in typeList"
           :key="item.id"

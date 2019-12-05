@@ -21,19 +21,9 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型" @change="typeChange">
+          <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品种类">
             <el-option
               v-for="item in typeList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-select v-model="dataForm.wdGoodsModelId" clearable placeholder="商品型号" :disabled="modelDisable">
-            <el-option
-              v-for="item in modelListForSelect"
               :key="item.id"
               :label="item.name"
               :value="item.id">
@@ -71,14 +61,7 @@
           header-align="center"
           align="center"
           :formatter="formatType"
-          label="商品类型">
-        </el-table-column>
-        <el-table-column
-          prop="wdGoodsModelId"
-          header-align="center"
-          align="center"
-          :formatter="formatModel"
-          label="商品型号">
+          label="商品种类">
         </el-table-column>
         <el-table-column
           prop="qty"
@@ -153,7 +136,6 @@
         dataForm: {
           wdGoodsId: '',
           wdGoodsTypeId: '',
-          wdGoodsModelId: '',
           // 填写的退货数量与备注
           qty: 0,
           remark: ''
@@ -165,28 +147,23 @@
         dataListLoading: false,
         goodsList: [],
         typeList: [],
-        modelList: [],
-        modelListForSelect: [],
         supplierList: [],
-        modelDisable: true,
         // 单选获取的值
         currentRow: null,
         currentWdGoodsId: '',
         currentWdGoodsTypeId: '',
-        currentWdGoodsModelId: '',
         currentWdSaleDetailId: '',
         currentSaleQty: '',
         currentSaleBackQty: ''
       }
     },
     methods: {
-      init (goodsList, typeList, modelList) {
+      init (goodsList, typeList) {
         this.visible = true
         this.active = 0
         this.getDataList()
         this.goodsList = goodsList
         this.typeList = typeList
-        this.modelList = modelList
       },
       // 提交
       dataFormSubmit () {
@@ -196,7 +173,6 @@
           data: this.$http.adornData({
             'wdGoodsId': this.currentWdGoodsId,
             'wdGoodsTypeId': this.currentWdGoodsTypeId,
-            'wdGoodsModelId': this.currentWdGoodsModelId,
             'wdSaleDetailId': this.currentWdSaleDetailId,
             'qty': this.dataForm.qty,
             'bdOrgId': this.$store.state.user.bdOrgId,
@@ -280,7 +256,6 @@
             'limit': this.pageSize,
             'wdGoodsId': this.dataForm.wdGoodsId,
             'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-            'wdGoodsModelId': this.dataForm.wdGoodsModelId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
@@ -331,30 +306,6 @@
         }
         return typeName
       },
-      formatModel: function (row, column) {
-        let modelName = '未知'
-        if (this.modelList != null) {
-          for (let i = 0; i < this.modelList.length; i++) {
-            let item = this.modelList[i]
-            if (item.id === row.wdGoodsModelId) {
-              modelName = item.name
-              break
-            }
-          }
-        }
-        return modelName
-      },
-      // 商品类型变更
-      typeChange () {
-        this.dataForm.wdGoodsModelId = ''
-        if (this.dataForm.wdGoodsTypeId) {
-          this.modelDisable = false
-          this.getModelListForSelect()
-        } else {
-          this.modelDisable = true
-          this.modelListForSelect = []
-        }
-      },
       // 单选变化
       selectChange (val) {
         this.currentRow = val
@@ -362,14 +313,12 @@
           this.currentWdSaleDetailId = val.id
           this.currentWdGoodsId = val.wdGoodsId
           this.currentWdGoodsTypeId = val.wdGoodsTypeId
-          this.currentWdGoodsModelId = val.wdGoodsModelId
           this.currentSaleQty = val.qty
           this.currentSaleBackQty = val.backQty
         } else {
           this.currentWdSaleDetailId = 0
           this.currentWdGoodsId = 0
-          this.currentWdGoodsId = 0
-          this.currentWdGoodsId = 0
+          this.currentWdGoodsTypeId = 0
           this.currentSaleQty = 0
           this.currentSaleBackQty = 0
         }

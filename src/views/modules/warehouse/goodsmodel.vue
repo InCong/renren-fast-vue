@@ -5,7 +5,7 @@
         <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型">
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品种类">
           <el-option
             v-for="item in typeList"
             :key="item.id"
@@ -50,7 +50,7 @@
         header-align="center"
         align="center"
         :formatter="formatType"
-        label="商品类型">
+        label="商品种类">
       </el-table-column>
       <el-table-column
         prop="remark"

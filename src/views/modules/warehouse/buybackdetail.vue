@@ -12,19 +12,9 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型" @change="typeChange">
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品种类">
           <el-option
             v-for="item in typeList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-select v-model="dataForm.wdGoodsModelId" clearable placeholder="商品型号" :disabled="modelDisable">
-          <el-option
-            v-for="item in modelListForSelect"
             :key="item.id"
             :label="item.name"
             :value="item.id">
@@ -68,14 +58,7 @@
         header-align="center"
         align="center"
         :formatter="formatType"
-        label="商品类型">
-      </el-table-column>
-      <el-table-column
-        prop="wdGoodsModelId"
-        header-align="center"
-        align="center"
-        :formatter="formatModel"
-        label="商品型号">
+        label="商品种类">
       </el-table-column>
       <el-table-column
         prop="wdSupplierId"
@@ -141,8 +124,7 @@
       return {
         dataForm: {
           wdGoodsId: '',
-          wdGoodsTypeId: '',
-          wdGoodsModelId: ''
+          wdGoodsTypeId: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -154,10 +136,7 @@
         buyBackDetailCreateVisible: false,
         goodsList: [],
         typeList: [],
-        modelList: [],
-        modelListForSelect: [],
-        supplierList: [],
-        modelDisable: true
+        supplierList: []
       }
     },
     components: {
@@ -168,7 +147,6 @@
       this.getDataList()
       this.getGoodsList()
       this.getTypeList()
-      this.getModelList()
       this.getSupplierList()
     },
     methods: {
@@ -183,7 +161,6 @@
             'limit': this.pageSize,
             'wdGoodsId': this.dataForm.wdGoodsId,
             'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-            'wdGoodsModelId': this.dataForm.wdGoodsModelId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
@@ -223,7 +200,7 @@
         } else {
           this.addOrUpdateVisible = true
           this.$nextTick(() => {
-            this.$refs.addOrUpdate.init(id, this.goodsList, this.typeList, this.modelList, this.supplierList)
+            this.$refs.addOrUpdate.init(id, this.goodsList, this.typeList, this.supplierList)
           })
         }
       },
@@ -231,7 +208,7 @@
       buyBackDetailCreate () {
         this.buyBackDetailCreateVisible = true
         this.$nextTick(() => {
-          this.$refs.buyBackDetailCreate.init(this.goodsList, this.typeList, this.modelList, this.supplierList)
+          this.$refs.buyBackDetailCreate.init(this.goodsList, this.typeList, this.supplierList)
         })
       },
       // 删除
@@ -313,35 +290,6 @@
           this.typeList = data.page.list
         })
       },
-      // 获取商品型号ID
-      getModelList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelListForSelect () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelListForSelect = data.page.list
-        })
-      },
       getSupplierList () {
         this.$http({
           url: this.$http.adornUrl('/warehouse/supplier/list'),
@@ -381,19 +329,6 @@
         }
         return typeName
       },
-      formatModel: function (row, column) {
-        let modelName = '未知'
-        if (this.modelList != null) {
-          for (let i = 0; i < this.modelList.length; i++) {
-            let item = this.modelList[i]
-            if (item.id === row.wdGoodsModelId) {
-              modelName = item.name
-              break
-            }
-          }
-        }
-        return modelName
-      },
       formatSupplier: function (row, column) {
         let supplierName = '未知'
         if (this.supplierList != null) {
@@ -406,17 +341,6 @@
           }
         }
         return supplierName
-      },
-      // 商品类型变更
-      typeChange () {
-        this.dataForm.wdGoodsModelId = ''
-        if (this.dataForm.wdGoodsTypeId) {
-          this.modelDisable = false
-          this.getModelListForSelect()
-        } else {
-          this.modelDisable = true
-          this.modelListForSelect = []
-        }
       }
     }
   }

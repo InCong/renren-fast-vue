@@ -7,8 +7,8 @@
     <el-form-item label="名称" prop="name">
       <el-input v-model="dataForm.name" placeholder="名称"></el-input>
     </el-form-item>
-    <el-form-item label="商品类型" prop="wdGoodsTypeId">
-      <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品类型">
+    <el-form-item label="商品种类" prop="wdGoodsTypeId">
+      <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品种类">
         <el-option
           v-for="item in typeList"
           :key="item.id"
@@ -50,7 +50,7 @@
             { required: true, message: '名称不能为空', trigger: 'blur' }
           ],
           wdGoodsTypeId: [
-            { required: true, message: '商品类型不能为空', trigger: 'blur' }
+            { required: true, message: '商品种类不能为空', trigger: 'blur' }
           ]
         },
         typeList: []

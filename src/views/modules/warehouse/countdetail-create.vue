@@ -28,7 +28,6 @@
         visible: false,
         currentValue: [],
         goodsType: [],
-        goodsModel: [],
         goodsList: []
       }
     },
@@ -48,7 +47,6 @@
             if (this.currentValue[i] === this.goodsList[y].id) {
               let item = this.goodsList[y]
               this.goodsType[i] = item.wdGoodsTypeId
-              this.goodsModel[i] = item.wdGoodsModelId
               break
             }
           }
@@ -59,7 +57,6 @@
           data: this.$http.adornData({
             'currentValue': this.currentValue,
             'goodsType': this.goodsType,
-            'goodsModel': this.goodsModel,
             'bdOrgId': this.$store.state.user.bdOrgId,
             'createUserId': this.$store.state.user.id
           })

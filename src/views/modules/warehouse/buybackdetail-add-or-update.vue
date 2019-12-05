@@ -14,20 +14,10 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="商品类型" prop="wdGoodsTypeId">
-      <el-select v-model="dataForm.wdGoodsTypeId" clearable filterable placeholder="商品类型" :disabled="true">
+    <el-form-item label="商品种类" prop="wdGoodsTypeId">
+      <el-select v-model="dataForm.wdGoodsTypeId" clearable filterable placeholder="商品种类" :disabled="true">
         <el-option
           v-for="item in typeList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="商品型号" prop="wdGoodsModelId">
-      <el-select v-model="dataForm.wdGoodsModelId" clearable filterable placeholder="商品型号" :disabled="true">
-        <el-option
-          v-for="item in modelList"
           :key="item.id"
           :label="item.name"
           :value="item.id">
@@ -70,7 +60,6 @@
           id: 0,
           wdGoodsId: '',
           wdGoodsTypeId: '',
-          wdGoodsModelId: '',
           wdSupplierId: '',
           wdBuyDetailId: '',
           qty: 0,
@@ -81,7 +70,6 @@
         },
         goodsList: [],
         typeList: [],
-        modelList: [],
         supplierList: [],
         dataRule: {
           qty: [
@@ -91,16 +79,11 @@
       }
     },
     methods: {
-      init (id, goodsList, typeList, modelList, supplierList) {
+      init (id, goodsList, typeList, supplierList) {
         this.dataForm.id = id || 0
         this.visible = true
-        // this.getGoodsList()
-        // this.getTypeList()
-        // this.getModelList()
-        // this.getSupplierList()
         this.goodsList = goodsList
         this.typeList = typeList
-        this.modelList = modelList
         this.supplierList = supplierList
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()
@@ -113,7 +96,6 @@
               if (data && data.code === 0) {
                 this.dataForm.wdGoodsId = data.buyBackDetail.wdGoodsId
                 this.dataForm.wdGoodsTypeId = data.buyBackDetail.wdGoodsTypeId
-                this.dataForm.wdGoodsModelId = data.buyBackDetail.wdGoodsModelId
                 this.dataForm.wdSupplierId = data.buyBackDetail.wdSupplierId
                 this.dataForm.wdBuyDetailId = data.buyBackDetail.wdBuyDetailId
                 this.dataForm.qty = data.buyBackDetail.qty

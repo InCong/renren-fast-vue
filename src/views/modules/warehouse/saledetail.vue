@@ -58,7 +58,7 @@
         header-align="center"
         align="center"
         :formatter="formatType"
-        label="商品类型">
+        label="商品种类">
       </el-table-column>
       <el-table-column
         prop="qty"
@@ -130,8 +130,7 @@
       return {
         dataForm: {
           wdGoodsId: '',
-          wdGoodsTypeId: '',
-          wdGoodsModelId: ''
+          wdGoodsTypeId: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -151,7 +150,6 @@
       this.getDataList()
       this.getGoodsList()
       this.getTypeList()
-      this.getModelList()
     },
     methods: {
       // 获取数据列表
@@ -165,7 +163,6 @@
             'limit': this.pageSize,
             'wdGoodsId': this.dataForm.wdGoodsId,
             'wdGoodsTypeId': this.dataForm.wdGoodsTypeId,
-            'wdGoodsModelId': this.dataForm.wdGoodsModelId,
             'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
@@ -286,20 +283,6 @@
           })
         }).then(({data}) => {
           this.typeList = data.page.list
-        })
-      },
-      // 获取商品型号ID
-      getModelList () {
-        this.$http({
-          url: this.$http.adornUrl('/warehouse/goodsmodel/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': 1,
-            'limit': 1000,
-            'bdOrgId': this.$store.state.user.id === 1 ? null : this.$store.state.user.bdOrgId // 超级管理员可以看全部
-          })
-        }).then(({data}) => {
-          this.modelList = data.page.list
         })
       },
       formatGoods: function (row, column) {
