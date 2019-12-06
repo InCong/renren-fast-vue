@@ -138,7 +138,7 @@
               </div>
             </el-card>
             <el-card shadow="always" class="timeSheet" v-loading="classArrangeListLoading">
-              <div style="position: relative; height: 750px; overflow-y: auto; overflow-x: hidden">
+              <div style="position: relative; height: 720px; overflow-y: auto; overflow-x: hidden">
                 <div style="position: absolute;margin-left: 90px;width: 1183px;height: 720px">
                   <el-row class="timeRow"><el-divider></el-divider></el-row>
                   <el-row class="timeRow"><el-divider></el-divider></el-row>
@@ -440,7 +440,7 @@
     },
     methods: {
       // 修改教师与学员表格列头样式
-      tableHeaderColor ({row, column, rowIndex, columnIdex}) {
+      tableHeaderColor ({row, column, rowIndex, columnIndex}) {
         if (rowIndex === 0) {
           return 'background-color: lightskyblue;color: #fff;font-weight: 500;font-size: 16px;height: 20px'
         }
@@ -700,7 +700,7 @@
   .classArrangeCol {
     text-align: center;
     /*min-width: 161px;*/
-    min-height: 720px;
+    min-height: 1284px;
     margin-right: 2px;
   }
   .centerContent {

@@ -81,10 +81,13 @@
         style="margin-top: 10px;text-align: right">
       </el-pagination>
     </div>
-    <div v-if="isShowTeacherSelector">
-      <el-divider content-position="left"><span style="color: #00a0e9;margin-bottom: 30px">选择任课教师</span></el-divider>
+    <div v-if="isShowTeacherSelector" style="margin-top: 30px">
+      <div style="margin-bottom: 30px">
+        <el-divider content-position="left"><span style="color: #00a0e9">选择任课教师</span></el-divider>
+      </div>
       <el-table
         :data="classesList"
+        :header-cell-style="headerCellClass"
         border
         style="width: 100%;">
         <el-table-column
@@ -104,7 +107,8 @@
           prop="bdTeacherId"
           header-align="center"
           align="center"
-          label="任课教师">
+          label="任课教师"
+          width="200px">
           <template slot-scope="scope">
             <el-select v-model="scope.row.bdTeacherId" filterable placeholder="请选择任课教师" @change="changeRowTeacher($event, scope.$index)">
               <el-option
@@ -327,6 +331,13 @@
               break
             }
           }
+        }
+      },
+      headerCellClass ({row, column, rowIndex, columnIndex}) {
+        if (rowIndex === 0 && columnIndex === 2) {
+          return 'background: #C7F5ED'
+        } else {
+          return ''
         }
       }
     }

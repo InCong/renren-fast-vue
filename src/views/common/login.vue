@@ -4,7 +4,7 @@
       <div class="site-content">
         <div class="brand-info">
           <h2 class="brand-info__text">教务管理系统</h2>
-          <p class="brand-info__intro">教务信息化，打破信息孤岛</p>
+          <p class="brand-info__intro">教务信息化，让管理变得更简单</p>
         </div>
         <div class="login-main">
           <h3 class="login-title">用户登录</h3>

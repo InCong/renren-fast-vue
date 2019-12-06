@@ -12,7 +12,7 @@
       <el-col :span="8" v-for="item in dataList" :key=item.id style="margin-bottom:40px" >
         <el-card :body-style="{ padding: '0px'}">
           <el-row :gutter="10">
-            <el-col :span="12"><img :src="item.url ? item.url : 'src/assets/img/avatar.png'" class="image" width="250px" height="250px"></el-col>
+            <el-col :span="12"><img :src="item.url ? item.url : './static/img/avatar.png'" class="image" width="250px" height="250px"></el-col>
             <el-col :span="12">
               <el-row>
                 <el-col :span="12">

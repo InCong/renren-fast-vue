@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="购买课时"
+    title="修改"
     :append-to-body="true"
     :close-on-click-modal="false"
     :visible.sync="visible"
@@ -41,6 +41,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
+      <el-button @click="changeClassTeacher">转移课程</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
@@ -210,7 +211,7 @@
           this.dataForm.remainNum = this.originalRemainNum
         // 如果变更为原来的课时，则剩余课时也变更为原来的数值
           // eslint-disable-next-line eqeqeq
-        } else if (this.dataForm.num == 9) {
+        } else if (this.dataForm.num === 9) {
           this.dataForm.remainNum = this.originalRemainNum
         } else {
           this.dataForm.remainNum = this.dataForm.num
@@ -219,6 +220,9 @@
       // 关闭时的逻辑
       closeDialog () {
         this.over()
+      },
+      changeClassTeacher () {
+        console.log('把剩余课时转移给其它教师')
       }
     }
   }
