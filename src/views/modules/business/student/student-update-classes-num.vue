@@ -41,9 +41,35 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button @click="changeClassTeacher">转移课程</el-button>
+      <el-button @click="openChangeDialog">转移课程</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
+    <el-dialog
+      title="转移课程"
+      :append-to-body="true"
+      :close-on-click-modal="false"
+      :visible.sync="changeTeacherDialogVisible"
+      width="30%">
+      <el-form :model="dataForm1" :rules="dataRule1" ref="dataForm1" label-width="80px">
+        <el-form-item label="教师" prop="targetTeacherId">
+          <el-select v-model="dataForm1.targetTeacherId" clearable placeholder="选择目标教师" filterable style="width: 50%">
+            <el-option
+              v-for="item in classTeacherList"
+              :key="item.bdTeacherId"
+              :label="item.bdTeacherName"
+              :value="item.bdTeacherId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="转移课时" prop="num">
+          <el-input-number v-model="dataForm1.targetNum" :min="1" :max="dataForm.remainNum"></el-input-number>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="changeTeacherDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="changeClassTeacher">确定</el-button>
+      </span>
+    </el-dialog>
   </el-dialog>
 </template>
 
@@ -87,7 +113,18 @@
         // 课程教师关系
         classTeacherList: [],
         classTeacherPreSelect: [],
-        classTeacherSelect: []
+        classTeacherSelect: [],
+        // 弹出界面 选择转移教师
+        changeTeacherDialogVisible: false,
+        dataForm1: {
+          targetTeacherId: '',
+          targetNum: 0
+        },
+        dataRule1: {
+          targetTeacherId: [
+            { required: true, message: '目标教师不能为空', trigger: 'blur' }
+          ]
+        }
       }
     },
     methods: {
@@ -151,6 +188,7 @@
           this.classTeacherList = []
           this.classTeacherPreSelect = []
           this.classTeacherSelect = []
+          this.changeTeacherDialogVisible = false
         }
       },
       dataFormSubmit () {
@@ -203,15 +241,14 @@
       },
       // 课时变更时，同步变更剩余课时
       numChange () {
-        // 如果变更使课时大于(剩余课时+原始已用课时)，剩余课时等于新课时-原始已用课时
+        // 如果变更使课时大于(原始剩余课时 + 原始已用课时)，剩余课时等于新课时-原始已用课时
         if (this.dataForm.num > this.originalRemainNum + this.diffNum) {
           this.dataForm.remainNum = this.dataForm.num - this.diffNum
-        // 如果变更使课时小于(剩余课时+原始已用课时) 且 课时大于剩余课时，剩余课时不变
+          // 如果变更使课时小于(原始剩余课时 + 原始已用课时) 且 课时大于剩余课时，剩余课时不变
         } else if (this.dataForm.num > this.originalRemainNum && this.dataForm.num < this.originalRemainNum + this.diffNum) {
           this.dataForm.remainNum = this.originalRemainNum
-        // 如果变更为原来的课时，则剩余课时也变更为原来的数值
-          // eslint-disable-next-line eqeqeq
-        } else if (this.dataForm.num === 9) {
+          // 如果变更为原来的课时，则剩余课时也变更为原来的数值
+        } else if (this.dataForm.num === this.originalRemainNum + this.diffNum) {
           this.dataForm.remainNum = this.originalRemainNum
         } else {
           this.dataForm.remainNum = this.dataForm.num
@@ -222,7 +259,56 @@
         this.over()
       },
       changeClassTeacher () {
-        console.log('把剩余课时转移给其它教师')
+        this.$refs['dataForm1'].validate((valid) => {
+          if (valid) {
+            let targetTeacherName = ''
+            for (let i = 0; i < this.classTeacherList.length; i++) {
+              let item = this.classTeacherList[i]
+              if (item.bdTeacherId === this.dataForm1.targetTeacherId) {
+                targetTeacherName = item.bdTeacherName
+                break
+              }
+            }
+            this.$http({
+              url: this.$http.adornUrl('/business/classesstudent/changeTeacher'),
+              method: 'post',
+              data: this.$http.adornData({
+                'id': this.dataForm.id,
+                'targetTeacherId': this.dataForm1.targetTeacherId,
+                'targetTeacherName': targetTeacherName,
+                'targetNum': this.dataForm1.targetNum
+              })
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                this.$message({
+                  message: '转移成功',
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.changeTeacherDialogVisible = false
+                    this.visible = false
+                    this.$emit('refreshDataList')
+                  }
+                })
+              }
+            })
+          }
+        })
+      },
+      openChangeDialog () {
+        if (this.dataForm.remainNum > 0) {
+          this.changeTeacherDialogVisible = true
+          this.$nextTick(() => {
+            this.$refs['dataForm1'].resetFields()
+          })
+          this.dataForm1.targetNum = this.dataForm.remainNum
+        } else {
+          this.$message({
+            message: '剩余课时为0，无法转移！',
+            type: 'warning',
+            duration: 1500
+          })
+        }
       }
     }
   }

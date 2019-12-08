@@ -7,6 +7,7 @@
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('business:teacher:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('business:teacher:save')" type="primary" @click="multiBindingClass()" :disabled="dataListSelections.length <= 0">批量绑定课程</el-button>
         <el-button v-if="isAuth('business:teacher:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
@@ -162,6 +163,8 @@
     <teacherUploadMultimedia v-if="teacherUploadMultimediaVisible" ref="teacherUploadMultimedia"></teacherUploadMultimedia>
     <!-- 弹窗，课程结算汇总 -->
     <teacher-class-settlement-sum v-if="teacherClassSettlementVisibleSum" ref="teacherClassSettlementSum"></teacher-class-settlement-sum>
+    <!-- 弹窗，批量绑定课程 -->
+    <multi-binding-class v-if="multiBindingClassVisible" ref="multiBindingClass"></multi-binding-class>
   </div>
 </template>
 
@@ -170,6 +173,7 @@
   import TeacherBindingWechat from '../binding-wechat'
   import TeacherUploadMultimedia from './teacher-multimedia-add-or-delete'
   import TeacherClassSettlementSum from './teacher-class-settlement-sum'
+  import MultiBindingClass from './multi-binding-class'
   export default {
     data () {
       return {
@@ -186,14 +190,16 @@
         addOrUpdateVisible: false,
         teacherBindingWechatVisible: false,
         teacherUploadMultimediaVisible: false,
-        teacherClassSettlementVisibleSum: false
+        teacherClassSettlementVisibleSum: false,
+        multiBindingClassVisible: false
       }
     },
     components: {
       AddOrUpdate,
       TeacherBindingWechat,
       TeacherUploadMultimedia,
-      TeacherClassSettlementSum
+      TeacherClassSettlementSum,
+      MultiBindingClass
     },
     activated () {
       this.getDataList()
@@ -332,6 +338,15 @@
         this.teacherClassSettlementVisibleSum = true
         this.$nextTick(() => {
           this.$refs.teacherClassSettlementSum.init(teacherId)
+        })
+      },
+      multiBindingClass () {
+        let ids = this.dataListSelections.map(item => {
+          return item.id
+        })
+        this.multiBindingClassVisible = true
+        this.$nextTick(() => {
+          this.$refs.multiBindingClass.init(ids)
         })
       }
     }
