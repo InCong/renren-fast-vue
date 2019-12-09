@@ -81,7 +81,7 @@
           originalPrice: '',
           currentPrice: '',
           num: 1,
-          otherType: '',
+          otherType: 1,
           classType: '',
           bdClassesTeacherId: '',
           bdClassId: '',

@@ -35,6 +35,16 @@
       <el-form-item label="剩余课时" prop="remainNum">
         <el-input v-model="dataForm.remainNum" placeholder="剩余课时" :disabled="true" type="number"></el-input>
       </el-form-item>
+      <el-form-item label="类型" prop="otherType">
+        <el-select v-model="dataForm.otherType" placeholder="请选择">
+          <el-option
+            v-for="item in otherTypeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
@@ -65,6 +75,7 @@
           currentPrice: 0,
           num: 0,
           remainNum: 0,
+          otherType: 1,
           remark: ''
         },
         dataRule: {
@@ -75,6 +86,9 @@
             { required: true, message: '课时数量不能为空', trigger: 'blur' },
             { validator: valiNum, trigger: 'blur' }
           ],
+          otherType: [
+            { required: true, message: '其它类型不能为空', trigger: 'blur' }
+          ],
           currentPrice: [
             { required: true, message: '现价不能为空', trigger: 'blur' }
           ]
@@ -83,7 +97,15 @@
         teacherList: [],
         // 课程
         classList: [],
-        classSelectDisable: true
+        classSelectDisable: true,
+        // 其它类型
+        otherTypeList: [{
+          id: 1,
+          name: '普通'
+        }, {
+          id: 2,
+          name: '赠送'
+        }]
       }
     },
     methods: {
@@ -129,6 +151,7 @@
                 'num': this.dataForm.num,
                 'currentPrice': this.dataForm.currentPrice,
                 'remainNum': this.dataForm.remainNum,
+                'otherType': this.dataForm.otherType,
                 'remark': this.dataForm.remark
               })
             }).then(({data}) => {

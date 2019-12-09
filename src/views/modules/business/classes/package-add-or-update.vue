@@ -96,7 +96,7 @@
         </el-table-column>
       </el-table>
       <!-- 弹窗, 新增 / 修改 -->
-      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList(dataForm.id)"></add-or-update>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

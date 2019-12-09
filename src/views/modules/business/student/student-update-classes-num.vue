@@ -35,6 +35,16 @@
       <el-form-item label="剩余课时" prop="remainNum">
         <el-input v-model="dataForm.remainNum" placeholder="剩余课时" :disabled="true" type="number"></el-input>
       </el-form-item>
+      <el-form-item label="类型" prop="otherType">
+        <el-select v-model="dataForm.otherType" placeholder="请选择">
+          <el-option
+            v-for="item in otherTypeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
       </el-form-item>
@@ -96,6 +106,7 @@
           currentPrice: 0,
           num: 0,
           remainNum: 0,
+          otherType: 1,
           remark: ''
         },
         dataRule: {
@@ -105,7 +116,10 @@
           num: [
             { required: true, message: '课时数量不能为空', trigger: 'blur' },
             { validator: valiNum, trigger: 'blur' }
-          ]
+          ],
+          otherType: [
+            { required: true, message: '其它类型不能为空', trigger: 'blur' }
+          ],
         },
         teacherList: [],
         classList: [],
@@ -124,7 +138,15 @@
           targetTeacherId: [
             { required: true, message: '目标教师不能为空', trigger: 'blur' }
           ]
-        }
+        },
+        // 其它类型
+        otherTypeList: [{
+          id: 1,
+          name: '普通'
+        }, {
+          id: 2,
+          name: '赠送'
+        }]
       }
     },
     methods: {
@@ -148,6 +170,7 @@
               this.dataForm.currentPrice = data.classesStudent.currentPrice
               this.dataForm.num = data.classesStudent.num
               this.dataForm.remainNum = data.classesStudent.remainNum
+              this.dataForm.otherType = data.classesStudent.otherType
               this.dataForm.remark = data.classesStudent.remark
               this.diffNum = this.dataForm.num - this.dataForm.remainNum
               this.originalRemainNum = this.dataForm.remainNum
@@ -201,6 +224,7 @@
                 'id': this.dataForm.id,
                 'num': this.dataForm.num,
                 'remainNum': this.dataForm.remainNum,
+                'otherType': this.dataForm.otherType,
                 'remark': this.dataForm.remark
               })
             }).then(({data}) => {
