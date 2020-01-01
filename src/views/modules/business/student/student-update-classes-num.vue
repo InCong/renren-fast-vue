@@ -119,7 +119,7 @@
           ],
           otherType: [
             { required: true, message: '其它类型不能为空', trigger: 'blur' }
-          ],
+          ]
         },
         teacherList: [],
         classList: [],

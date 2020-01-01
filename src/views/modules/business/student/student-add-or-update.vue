@@ -211,6 +211,82 @@
               layout="total, sizes, prev, pager, next, jumper"
               style="margin-top: 10px;text-align: right">
             </el-pagination>
+            <div v-if="isShowTeacherSelector" style="margin-top: 30px">
+              <div style="margin-bottom: 30px">
+                <el-divider content-position="left"><span style="color: #00a0e9">选择任课教师</span></el-divider>
+              </div>
+              <el-table
+                :data="packageDetailList"
+                :header-cell-style="headerCellClass"
+                border
+                style="width: 100%;">
+                <el-table-column
+                  prop="id"
+                  header-align="center"
+                  align="center"
+                  label="id"
+                  width="50">
+                </el-table-column>
+                <el-table-column
+                  prop="name"
+                  header-align="center"
+                  align="center"
+                  label="课程名">
+                </el-table-column>
+                <el-table-column
+                  prop="bdTeacherId"
+                  header-align="center"
+                  align="center"
+                  label="任课教师"
+                  width="200px">
+                  <template slot-scope="scope">
+                    <el-select v-model="scope.row.bdTeacherId" filterable placeholder="请选择任课教师" @change="changeRowTeacher($event, scope.$index)">
+                      <el-option
+                        v-for="item in teacherList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="originalPrice"
+                  header-align="center"
+                  align="center"
+                  label="原价">
+                </el-table-column>
+                <el-table-column
+                  prop="currentPrice"
+                  header-align="center"
+                  align="center"
+                  label="现价">
+                </el-table-column>
+                <el-table-column
+                  prop="num"
+                  header-align="center"
+                  align="center"
+                  label="课时">
+                </el-table-column>
+                <el-table-column
+                  prop="otherType"
+                  header-align="center"
+                  align="center"
+                  label="类型">
+                  <template slot-scope="scope">
+                    <el-tag v-if="scope.row.otherType === 1" size="small">普通</el-tag>
+                    <el-tag v-if="scope.row.otherType === 2" size="small">赠送</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  prop="remark"
+                  header-align="center"
+                  align="center"
+                  show-overflow-tooltip
+                  label="备注">
+                </el-table-column>
+              </el-table>
+            </div>
           </div>
         </div>
       </el-tab-pane>
@@ -312,7 +388,9 @@
         pageSize: 10,
         totalPage: 0,
         dataListLoading: false,
-        currentRow: null
+        currentRow: null,
+        isShowTeacherSelector: false,
+        packageDetailList: []
       }
     },
     methods: {
@@ -380,6 +458,8 @@
           this.classSelectDisable = true
           this.buyMode = '1'
           this.currentRow = null
+          this.isShowTeacherSelector = false
+          this.packageDetailList = []
           this.dataForm1.bdTeacherId = ''
           this.dataForm1.bdClassesId = ''
           this.dataForm1.num = 0
@@ -474,29 +554,69 @@
                     }
                   })
                 } else if (this.buyMode === '2' && this.currentRow) {
-                  let bdPackageId = this.currentRow.id
-                  this.$http({
-                    url: this.$http.adornUrl('/business/studentpackage/save'),
-                    method: 'post',
-                    data: this.$http.adornData({
-                      'bdStudentId': this.dataForm.id,
-                      'bdPackageId': bdPackageId
-                    })
-                  }).then(({data}) => {
-                    if (data && data.code === 0) {
-                      this.$message({
-                        message: '操作成功',
-                        type: 'success',
-                        duration: 1500,
-                        onClose: () => {
-                          this.visible = false
-                          this.$emit('refreshDataList')
-                        }
-                      })
-                    } else {
-                      this.$message.error(data.msg)
+                  // let bdPackageId = this.currentRow.id
+                  // this.$http({
+                  //   url: this.$http.adornUrl('/business/studentpackage/save'),
+                  //   method: 'post',
+                  //   data: this.$http.adornData({
+                  //     'bdStudentId': this.dataForm.id,
+                  //     'bdPackageId': bdPackageId
+                  //   })
+                  // }).then(({data}) => {
+                  //   if (data && data.code === 0) {
+                  //     this.$message({
+                  //       message: '操作成功',
+                  //       type: 'success',
+                  //       duration: 1500,
+                  //       onClose: () => {
+                  //         this.visible = false
+                  //         this.$emit('refreshDataList')
+                  //       }
+                  //     })
+                  //   } else {
+                  //     this.$message.error(data.msg)
+                  //   }
+                  // })
+                  // 检查是否都有选择任课教师
+                  let isSelectTeacher = true
+                  for (let i = 0; i < this.packageDetailList.length; i++) {
+                    if (this.packageDetailList[i].bdTeacherId === null || this.packageDetailList[i].bdTeacherId === '') {
+                      isSelectTeacher = false
+                      break
                     }
-                  })
+                  }
+                  if (isSelectTeacher) {
+                    let bdPackageId = this.currentRow.id
+                    this.$http({
+                      url: this.$http.adornUrl('/business/studentpackage/multiSave'),
+                      method: 'post',
+                      data: this.$http.adornData({
+                        'bdStudentId': this.dataForm.id,
+                        'bdPackageId': bdPackageId,
+                        'classesList': this.packageDetailList
+                      })
+                    }).then(({data}) => {
+                      if (data && data.code === 0) {
+                        this.$message({
+                          message: '操作成功',
+                          type: 'success',
+                          duration: 1500,
+                          onClose: () => {
+                            this.visible = false
+                            this.$emit('refreshDataList')
+                          }
+                        })
+                      } else {
+                        this.$message.error(data.msg)
+                      }
+                    })
+                  } else {
+                    this.$message({
+                      message: '请选择课程对应的任课教师！！！',
+                      type: 'warning',
+                      duration: 3000
+                    })
+                  }
                 } else {
                   if (data && data.code === 0) {
                     this.$message({
@@ -593,6 +713,27 @@
       // 单选变更
       handleCurrentChange (val) {
         this.currentRow = val
+        if (this.currentRow != null) {
+          this.isShowTeacherSelector = true
+          this.$http({
+            url: this.$http.adornUrl('/business/packagedetail/list'),
+            method: 'get',
+            params: this.$http.adornParams({
+              'page': 1,
+              'limit': 1000,
+              'bdPackageId': this.currentRow.id
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              this.packageDetailList = data.page.list
+            } else {
+              this.packageDetailList = []
+            }
+          })
+        } else {
+          this.isShowTeacherSelector = false
+          this.packageDetailList = []
+        }
       },
       // 购买模式变更
       buyModeChange (val) {
@@ -605,7 +746,25 @@
       // 关闭时的逻辑
       closeDialog () {
         this.over()
-      }
+      },
+      headerCellClass ({row, column, rowIndex, columnIndex}) {
+        if (rowIndex === 0 && columnIndex === 2) {
+          return 'background: #C7F5ED'
+        } else {
+          return ''
+        }
+      },
+      changeRowTeacher (val, index) {
+        if (this.teacherList != null) {
+          for (let i = 0; i < this.teacherList.length; i++) {
+            let item = this.teacherList[i]
+            if (item.id === val) {
+              this.classesList[index].teacherName = item.name
+              break
+            }
+          }
+        }
+      },
     }
   }
 </script>

@@ -35,7 +35,28 @@
         prop="name"
         header-align="center"
         align="center"
-        label="课程名称">
+        label="课程别名">
+      </el-table-column>
+      <el-table-column
+        prop="bdClassTypeId"
+        header-align="center"
+        align="center"
+        width="150"
+        :formatter="formatClassType"
+        label="课程种类">
+      </el-table-column>
+      <el-table-column
+        prop="bdClassWayId"
+        header-align="center"
+        align="center"
+        width="150"
+        label="上课方式">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.bdClassWayId === 1">一对一</el-tag>
+          <el-tag v-if="scope.row.bdClassWayId === 2">一对多</el-tag>
+          <el-tag v-if="scope.row.bdClassWayId === 3">多对一</el-tag>
+          <el-tag v-if="scope.row.bdClassWayId === 4">多对多</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         prop="price"
@@ -64,27 +85,6 @@
           <el-tag v-if="scope.row.status === 3" type="danger">撤销</el-tag>
           <el-tag v-if="scope.row.status === 9" type="warning">其它</el-tag>
         </template>
-      </el-table-column>
-      <el-table-column
-        prop="bdClassWayId"
-        header-align="center"
-        align="center"
-        width="150"
-        label="上课方式">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.bdClassWayId === 1">一对一</el-tag>
-          <el-tag v-if="scope.row.bdClassWayId === 2">一对多</el-tag>
-          <el-tag v-if="scope.row.bdClassWayId === 3">多对一</el-tag>
-          <el-tag v-if="scope.row.bdClassWayId === 4">多对多</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="bdClassTypeId"
-        header-align="center"
-        align="center"
-        width="150"
-        :formatter="formatClassType"
-        label="课程种类">
       </el-table-column>
       <el-table-column
         prop="remark"

@@ -8,7 +8,12 @@
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
         <el-radio-group v-model="dataForm.arrangeDate" @change="clearClassSelect">
-          <el-radio-button v-for="item in dayList" v-bind:key="item.id" v-if="item.length > 5" :label="item" style="margin-right: 20px">{{item.substring(5)}}</el-radio-button>
+          <el-radio-button v-for="item in dayList" v-bind:key="item.id" v-if="item.length > 5" :label="item" style="margin-right: 20px">
+            <div>
+              <el-row style="margin-bottom: 5px">{{showWeek(item)}}</el-row>
+              <el-row>{{item.substring(5)}}</el-row>
+            </div>
+          </el-radio-button>
         </el-radio-group>
       </div>
       <div style="text-align: center;margin-bottom: 30px">
@@ -108,6 +113,10 @@
           active-value="1"
           @change="changeAutoNotice">
         </el-switch>
+        <el-tooltip placement="top" effect="light" style="margin-left: 10px">
+          <div slot="content">系统会将第二天的课程提醒信息于当天10点通过微信公众号群发给对应的教师、家长。</div>
+          <i class="el-icon-question"></i>
+        </el-tooltip>
       </div>
       <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
       <div style="text-align: center;margin-top: 30px">
@@ -567,6 +576,9 @@
       // 变更自动提醒
       changeAutoNotice () {
 
+      },
+      showWeek(date) {
+        return moment(date).format('ddd')
       }
     }
   }

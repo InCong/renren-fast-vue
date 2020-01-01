@@ -23,7 +23,7 @@
           active-value="1"
           @change="changeAutoNotice">
         </el-switch>
-        <el-tooltip placement="top" effect="light">
+        <el-tooltip placement="top" effect="light" style="margin-left: 10px">
           <div slot="content">系统会将第二天的课程提醒信息于当天10点通过微信公众号群发给对应的教师、家长。</div>
           <i class="el-icon-question"></i>
         </el-tooltip>
