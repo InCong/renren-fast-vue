@@ -577,7 +577,7 @@
       changeAutoNotice () {
 
       },
-      showWeek(date) {
+      showWeek (date) {
         return moment(date).format('ddd')
       }
     }

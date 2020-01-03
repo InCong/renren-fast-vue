@@ -1,63 +1,73 @@
 <template>
   <div>
     <div style="margin-bottom: 25px;margin-top: 10px">
-      <span style="font-size: 25px;font-weight: 900">整体数据概览</span>
+      <span style="font-size: 25px;font-weight: 900">数据概览</span>
       <el-button class="el-icon-refresh" type="primary" size="mini" circle style="margin-left: 20px;font-size: 20px" @click="refresh"></el-button>
     </div>
     <div class="mod-home">
       <el-row :gutter="20">
-        <el-col :span="8">
+        <el-col :span="6">
           <el-card class="card">
             <div slot="header" class="cardHeader">
-              学生总数
+              今日新增学员
             </div>
-            <div class="cardContent" v-loading="studentSumLoading">
-              <span>{{studentSum}}</span><span style="font-size: 20px"> 人</span>
+            <div class="cardContent" v-loading="studentAddLoading">
+              <span>{{studentAddNum}}</span><span style="font-size: 20px"> 人</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="card">
+            <div slot="header" class="cardHeader">
+              今日新增购买课时
+            </div>
+            <div class="cardContent" v-loading="classBuyAddLoading">
+              <span>{{classBuyAddNum}}</span><span style="font-size: 20px"> 个</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="card">
+            <div slot="header" class="cardHeader">
+              今日上课教师
+            </div>
+            <div class="cardContent" v-loading="teacherTodayLoading">
+              <span>{{teacherTodayNum}}</span><span style="font-size: 20px"> 个</span>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="card">
+            <div slot="header" class="cardHeader">
+              今日上课学员
+            </div>
+            <div class="cardContent" v-loading="studentTodayLoading">
+              <span>{{studentTodayNum}}</span><span style="font-size: 20px"> 个</span>
             </div>
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card class="card">
+          <el-card>
             <div slot="header" class="cardHeader">
-              教师总数
+              今日签到占比
             </div>
-            <div class="cardContent" v-loading="teacherSumLoading">
-              <span>{{teacherSum}}</span><span style="font-size: 20px"> 人</span>
-            </div>
+            <div id="classSignFormChartBar" class="chart-box"></div>
           </el-card>
         </el-col>
         <el-col :span="8">
-          <el-card class="card">
-            <div slot="header" class="cardHeader">
-              开设课程总数
-            </div>
-            <div class="cardContent" v-loading="classesSumLoading">
-              <span>{{classesSum}}</span><span style="font-size: 20px"> 个</span>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
           <el-card>
             <div slot="header" class="cardHeader">
-              本月课时占比
+              今日课程种类占比
             </div>
-            <div id="classesFormChartBar" class="chart-box"></div>
+            <div id="classSignFormChartBar2" class="chart-box"></div>
           </el-card>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-card>
             <div slot="header" class="cardHeader">
-              未来七天课时分布
+              今日销售占比
             </div>
-            <div id="classesDistributionChartBar" class="chart-box"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="24">
-          <el-card>
-            <div slot="header" class="cardHeader">
-              商品利润概况
-            </div>
-            <div id="profitsChartBar" class="chart-box"></div>
+            <div id="classSignFormChartBar3" class="chart-box"></div>
           </el-card>
         </el-col>
       </el-row>
@@ -70,162 +80,260 @@
   export default {
     data () {
       return {
-        studentSum: 0,
-        teacherSum: 0,
-        classesSum: 0,
-        chartLine: null,
-        chartBar: null,
-        chartPie: null,
-        chartScatter: null,
-        studentSumLoading: false,
-        teacherSumLoading: false,
-        classesSumLoading: false,
-        // 本月课时数量及相关数据
-        monthClassesName: [],
-        monthClassesTypeData: [],
-        monthClassesData: [],
-        // 未来7天的课时数量及相关数据
-        daysClassesName: [],
-        daysName: [],
-        daysClassesData: [],
-        // 销售利润的数据
-        saleIncomeData: [],
-        saleCostData: [],
-        saleProfitData: []
+        studentAddNum: 0,
+        classBuyAddNum: 0,
+        teacherTodayNum: 0,
+        studentTodayNum: 0,
+        // 图形
+        signTodayChartPie: null,
+        classTypeTodayChartPie: null,
+        saleTodayChartPie: null,
+        // loading
+        studentAddLoading: false,
+        classBuyAddLoading: false,
+        teacherTodayLoading: false,
+        studentTodayLoading: false,
+        signTodayLoading: false,
+        classTypeTodayLoading: false,
+        saleTodayLoading: false,
+        // 当天签到情况
+        signTypeName: [],
+        signTypeData: [],
+        // 当天课程种类情况
+        classTypeName: [],
+        classTypeData: [],
+        // 当天销售商品种类情况
+        saleGoodsTypeName: [],
+        saleGoodsTypeData: []
       }
     },
     mounted () {
       // 先加载数据
-      this.getStudentSum()
-      this.getTeacherSum()
-      this.getClassesSum()
-      this.getMonthClassesNum()
-      this.get7DaysClassesNum()
-      this.getSaleData()
-      // 再初始化图表
-      this.initClassesDistributionChartLine()
-      this.initProfitsChartBar()
-      this.initClassesFormChartPie()
+      this.getStudentAddNum()
+      this.getClassBuyAddNum()
+      this.getTeacherTodayNum()
+      this.getStudentTodayNum()
+      this.getSignNum()
+      this.getClassTypeTodayNum()
+      this.getSaleTodayNum()
     },
     activated () {
       // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
-      if (this.chartLine) {
-        this.chartLine.resize()
+      if (this.signTodayChartPie) {
+        this.signTodayChartPie.resize()
       }
-      if (this.chartBar) {
-        this.chartBar.resize()
+      if (this.classTypeTodayChartPie) {
+        this.classTypeTodayChartPie.resize()
       }
-      if (this.chartPie) {
-        this.chartPie.resize()
+      if (this.saleTodayChartPie) {
+        this.saleTodayChartPie.resize()
       }
     },
     methods: {
-      // 学员总数
-      getStudentSum () {
-        this.studentSumLoading = true
+      // 今日学员新增数量
+      getStudentAddNum () {
+        this.studentAddLoading = true
         this.$http({
-          url: this.$http.adornUrl('/statistical/studentSum'),
+          url: this.$http.adornUrl('/statistical/studentAddNum'),
           method: 'post',
           data: this.$http.adornData({
             'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.studentSum = data.count
-            this.studentSumLoading = false
+            this.studentAddNum = data.count
+            this.studentAddLoading = false
           } else {
-            this.studentSum = 0
+            this.studentAddNum = 0
           }
         })
       },
-      // 教师总数
-      getTeacherSum () {
-        this.teacherSumLoading = true
+      // 今日课程购买课时
+      getClassBuyAddNum () {
+        this.classBuyAddLoading = true
         this.$http({
-          url: this.$http.adornUrl('/statistical/teacherSum'),
+          url: this.$http.adornUrl('/statistical/classBuyAddNum'),
           method: 'post',
           data: this.$http.adornData({
             'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.teacherSum = data.count
-            this.teacherSumLoading = false
+            this.classBuyAddNum = data.count
+            if (!this.classBuyAddNum) {
+              this.classBuyAddNum = 0
+            }
+            this.classBuyAddLoading = false
           } else {
-            this.teacherSum = 0
+            this.classBuyAddNum = 0
           }
         })
       },
-      // 课程总数
-      getClassesSum () {
-        this.classesSumLoading = true
+      // 今日上课教师数量
+      getTeacherTodayNum () {
+        this.teacherTodayLoading = true
         this.$http({
-          url: this.$http.adornUrl('/statistical/classesSum'),
+          url: this.$http.adornUrl('/statistical/teacherTodayNum'),
           method: 'post',
           data: this.$http.adornData({
             'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
-            this.classesSum = data.count
-            this.classesSumLoading = false
+            this.teacherTodayNum = data.count
+            this.teacherTodayLoading = false
           } else {
-            this.classesSum = 0
+            this.teacherTodayNum = 0
           }
         })
       },
-      // 获取本月课时数量
-      getMonthClassesNum () {
-        this.monthClassesName = ['钢琴', '跳舞', '尤克里里', '钢琴高级', '跳舞1', '跳舞2', '跳舞3', '尤克里里高级', '尤克里里1', '尤克里里2', '尤克里里3']
-        this.monthClassesTypeData = [
-          {value: 335, name: '钢琴'},
-          {value: 679, name: '跳舞'},
-          {value: 1548, name: '尤克里里'}
-        ]
-        this.monthClassesData = [
-          {value: 335, name: '钢琴高级'},
-          {value: 310, name: '跳舞1'},
-          {value: 234, name: '跳舞2'},
-          {value: 135, name: '跳舞3'},
-          {value: 1048, name: '尤克里里高级'},
-          {value: 251, name: '尤克里里1'},
-          {value: 147, name: '尤克里里2'},
-          {value: 102, name: '尤克里里3'}
-        ]
-      },
-      // 获取未来7天的课时数量
-      get7DaysClassesNum () {
-        this.daysClassesName = ['钢琴', '跳舞', '尤克里里']
-        this.daysName = ['0816', '0817', '0818', '0819', '0820', '0821', '0822']
-        this.daysClassesData = [
-          {
-            'name': '钢琴',
-            'type': 'line',
-            'stack': '总量',
-            'data': [ 120, 132, 101, 134, 90, 230, 210 ]
-          },
-          {
-            'name': '跳舞',
-            'type': 'line',
-            'stack': '总量',
-            'data': [ 220, 182, 191, 234, 290, 330, 310 ]
-          },
-          {
-            'name': '尤克里里',
-            'type': 'line',
-            'stack': '总量',
-            'data': [ 150, 232, 201, 154, 190, 330, 410 ]
+      // 今日上课学员数量
+      getStudentTodayNum () {
+        this.studentTodayLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/statistical/studentTodayNum'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.studentTodayNum = data.count
+            this.studentTodayLoading = false
+          } else {
+            this.studentTodayNum = 0
           }
-        ]
+        })
       },
-      // 获取商品销售利润情况
-      getSaleData () {
-        this.saleIncomeData = [320, 332, 301, 334, 390, 330, 320, 301, 334, 390, 330, 320]
-        this.saleCostData = [-120, -132, -101, -134, -90, -230, -210, -101, -134, -90, -230, -210]
-        this.saleProfitData = [1.67, 1.51, 1.98, 1.49, 3.33, 0.52, 0.52, 1.98, 1.49, 3.33, 0.43, 0.52]
+      // 获取当天签到情况
+      getSignNum () {
+        this.signTypeName = ['微信签到', '人工签到', '未签到']
+        this.signTodayLoading = true
+        this.$http({
+          url: this.$http.adornUrl('/statistical/signTodayNum'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            if (data.signToday.wechatSign > 0) {
+              let obj = {}
+              this.$set(obj, 'value', data.signToday.wechatSign)
+              this.$set(obj, 'name', '微信签到')
+              this.signTypeData.push(obj)
+            }
+            if (data.signToday.handSign > 0) {
+              let obj = {}
+              this.$set(obj, 'value', data.signToday.handSign)
+              this.$set(obj, 'name', '人工签到')
+              this.signTypeData.push(obj)
+            }
+            if (data.signToday.notSign > 0) {
+              let obj = {}
+              this.$set(obj, 'value', data.signToday.notSign)
+              this.$set(obj, 'name', '未签到')
+              this.signTypeData.push(obj)
+            }
+            this.initSignTodayChartPie()
+            this.signTodayLoading = false
+          } else {
+            this.signTypeData = [
+              {value: 0, name: '微信签到'},
+              {value: 0, name: '人工签到'},
+              {value: 0, name: '未签到'}
+            ]
+            this.initSignTodayChartPie()
+            this.signTodayLoading = false
+          }
+        })
       },
-      // 课时数量占比饼状图
-      initClassesFormChartPie () {
+      // 获取当天课程种类数量
+      getClassTypeTodayNum () {
+        this.classTypeTodayLoading = true
+        this.classTypeName = []
+        this.$http({
+          url: this.$http.adornUrl('/basic/classtype/getClassTypeName'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            for (let i = 0; i < data.list.length; i++) {
+              this.classTypeName.push(data.list[i].name)
+            }
+          }
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/statistical/classTypeTodayNum'),
+            method: 'post',
+            data: this.$http.adornData({
+              'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              for (let i = 0; i < data.list.length; i++) {
+                let obj = {}
+                this.$set(obj, 'value', data.list[0].count)
+                this.$set(obj, 'name', data.list[0].name)
+                this.classTypeData.push(obj)
+              }
+              console.log(this.classTypeData)
+              this.initClassTypeTodayChartPie()
+              this.classTypeTodayLoading = false
+            } else {
+              this.classTypeData = []
+              this.initClassTypeTodayChartPie()
+              this.classTypeTodayLoading = false
+            }
+          })
+        })
+      },
+      // 获取当天销售商品种类数量
+      getSaleTodayNum () {
+        this.saleTodayLoading = true
+        this.saleGoodsTypeName = []
+        this.$http({
+          url: this.$http.adornUrl('/warehouse/goodstype/getGoodsTypeName'),
+          method: 'post',
+          data: this.$http.adornData({
+            'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+          })
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            for (let i = 0; i < data.list.length; i++) {
+              this.saleGoodsTypeName.push(data.list[i].name)
+            }
+          }
+        }).then(() => {
+          this.$http({
+            url: this.$http.adornUrl('/statistical/saleTodayNum'),
+            method: 'post',
+            data: this.$http.adornData({
+              'bdOrgId': this.$store.state.user.id === 1 ? 0 : this.$store.state.user.bdOrgId // 超级管理员可以看全部
+            })
+          }).then(({data}) => {
+            if (data && data.code === 0) {
+              for (let i = 0; i < data.list.length; i++) {
+                let obj = {}
+                this.$set(obj, 'value', data.list[0].count)
+                this.$set(obj, 'name', data.list[0].name)
+                this.saleGoodsTypeData.push(obj)
+              }
+              console.log(this.saleGoodsTypeData)
+              this.initSaleGoodsTypeTodayChartPie()
+              this.saleTodayLoading = false
+            } else {
+              this.saleGoodsTypeData = []
+              this.initSaleGoodsTypeTodayChartPie()
+              this.saleTodayLoading = false
+            }
+          })
+        })
+      },
+      // 当天签到种类占比饼状图
+      initSignTodayChartPie () {
         const option = {
           tooltip: {
             trigger: 'item',
@@ -234,7 +342,47 @@
           legend: {
             orient: 'vertical',
             x: 'left',
-            data: this.monthClassesName
+            data: this.signTypeName
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: { }
+            }
+          },
+          series: [
+            {
+              name: '签到情况',
+              type: 'pie',
+              selectedMode: 'single',
+              radius: [0, '50%'],
+              data: this.signTypeData
+            }
+          ]
+        }
+        if (this.signTypeData.length !== 0) {
+          this.signTodayChartPie = echarts.init(document.getElementById('classSignFormChartBar'))
+          this.signTodayChartPie.setOption(option)
+          window.addEventListener('resize', () => {
+            this.signTodayChartPie.resize()
+          })
+        } else {
+          // 以下是暂无数据显示样式(样式根据本身需求进行调整)
+          const html = '<div><span style="position: absolute;top: 60%;margin-left: 10%;color:#868686; font-size: 20px;">暂无数据</span></div>'
+          document.getElementById('classSignFormChartBar').innerHTML = html
+          document.getElementById('classSignFormChartBar').removeAttribute('_echarts_instance_')
+        }
+      },
+      // 当天课程种类数量占比饼状图
+      initClassTypeTodayChartPie () {
+        const option = {
+          tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c} ({d}%)'
+          },
+          legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: this.classTypeData
           },
           toolbox: {
             feature: {
@@ -247,145 +395,72 @@
               type: 'pie',
               selectedMode: 'single',
               radius: [0, '50%'],
-              label: {
-                normal: {
-                  position: 'inner'
-                }
-              },
-              labelLine: {
-                normal: {
-                  show: false
-                }
-              },
-              data: this.monthClassesTypeData
-            },
-            {
-              name: '课程名',
-              type: 'pie',
-              radius: ['60%', '80%'],
-              data: this.monthClassesData
+              data: this.classTypeData
             }
           ]
         }
-        this.chartPie = echarts.init(document.getElementById('classesFormChartBar'))
-        this.chartPie.setOption(option)
-        window.addEventListener('resize', () => {
-          this.chartPie.resize()
-        })
-      },
-      // 课时日期分布折线图
-      initClassesDistributionChartLine () {
-        var option = {
-          'tooltip': {
-            'trigger': 'axis'
-          },
-          'legend': {
-            'data': this.daysClassesName
-          },
-          'grid': {
-            'left': '3%',
-            'right': '4%',
-            'bottom': '3%',
-            'containLabel': true
-          },
-          'toolbox': {
-            'feature': {
-              'saveAsImage': { }
-            }
-          },
-          'xAxis': {
-            'type': 'category',
-            'boundaryGap': false,
-            'data': this.daysName
-          },
-          'yAxis': {
-            'type': 'value'
-          },
-          'series': this.daysClassesData
+        if (this.classTypeData.length !== 0) {
+          this.classTypeTodayChartPie = echarts.init(document.getElementById('classSignFormChartBar2'))
+          this.classTypeTodayChartPie.setOption(option)
+          window.addEventListener('resize', () => {
+            this.classTypeTodayChartPie.resize()
+          })
+        } else {
+          // 以下是暂无数据显示样式(样式根据本身需求进行调整)
+          const html = '<div><span style="position: absolute;top: 60%;margin-left: 10%;color:#868686; font-size: 20px;">暂无数据</span></div>'
+          document.getElementById('classSignFormChartBar2').innerHTML = html
+          document.getElementById('classSignFormChartBar2').removeAttribute('_echarts_instance_')
         }
-        this.chartLine = echarts.init(document.getElementById('classesDistributionChartBar'))
-        this.chartLine.setOption(option)
-        window.addEventListener('resize', () => {
-          this.chartLine.resize()
-        })
       },
-      // 利润柱状图
-      initProfitsChartBar () {
+      // 当天课程种类数量占比饼状图
+      initSaleGoodsTypeTodayChartPie () {
         const option = {
           tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross'
-            }
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c} ({d}%)'
           },
           legend: {
-            type: 'scroll',
-            data: ['收入', '成本', '利润率']
+            orient: 'vertical',
+            x: 'left',
+            data: this.saleGoodsTypeData
           },
           toolbox: {
             feature: {
               saveAsImage: { }
             }
           },
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
-          },
-          xAxis: [
-            {
-              type: 'category',
-              data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-            }
-          ],
-          yAxis: [
-            {
-              type: 'value',
-              name: '金额'
-            },
-            {
-              type: 'value',
-              name: '利润率',
-              min: -5,
-              max: 5
-            }
-          ],
           series: [
             {
-              name: '收入',
-              type: 'bar',
-              stack: '商品销售',
-              data: this.saleIncomeData
-            },
-            {
-              name: '成本',
-              type: 'bar',
-              stack: '商品销售',
-              data: this.saleCostData
-            },
-            {
-              name: '利润率',
-              type: 'line',
-              yAxisIndex: 1,
-              data: this.saleProfitData
+              name: '销售商品种类',
+              type: 'pie',
+              selectedMode: 'single',
+              radius: [0, '50%'],
+              data: this.saleGoodsTypeData
             }
           ]
         }
-        this.chartBar = echarts.init(document.getElementById('profitsChartBar'))
-        this.chartBar.setOption(option)
-        window.addEventListener('resize', () => {
-          this.chartBar.resize()
-        })
+        if (this.saleGoodsTypeData.length !== 0) {
+          this.saleTodayChartPie = echarts.init(document.getElementById('classSignFormChartBar3'))
+          this.saleTodayChartPie.setOption(option)
+          window.addEventListener('resize', () => {
+            this.saleTodayChartPie.resize()
+          })
+        } else {
+          // 以下是暂无数据显示样式(样式根据本身需求进行调整)
+          const html = '<div><span style="position: absolute;top: 60%;margin-left: 10%;color:#868686; font-size: 20px;">暂无数据</span></div>'
+          document.getElementById('classSignFormChartBar3').innerHTML = html
+          document.getElementById('classSignFormChartBar3').removeAttribute('_echarts_instance_')
+        }
       },
       // 刷新
       refresh () {
-        this.getStudentSum()
-        this.getTeacherSum()
-        this.getClassesSum()
-        this.getMonthClassesNum()
-        this.get7DaysClassesNum()
-        this.getSaleData()
+        this.getStudentAddNum()
+        this.getClassBuyAddNum()
+        this.getTeacherTodayNum()
+        this.getStudentTodayNum()
+        this.getSignNum()
+        this.getClassTypeTodayNum()
+        this.getSaleTodayNum()
       }
     }
   }
