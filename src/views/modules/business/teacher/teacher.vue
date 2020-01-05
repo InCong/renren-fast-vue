@@ -10,6 +10,18 @@
         <el-button v-if="isAuth('business:teacher:save')" type="primary" @click="multiBindingClass()" :disabled="dataListSelections.length <= 0">批量绑定课程</el-button>
         <el-button v-if="isAuth('business:teacher:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
+      <el-form-item>
+        <el-upload
+          ref="upload"
+          accept=".xls,.xlsx"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :on-change="upload"
+          :multiple="false"
+          :show-file-list="false"
+          :auto-upload="false">
+          <el-button slot="trigger" type="primary">模板批量导入</el-button>
+        </el-upload>
+      </el-form-item>
     </el-form>
     <el-table
       :data="dataList"
@@ -174,6 +186,7 @@
   import TeacherUploadMultimedia from './teacher-multimedia-add-or-delete'
   import TeacherClassSettlementSum from './teacher-class-settlement-sum'
   import MultiBindingClass from './multi-binding-class'
+  import XLSX from 'xlsx'
   export default {
     data () {
       return {
@@ -348,6 +361,79 @@
         this.$nextTick(() => {
           this.$refs.multiBindingClass.init(ids)
         })
+      },
+      upload(file,fileList){
+        let files = {0:file.raw}
+        this.readExcel1(files)
+      },
+      //表格导入
+      readExcel1(files) {
+        //如果没有文件名
+        if(files.length <= 0){
+          return false;
+        }else if(!/\.(xls|xlsx)$/.test(files[0].name.toLowerCase())){
+          this.$message({
+            message: '上传格式不正确，请上传xls或者xlsx格式！',
+            type: 'error',
+            duration: 1500
+          })
+          return false;
+        }
+        const fileReader = new FileReader()
+        fileReader.onload = (ev) => {
+          try {
+            const data = ev.target.result
+            const workbook = XLSX.read(data, {
+              type: 'binary'
+            })
+            const workSheetName = workbook.SheetNames[0]// 取第一张表
+            const ws = XLSX.utils.sheet_to_json(workbook.Sheets[workSheetName])// 生成json表格内容
+            const loading = this.$loading({
+              lock: true,
+              text: 'Loading',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            })
+            this.$http({
+              url: this.$http.adornUrl('/business/teacher/multiSave'),
+              method: 'post',
+              data: this.$http.adornData({
+                'workSheetData': ws,
+                'bdOrgId': this.$store.state.user.bdOrgId
+              })
+            }).then(({data}) => {
+              if (data && data.code === 0) {
+                loading.close()
+                this.$message({
+                  message: '上传成功！',
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.getDataList()
+                  }
+                })
+              } else {
+                setTimeout(() => {
+                  loading.close();
+                }, 2000);
+                this.$message({
+                  message: '上传错误！' + data.msg,
+                  type: 'error',
+                  duration: 1500
+                })
+              }
+            })
+            this.$refs.upload.value = ''
+          } catch (e) {
+            this.$message({
+              message: '上传错误！',
+              type: 'error',
+              duration: 1500
+            })
+            return false
+          }
+        }
+        fileReader.readAsBinaryString(files[0])
       }
     }
   }
