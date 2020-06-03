@@ -428,22 +428,22 @@
           this.$refs.studentClassesQuery.init(studentId)
         })
       },
-      upload(file,fileList){
-        let files = {0:file.raw}
+      upload (file, fileList) {
+        let files = {0: file.raw}
         this.readExcel1(files)
       },
-      //表格导入
-      readExcel1(files) {
-        //如果没有文件名
-        if(files.length <= 0){
-          return false;
-        }else if(!/\.(xls|xlsx)$/.test(files[0].name.toLowerCase())){
+      // 表格导入
+      readExcel1 (files) {
+        // 如果没有文件名
+        if (files.length <= 0) {
+          return false
+        } else if (!/\.(xls|xlsx)$/.test(files[0].name.toLowerCase())) {
           this.$message({
             message: '上传格式不正确，请上传xls或者xlsx格式！',
             type: 'error',
             duration: 1500
           })
-          return false;
+          return false
         }
         const fileReader = new FileReader()
         fileReader.onload = (ev) => {
@@ -480,7 +480,7 @@
                 })
               } else {
                 setTimeout(() => {
-                  loading.close();
+                  loading.close()
                 }, 2000)
                 this.$message({
                   message: '上传错误！' + data.msg,
