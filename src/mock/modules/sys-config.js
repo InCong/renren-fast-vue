@@ -4,10 +4,10 @@ import Mock from 'mockjs'
 var dataList = []
 for (let i = 0; i < Math.floor(Math.random() * 10 + 1); i++) {
   dataList.push(Mock.mock({
-    'id': '@increment',
-    'paramKey': '@first',
-    'paramValue': '@last',
-    'remark': '@csentence'
+    id: '@increment',
+    paramKey: '@first',
+    paramValue: '@last',
+    remark: '@csentence'
   }))
 }
 
@@ -18,14 +18,14 @@ export function list () {
     url: '/sys/config/list',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'page': {
-        'totalCount': dataList.length,
-        'pageSize': 10,
-        'totalPage': 1,
-        'currPage': 1,
-        'list': dataList
+      msg: 'success',
+      code: 0,
+      page: {
+        totalCount: dataList.length,
+        pageSize: 10,
+        totalPage: 1,
+        currPage: 1,
+        list: dataList
       }
     }
   }
@@ -38,9 +38,9 @@ export function info () {
     url: '/sys/config/info',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'config': dataList[0]
+      msg: 'success',
+      code: 0,
+      config: dataList[0]
     }
   }
 }
@@ -52,8 +52,8 @@ export function add () {
     url: '/sys/config/save',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -65,8 +65,8 @@ export function update () {
     url: '/sys/config/update',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -78,8 +78,8 @@ export function del () {
     url: '/sys/config/delete',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }

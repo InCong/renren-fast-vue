@@ -4,12 +4,12 @@ import Mock from 'mockjs'
 var dataList = []
 for (let i = 0; i < Math.floor(Math.random() * 10 + 1); i++) {
   dataList.push(Mock.mock({
-    'roleId': '@increment',
-    'roleName': '@name',
-    'remark': '@csentence',
-    'createUserId': 1,
-    'menuIdList': '@range(1, 10, 2)',
-    'createTime': '@datetime'
+    roleId: '@increment',
+    roleName: '@name',
+    remark: '@csentence',
+    createUserId: 1,
+    menuIdList: '@range(1, 10, 2)',
+    createTime: '@datetime'
   }))
 }
 
@@ -20,14 +20,14 @@ export function list () {
     url: '/sys/role/list',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'page': {
-        'totalCount': dataList.length,
-        'pageSize': 10,
-        'totalPage': 1,
-        'currPage': 1,
-        'list': dataList
+      msg: 'success',
+      code: 0,
+      page: {
+        totalCount: dataList.length,
+        pageSize: 10,
+        totalPage: 1,
+        currPage: 1,
+        list: dataList
       }
     }
   }
@@ -40,9 +40,9 @@ export function select () {
     url: '/sys/role/select',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'list': dataList
+      msg: 'success',
+      code: 0,
+      list: dataList
     }
   }
 }
@@ -54,9 +54,9 @@ export function info () {
     url: '/sys/role/info',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'role': dataList[0]
+      msg: 'success',
+      code: 0,
+      role: dataList[0]
     }
   }
 }
@@ -68,8 +68,8 @@ export function add () {
     url: '/sys/role/save',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -81,8 +81,8 @@ export function update () {
     url: '/sys/role/update',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -94,8 +94,8 @@ export function del () {
     url: '/sys/role/delete',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }

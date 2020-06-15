@@ -3,16 +3,16 @@ import Mock from 'mockjs'
 // 生成数据列表
 var dataList = []
 for (let i = 0; i < Math.floor(Math.random() * 10 + 1); i++) {
-  let name = Mock.Random.name()
+  const name = Mock.Random.name()
   dataList.push(Mock.mock({
-    'jobId': '@increment',
-    'beanName': name,
-    'methodName': name,
-    'params': '-',
-    'cronExpression': '0 0/30 * * * ?',
-    'status': 1,
-    'remark': '@csentence',
-    'createTime': '@datetime'
+    jobId: '@increment',
+    beanName: name,
+    methodName: name,
+    params: '-',
+    cronExpression: '0 0/30 * * * ?',
+    status: 1,
+    remark: '@csentence',
+    createTime: '@datetime'
   }))
 }
 
@@ -23,14 +23,14 @@ export function list () {
     url: '/sys/schedule/list',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'page': {
-        'totalCount': dataList.length,
-        'pageSize': 10,
-        'totalPage': 1,
-        'currPage': 1,
-        'list': dataList
+      msg: 'success',
+      code: 0,
+      page: {
+        totalCount: dataList.length,
+        pageSize: 10,
+        totalPage: 1,
+        currPage: 1,
+        list: dataList
       }
     }
   }
@@ -43,9 +43,9 @@ export function info () {
     url: '/sys/schedule/info',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'user': dataList[0]
+      msg: 'success',
+      code: 0,
+      user: dataList[0]
     }
   }
 }
@@ -57,8 +57,8 @@ export function add () {
     url: '/sys/schedule/save',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -70,8 +70,8 @@ export function update () {
     url: '/sys/schedule/update',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -83,8 +83,8 @@ export function del () {
     url: '/sys/schedule/delete',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -96,8 +96,8 @@ export function run () {
     url: '/sys/schedule/run',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -109,8 +109,8 @@ export function pause () {
     url: '/sys/schedule/pause',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -122,8 +122,8 @@ export function resume () {
     url: '/sys/schedule/resume',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }

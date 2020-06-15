@@ -4,9 +4,9 @@ import Mock from 'mockjs'
 var dataList = []
 for (let i = 0; i < Math.floor(Math.random() * 10 + 1); i++) {
   dataList.push(Mock.mock({
-    'id': '@increment',
-    'url': 'http://oapk0ekso.bkt.clouddn.com/upload/@date("yyyyMMdd")/@guid().png',
-    'createDate': '@datetime'
+    id: '@increment',
+    url: 'http://oapk0ekso.bkt.clouddn.com/upload/@date("yyyyMMdd")/@guid().png',
+    createDate: '@datetime'
   }))
 }
 
@@ -17,14 +17,14 @@ export function list () {
     url: '/sys/oss/list',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'page': {
-        'totalCount': dataList.length,
-        'pageSize': 10,
-        'totalPage': 1,
-        'currPage': 1,
-        'list': dataList
+      msg: 'success',
+      code: 0,
+      page: {
+        totalCount: dataList.length,
+        pageSize: 10,
+        totalPage: 1,
+        currPage: 1,
+        list: dataList
       }
     }
   }
@@ -37,28 +37,28 @@ export function config () {
     url: '/sys/oss/config',
     type: 'get',
     data: {
-      'msg': 'success',
-      'code': 0,
-      'config': {
-        'type': 1,
-        'qiniuDomain': 'http:// oapk0ekso.bkt.clouddn.com',
-        'qiniuPrefix': 'upload',
-        'qiniuAccessKey': '2fIEkyYuNXatF4HIXlMbUY6dA-rDQpuADPxtnAHZ',
-        'qiniuSecretKey': 'G4F9gqYRJd5K56pDGaWQrGIzV8me4rT7mQQUKfmk',
-        'qiniuBucketName': 'xiaolu-vido',
-        'aliyunDomain': '',
-        'aliyunPrefix': '',
-        'aliyunEndPoint': '',
-        'aliyunAccessKeyId': '',
-        'aliyunAccessKeySecret': '',
-        'aliyunBucketName': '',
-        'qcloudDomain': '',
-        'qcloudPrefix': '',
-        'qcloudAppId': null,
-        'qcloudSecretId': '',
-        'qcloudSecretKey': '',
-        'qcloudBucketName': '',
-        'qcloudRegion': null
+      msg: 'success',
+      code: 0,
+      config: {
+        type: 1,
+        qiniuDomain: 'http:// oapk0ekso.bkt.clouddn.com',
+        qiniuPrefix: 'upload',
+        qiniuAccessKey: '2fIEkyYuNXatF4HIXlMbUY6dA-rDQpuADPxtnAHZ',
+        qiniuSecretKey: 'G4F9gqYRJd5K56pDGaWQrGIzV8me4rT7mQQUKfmk',
+        qiniuBucketName: 'xiaolu-vido',
+        aliyunDomain: '',
+        aliyunPrefix: '',
+        aliyunEndPoint: '',
+        aliyunAccessKeyId: '',
+        aliyunAccessKeySecret: '',
+        aliyunBucketName: '',
+        qcloudDomain: '',
+        qcloudPrefix: '',
+        qcloudAppId: null,
+        qcloudSecretId: '',
+        qcloudSecretKey: '',
+        qcloudBucketName: '',
+        qcloudRegion: null
       }
     }
   }
@@ -71,8 +71,8 @@ export function addConfig () {
     url: '/sys/oss/saveConfig',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
@@ -84,8 +84,8 @@ export function del () {
     url: '/sys/oss/delete',
     type: 'post',
     data: {
-      'msg': 'success',
-      'code': 0
+      msg: 'success',
+      code: 0
     }
   }
 }
