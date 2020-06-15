@@ -1,9 +1,10 @@
 <template>
   <div
+    v-loading.fullscreen.lock="loading"
     class="site-wrapper"
     :class="{ 'site-sidebar--fold': sidebarFold }"
-    v-loading.fullscreen.lock="loading"
-    element-loading-text="拼命加载中">
+    element-loading-text="拼命加载中"
+  >
     <template v-if="!loading">
       <main-navbar />
       <main-sidebar />
@@ -19,15 +20,15 @@
   import MainSidebar from './main-sidebar'
   import MainContent from './main-content'
   export default {
-    data () {
-      return {
-        loading: true
-      }
-    },
     components: {
       MainNavbar,
       MainSidebar,
       MainContent
+    },
+    data () {
+      return {
+        loading: true
+      }
     },
     computed: {
       documentClientHeight: {

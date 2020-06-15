@@ -2,55 +2,76 @@
   <el-dialog
     :title="'【' + className + '】 ' + startTime + ' 至 ' + endTime"
     :visible.sync="visible"
-    @close="closeDialog"
     width="35%"
-    center>
+    center
+    @close="closeDialog"
+  >
     <div style="text-align: center">
-      <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">相关操作</span></el-divider>
+      <el-divider content-position="left">
+        <span style="color: #00a0e9;font-size: 13px">相关操作</span>
+      </el-divider>
       <div style="margin-top: 30px;margin-bottom: 30px">
-        <el-button type="success" @click="signButtonClick">微信签到</el-button>
-        <el-button type="primary" @click="artificialSignButtonClick">人工签到</el-button>
-        <el-button type="primary" @click="modifyButtonClick">课程修改</el-button>
-        <el-button type="danger" @click="deleteButtonClick">删除课程</el-button>
-        <el-button type="danger" @click="multiDeleteButtonClick">批量删除</el-button>
+        <el-button type="success" @click="signButtonClick">
+          微信签到
+        </el-button>
+        <el-button type="primary" @click="artificialSignButtonClick">
+          人工签到
+        </el-button>
+        <el-button type="primary" @click="modifyButtonClick">
+          课程修改
+        </el-button>
+        <el-button type="danger" @click="deleteButtonClick">
+          删除课程
+        </el-button>
+        <el-button type="danger" @click="multiDeleteButtonClick">
+          批量删除
+        </el-button>
       </div>
-      <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">自动提醒</span></el-divider>
+      <el-divider content-position="left">
+        <span style="color: #00a0e9;font-size: 13px">自动提醒</span>
+      </el-divider>
       <div style="margin-top: 30px;margin-bottom: 30px">
         <el-switch
           v-model="isAutoNotice"
           active-text="是否自动提醒"
           inactive-value="0"
           active-value="1"
-          @change="changeAutoNotice">
-        </el-switch>
+          @change="changeAutoNotice"
+        />
         <el-tooltip placement="top" effect="light" style="margin-left: 10px">
-          <div slot="content">系统会将第二天的课程提醒信息于当天10点通过微信公众号群发给对应的教师、家长。</div>
-          <i class="el-icon-question"></i>
+          <div slot="content">
+            系统会将第二天的课程提醒信息于当天10点通过微信公众号群发给对应的教师、家长。
+          </div>
+          <i class="el-icon-question" />
         </el-tooltip>
       </div>
-      <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">发送通知</span></el-divider>
+      <el-divider content-position="left">
+        <span style="color: #00a0e9;font-size: 13px">发送通知</span>
+      </el-divider>
       <div style="margin-top: 30px">
         <el-checkbox-group v-model="checkList">
-          <el-checkbox label="学员"></el-checkbox>
-          <el-checkbox label="教师"></el-checkbox>
+          <el-checkbox label="学员" />
+          <el-checkbox label="教师" />
         </el-checkbox-group>
       </div>
       <div style="margin-top: 10px;margin-bottom: 30px">
         <el-input
+          v-model="noticeText"
           type="textarea"
           :rows="3"
           placeholder="请输入通知内容"
-          v-model="noticeText"
           maxlength="50"
           show-word-limit
-          style="margin-bottom: 20px">
-        </el-input>
-        <el-button type="success" @click="noticeButtonClick">微信通知</el-button>
+          style="margin-bottom: 20px"
+        />
+        <el-button type="success" @click="noticeButtonClick">
+          微信通知
+        </el-button>
       </div>
       <!-- 弹窗，显示课程的时间段修改 -->
-      <class-arrange-modify v-if="classArrangeModifyVisible" ref="classArrangeModify" @updateTimeData="updateTimeData"></class-arrange-modify>
+      <class-arrange-modify v-if="classArrangeModifyVisible" ref="classArrangeModify" @updateTimeData="updateTimeData" />
       <!-- 弹窗，显示微信签到 -->
-      <class-arrange-wechat-sign v-if="classArrangeWechatSignVisible" ref="classArrangeWechatSign" @signSuccess="signSuccess"></class-arrange-wechat-sign>
+      <class-arrange-wechat-sign v-if="classArrangeWechatSignVisible" ref="classArrangeWechatSign" @signSuccess="signSuccess" />
     </div>
   </el-dialog>
 </template>

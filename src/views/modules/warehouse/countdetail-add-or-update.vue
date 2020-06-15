@@ -2,36 +2,37 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '盘点登记'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="商品" prop="wdGoodsId">
-      <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px" :disabled="true">
-        <el-option
-          v-for="item in goodsList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="静态库存" prop="staticQty">
-      <el-input-number v-model="dataForm.staticQty" placeholder="静态库存" :disabled="true"></el-input-number>
-    </el-form-item>
-    <el-form-item label="盘点数量" prop="qty">
-      <el-input-number v-model="dataForm.qty" placeholder="盘点数量" :step="1" :min="0" @change="changeCountQty" :disabled="dataForm.modifyTime ? true : false"></el-input-number>
-    </el-form-item>
-    <el-form-item label="差异数量" prop="diffQty">
-      <el-input-number v-model="dataForm.diffQty" placeholder="差异数量" :disabled="true"></el-input-number>
-    </el-form-item>
-    <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
-    </el-form-item>
-    <el-form-item label="登记时间" prop="modifyTime">
-      <el-input v-model="dataForm.modifyTime" placeholder="盘点登记时间，自动生成，无需填写" :disabled="true"></el-input>
-    </el-form-item>
-    <el-form-item label="盘点情况" prop="remark">
-      <el-input v-model="dataForm.remark" placeholder="盘点情况"></el-input>
-    </el-form-item>
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
+      <el-form-item label="商品" prop="wdGoodsId">
+        <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px" :disabled="true">
+          <el-option
+            v-for="item in goodsList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="静态库存" prop="staticQty">
+        <el-input-number v-model="dataForm.staticQty" placeholder="静态库存" :disabled="true" />
+      </el-form-item>
+      <el-form-item label="盘点数量" prop="qty">
+        <el-input-number v-model="dataForm.qty" placeholder="盘点数量" :step="1" :min="0" :disabled="!!dataForm.modifyTime" @change="changeCountQty" />
+      </el-form-item>
+      <el-form-item label="差异数量" prop="diffQty">
+        <el-input-number v-model="dataForm.diffQty" placeholder="差异数量" :disabled="true" />
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true" />
+      </el-form-item>
+      <el-form-item label="登记时间" prop="modifyTime">
+        <el-input v-model="dataForm.modifyTime" placeholder="盘点登记时间，自动生成，无需填写" :disabled="true" />
+      </el-form-item>
+      <el-form-item label="盘点情况" prop="remark">
+        <el-input v-model="dataForm.remark" placeholder="盘点情况" />
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

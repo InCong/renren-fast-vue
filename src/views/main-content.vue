@@ -7,27 +7,37 @@
       :closable="true"
       type="card"
       @tab-click="selectedTabHandle"
-      @tab-remove="removeTabHandle">
+      @tab-remove="removeTabHandle"
+    >
       <el-dropdown class="site-tabs__tools" :show-timeout="0">
-        <i class="el-icon-arrow-down el-icon--right"></i>
+        <i class="el-icon-arrow-down el-icon--right" />
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="tabsCloseCurrentHandle">关闭当前标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsCloseOtherHandle">关闭其它标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsRefreshCurrentHandle">刷新当前标签页</el-dropdown-item>
+          <el-dropdown-item @click.native="tabsCloseCurrentHandle">
+            关闭当前标签页
+          </el-dropdown-item>
+          <el-dropdown-item @click.native="tabsCloseOtherHandle">
+            关闭其它标签页
+          </el-dropdown-item>
+          <el-dropdown-item @click.native="tabsCloseAllHandle">
+            关闭全部标签页
+          </el-dropdown-item>
+          <el-dropdown-item @click.native="tabsRefreshCurrentHandle">
+            刷新当前标签页
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <el-tab-pane
         v-for="item in mainTabs"
         :key="item.name"
         :label="item.title"
-        :name="item.name">
+        :name="item.name"
+      >
         <el-card :body-style="siteContentViewHeight">
           <iframe
             v-if="item.type === 'iframe'"
             :src="item.iframeUrl"
-            width="100%" height="100%" frameborder="0" scrolling="yes">
-          </iframe>
+            width="100%" height="100%" frameborder="0" scrolling="yes"
+          />
           <keep-alive v-else>
             <router-view v-if="item.name === mainTabsActiveName" />
           </keep-alive>

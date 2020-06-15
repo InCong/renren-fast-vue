@@ -3,100 +3,117 @@
     :title="'套餐管理'"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    width="55%">
+    width="55%"
+  >
     <div class="mod-config">
       <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
         <el-form-item>
-          <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+          <el-input v-model="dataForm.name" placeholder="名称" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button @click="getDataList()">查询</el-button>
-          <el-button type="primary" @click="addOrUpdateHandle()">新增</el-button>
-          <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+          <el-button @click="getDataList()">
+            查询
+          </el-button>
+          <el-button type="primary" @click="addOrUpdateHandle()">
+            新增
+          </el-button>
+          <el-button type="danger" :disabled="dataListSelections.length <= 0" @click="deleteHandle()">
+            批量删除
+          </el-button>
         </el-form-item>
       </el-form>
       <el-table
+        v-loading="dataListLoading"
         :data="dataList"
         border
-        v-loading="dataListLoading"
+        style="width: 100%;"
         @selection-change="selectionChangeHandle"
-        style="width: 100%;">
+      >
         <el-table-column
           type="selection"
           header-align="center"
           align="center"
-          width="50">
-        </el-table-column>
+          width="50"
+        />
         <el-table-column
           prop="id"
           header-align="center"
           align="center"
           label="id"
-          width="50">
-        </el-table-column>
+          width="50"
+        />
         <el-table-column
           prop="name"
           header-align="center"
           align="center"
-          label="名称">
-        </el-table-column>
+          label="名称"
+        />
         <el-table-column
           prop="originalAmount"
           header-align="center"
           align="center"
-          label="原金额">
-        </el-table-column>
+          label="原金额"
+        />
         <el-table-column
           prop="amount"
           header-align="center"
           align="center"
-          label="实际金额">
-        </el-table-column>
+          label="实际金额"
+        />
         <el-table-column
           prop="num"
           header-align="center"
           align="center"
-          label="总课时">
-        </el-table-column>
+          label="总课时"
+        />
         <el-table-column
           prop="createTime"
           header-align="center"
           show-overflow-tooltip
           align="center"
-          label="创建时间">
-        </el-table-column>
+          label="创建时间"
+        />
         <el-table-column
           prop="remark"
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="备注">
-        </el-table-column>
+          label="备注"
+        />
         <el-table-column
           fixed="right"
           header-align="center"
           align="center"
           width="150"
-          label="操作">
+          label="操作"
+        >
           <template slot-scope="scope">
             <el-row style="margin-bottom:10px">
-              <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button></el-col>
-              <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+              <el-col :span="12">
+                <el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">
+                  修改
+                </el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">
+                  删除
+                </el-button>
+              </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
-        @size-change="sizeChangeHandle"
-        @current-change="currentChangeHandle"
         :current-page="pageIndex"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
         :total="totalPage"
-        layout="total, sizes, prev, pager, next, jumper">
-      </el-pagination>
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="sizeChangeHandle"
+        @current-change="currentChangeHandle"
+      />
       <!-- 弹窗, 新增 / 修改 -->
-      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
     </div>
   </el-dialog>
 </template>
@@ -104,6 +121,9 @@
 <script>
   import AddOrUpdate from './package-add-or-update'
   export default {
+    components: {
+      AddOrUpdate
+    },
     data () {
       return {
         dataForm: {
@@ -118,9 +138,6 @@
         dataListSelections: [],
         addOrUpdateVisible: false
       }
-    },
-    components: {
-      AddOrUpdate
     },
     methods: {
       init () {
@@ -174,7 +191,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        const ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

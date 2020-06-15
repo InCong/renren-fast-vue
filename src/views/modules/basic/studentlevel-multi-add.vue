@@ -1,33 +1,34 @@
 <template>
-    <el-dialog
-      title="批量新增"
-      :close-on-click-modal="false"
-      :visible.sync="visible"
-      width="30%"
-      @close="closeDialog">
-      <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="dataForm.name" placeholder="级别名称" style="width: 200px"></el-input>
-        </el-form-item>
-        <el-form-item label="级别类型" prop="type">
-          <el-select v-model="dataForm.type" placeholder="请选择" @change="typeChange">
-            <el-option
-              v-for="item in typeList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="最高级别" prop="maxLevel" v-if="isShowMaxLevel">
-          <el-input-number v-model="dataForm.maxLevel" placeholder="最高级别" :min="1" :step="1"></el-input-number>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
-      </span>
-    </el-dialog>
+  <el-dialog
+    title="批量新增"
+    :close-on-click-modal="false"
+    :visible.sync="visible"
+    width="30%"
+    @close="closeDialog"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="级别名称" style="width: 200px" />
+      </el-form-item>
+      <el-form-item label="级别类型" prop="type">
+        <el-select v-model="dataForm.type" placeholder="请选择" @change="typeChange">
+          <el-option
+            v-for="item in typeList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="isShowMaxLevel" label="最高级别" prop="maxLevel">
+        <el-input-number v-model="dataForm.maxLevel" placeholder="最高级别" :min="1" :step="1" />
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>

@@ -2,16 +2,17 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="课程种类" prop="bdClassTypeId">
         <el-select v-model="dataForm.bdClassTypeId" clearable placeholder="请选择">
           <el-option
             v-for="item in classTypeList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="上课方式" prop="bdClassWayId">
@@ -20,18 +21,18 @@
             v-for="item in classWayList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input-number v-model="dataForm.price" placeholder="价格" :min="0" :step="10" :precision="2"></el-input-number>
+        <el-input-number v-model="dataForm.price" placeholder="价格" :min="0" :step="10" :precision="2" />
       </el-form-item>
       <el-form-item label="时长" prop="length">
-        <el-input-number v-model="dataForm.length" :step="15"></el-input-number>
+        <el-input-number v-model="dataForm.length" :step="15" />
       </el-form-item>
       <el-form-item label="课程别名" prop="name">
-        <el-input v-model="dataForm.name" placeholder="课程别名"></el-input>
+        <el-input v-model="dataForm.name" placeholder="课程别名" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="dataForm.status" placeholder="请选择">
@@ -39,15 +40,15 @@
             v-for="item in statusList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间" prop="createTime">
-        <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
+        <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true" />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注" type="textarea"></el-input>
+        <el-input v-model="dataForm.remark" placeholder="备注" type="textarea" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

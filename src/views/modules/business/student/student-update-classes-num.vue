@@ -4,10 +4,11 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    @close="closeDialog">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    @close="closeDialog"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="教师" prop="">
-        <el-input placeholder="教师" :disabled="true" :value="teacherName"></el-input>
+        <el-input placeholder="教师" :disabled="true" :value="teacherName" />
       </el-form-item>
       <el-form-item label="其它教师" prop="classTeacherSelect">
         <el-select v-model="classTeacherSelect" clearable placeholder="选择其它教师作为该课程的任课教师" filterable multiple style="width: 50%">
@@ -15,25 +16,27 @@
             v-for="item in classTeacherList"
             :key="item.bdTeacherId"
             :label="item.bdTeacherName"
-            :value="item.bdTeacherId">
-          </el-option>
+            :value="item.bdTeacherId"
+          />
         </el-select>
         <el-tooltip placement="top" effect="light">
-          <div slot="content">选择其它教师，系统则会认为所选择的教师都一起任教该课程、指导该学员。</div>
-          <i class="el-icon-question"></i>
+          <div slot="content">
+            选择其它教师，系统则会认为所选择的教师都一起任教该课程、指导该学员。
+          </div>
+          <i class="el-icon-question" />
         </el-tooltip>
       </el-form-item>
       <el-form-item label="课程" prop="">
-        <el-input placeholder="课程" :disabled="true" :value="classesName"></el-input>
+        <el-input placeholder="课程" :disabled="true" :value="classesName" />
       </el-form-item>
       <el-form-item label="现价(元)" prop="currentPrice">
-        <el-input-number v-model="dataForm.currentPrice" placeholder="限价" :min="0" :step="1" :precision="2" :disabled="true"></el-input-number>
+        <el-input-number v-model="dataForm.currentPrice" placeholder="限价" :min="0" :step="1" :precision="2" :disabled="true" />
       </el-form-item>
       <el-form-item label="课时" prop="num">
-        <el-input v-model="dataForm.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
+        <el-input v-model="dataForm.num" placeholder="课时数量" type="number" @input="numChange()" />
       </el-form-item>
       <el-form-item label="剩余课时" prop="remainNum">
-        <el-input v-model="dataForm.remainNum" placeholder="剩余课时" :disabled="true" type="number"></el-input>
+        <el-input v-model="dataForm.remainNum" placeholder="剩余课时" :disabled="true" type="number" />
       </el-form-item>
       <el-form-item label="类型" prop="otherType">
         <el-select v-model="dataForm.otherType" placeholder="请选择">
@@ -41,12 +44,12 @@
             v-for="item in otherTypeList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+        <el-input v-model="dataForm.remark" placeholder="备注" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -59,20 +62,21 @@
       :append-to-body="true"
       :close-on-click-modal="false"
       :visible.sync="changeTeacherDialogVisible"
-      width="30%">
-      <el-form :model="dataForm1" :rules="dataRule1" ref="dataForm1" label-width="80px">
+      width="30%"
+    >
+      <el-form ref="dataForm1" :model="dataForm1" :rules="dataRule1" label-width="80px">
         <el-form-item label="教师" prop="targetTeacherId">
           <el-select v-model="dataForm1.targetTeacherId" clearable placeholder="选择目标教师" filterable style="width: 50%">
             <el-option
               v-for="item in classTeacherList"
               :key="item.bdTeacherId"
               :label="item.bdTeacherName"
-              :value="item.bdTeacherId">
-            </el-option>
+              :value="item.bdTeacherId"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="转移课时" prop="num">
-          <el-input-number v-model="dataForm1.targetNum" :min="1" :max="dataForm.remainNum"></el-input-number>
+          <el-input-number v-model="dataForm1.targetNum" :min="1" :max="dataForm.remainNum" />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -86,7 +90,7 @@
 <script>
   export default {
     data () {
-      var valiNum = (rule, value, callback) => {
+      const valiNum = (rule, value, callback) => {
         if (value <= 0) {
           callback(new Error('课时不能小于等于0'))
         } else {

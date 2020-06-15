@@ -5,73 +5,82 @@
     :append-to-body="true"
     :visible.sync="visible"
     width="60%"
-    @close="closeDialog">
+    @close="closeDialog"
+  >
     <el-steps :active="active" finish-status="finish" :align-center="true">
-      <el-step title="填写信息"></el-step>
-      <el-step title="组合课程"></el-step>
+      <el-step title="填写信息" />
+      <el-step title="组合课程" />
     </el-steps>
     <div>
-      <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="next()" label-width="50px" :disabled="active > 1">
+      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="50px" :disabled="active > 1" @keyup.enter.native="next()">
         <el-row>
           <el-col :span="8">
             <el-form-item label="名称" prop="name">
-              <el-input v-model="dataForm.name" placeholder="名称" @change="inputChange"></el-input>
+              <el-input v-model="dataForm.name" placeholder="名称" @change="inputChange" />
             </el-form-item>
           </el-col>
           <el-col :span="16">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="dataForm.remark" placeholder="备注" @change="inputChange"></el-input>
+              <el-input v-model="dataForm.remark" placeholder="备注" @change="inputChange" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </div>
     <div v-if="active > 1">
-      <el-button type="primary" @click="addOrUpdateHandle(null, dataForm.id)" style="margin-bottom: 10px">增加课程</el-button>
+      <el-button type="primary" style="margin-bottom: 10px" @click="addOrUpdateHandle(null, dataForm.id)">
+        增加课程
+      </el-button>
       <el-table
+        v-loading="dataListLoading"
         :data="dataList"
         border
-        v-loading="dataListLoading"
-        style="width: 100%;">
+        style="width: 100%;"
+      >
         <el-table-column
           prop="id"
           header-align="center"
           align="center"
           label="id"
-          width="50">
-        </el-table-column>
+          width="50"
+        />
         <el-table-column
           prop="name"
           header-align="center"
           align="center"
-          label="课程名">
-        </el-table-column>
+          label="课程名"
+        />
         <el-table-column
           prop="originalPrice"
           header-align="center"
           align="center"
-          label="原价">
-        </el-table-column>
+          label="原价"
+        />
         <el-table-column
           prop="currentPrice"
           header-align="center"
           align="center"
-          label="现价">
-        </el-table-column>
+          label="现价"
+        />
         <el-table-column
           prop="num"
           header-align="center"
           align="center"
-          label="课时">
-        </el-table-column>
+          label="课时"
+        />
         <el-table-column
           prop="otherType"
           header-align="center"
           align="center"
-          label="类型">
+          label="类型"
+        >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.otherType === 1" size="small">普通</el-tag>
-            <el-tag v-if="scope.row.otherType === 2" size="small">赠送</el-tag>
+            <el-tag v-if="scope.row.otherType === 1" size="small">
+              普通
+            </el-tag>
+            <el-tag v-if="scope.row.otherType === 2" size="small">
+              赠送
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -79,29 +88,38 @@
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="备注">
-        </el-table-column>
+          label="备注"
+        />
         <el-table-column
           fixed="right"
           header-align="center"
           align="center"
           width="150"
-          label="操作">
+          label="操作"
+        >
           <template slot-scope="scope">
             <el-row style="margin-bottom:10px">
-              <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id, dataForm.id)">修改</el-button></el-col>
-              <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+              <el-col :span="12">
+                <el-button size="mini" @click="addOrUpdateHandle(scope.row.id, dataForm.id)">
+                  修改
+                </el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">
+                  删除
+                </el-button>
+              </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
       <!-- 弹窗, 新增 / 修改 -->
-      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList(dataForm.id)"></add-or-update>
+      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList(dataForm.id)" />
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button v-if="this.active===2" type="primary" @click="previous()">上一步</el-button>
-      <el-button type="primary" @click="next()">{{buttonName}}</el-button>
+      <el-button v-if="active===2" type="primary" @click="previous()">上一步</el-button>
+      <el-button type="primary" @click="next()">{{ buttonName }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -109,6 +127,9 @@
 <script>
   import AddOrUpdate from './packagedetail-add-or-update'
   export default {
+    components: {
+      AddOrUpdate
+    },
     data () {
       return {
         visible: false,
@@ -136,9 +157,6 @@
         dataList: [],
         addOrUpdateVisible: false
       }
-    },
-    components: {
-      AddOrUpdate
     },
     methods: {
       init (id) {
@@ -277,7 +295,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = [id]
+        const ids = [id]
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

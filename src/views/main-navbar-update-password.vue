@@ -2,19 +2,20 @@
   <el-dialog
     title="修改密码"
     :visible.sync="visible"
-    :append-to-body="true">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    :append-to-body="true"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="账号">
         <span>{{ userName }}</span>
       </el-form-item>
       <el-form-item label="原密码" prop="password">
-        <el-input type="password" v-model="dataForm.password"></el-input>
+        <el-input v-model="dataForm.password" type="password" />
       </el-form-item>
       <el-form-item label="新密码" prop="newPassword">
-        <el-input type="password" v-model="dataForm.newPassword"></el-input>
+        <el-input v-model="dataForm.newPassword" type="password" />
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input type="password" v-model="dataForm.confirmPassword"></el-input>
+        <el-input v-model="dataForm.confirmPassword" type="password" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -28,7 +29,7 @@
   import { clearLoginInfo } from '@/utils'
   export default {
     data () {
-      var validateConfirmPassword = (rule, value, callback) => {
+      const validateConfirmPassword = (rule, value, callback) => {
         if (this.dataForm.newPassword !== value) {
           callback(new Error('确认密码与新密码不一致'))
         } else {

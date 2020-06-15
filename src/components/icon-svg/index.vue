@@ -3,14 +3,15 @@
     :class="getClassName"
     :width="width"
     :height="height"
-    aria-hidden="true">
-    <use :xlink:href="getName"></use>
+    aria-hidden="true"
+  >
+    <use :xlink:href="getName" />
   </svg>
 </template>
 
 <script>
   export default {
-    name: 'icon-svg',
+    name: 'IconSvg',
     props: {
       name: {
         type: String,

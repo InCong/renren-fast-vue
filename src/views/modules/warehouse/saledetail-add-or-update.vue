@@ -2,33 +2,34 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="80px">
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px">
       <el-form-item label="商品" prop="wdGoodsId">
         <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品" style="width: 300px" @change="changeGoodsSelect()">
           <el-option
             v-for="item in goodsList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
-    <el-form-item label="数量" prop="qty">
-      <el-input-number v-model="dataForm.qty" placeholder="数量" :min="1" :step="1" @change="changeTotalPrice"></el-input-number>
-    </el-form-item>
-    <el-form-item label="销售价" prop="price">
-      <el-input-number v-model="dataForm.price" placeholder="销售价" :min="1" :step="1" :precision="2" @change="changeTotalPrice"></el-input-number>
-    </el-form-item>
-    <el-form-item label="总价" prop="totalPrice">
-      <el-input-number v-model="dataForm.totalPrice" placeholder="总价" :min="1" :step="1" :precision="2" :disabled="true"></el-input-number>
-    </el-form-item>
-    <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
-    </el-form-item>
-    <el-form-item label="备注" prop="remark">
-      <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
-    </el-form-item>
+      <el-form-item label="数量" prop="qty">
+        <el-input-number v-model="dataForm.qty" placeholder="数量" :min="1" :step="1" @change="changeTotalPrice" />
+      </el-form-item>
+      <el-form-item label="销售价" prop="price">
+        <el-input-number v-model="dataForm.price" placeholder="销售价" :min="1" :step="1" :precision="2" @change="changeTotalPrice" />
+      </el-form-item>
+      <el-form-item label="总价" prop="totalPrice">
+        <el-input-number v-model="dataForm.totalPrice" placeholder="总价" :min="1" :step="1" :precision="2" :disabled="true" />
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true" />
+      </el-form-item>
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="dataForm.remark" placeholder="备注" />
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

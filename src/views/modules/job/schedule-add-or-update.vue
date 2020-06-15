@@ -2,22 +2,23 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="100px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="bean名称" prop="beanName">
-        <el-input v-model="dataForm.beanName" placeholder="spring bean名称, 如: testTask"></el-input>
+        <el-input v-model="dataForm.beanName" placeholder="spring bean名称, 如: testTask" />
       </el-form-item>
       <el-form-item label="方法名称" prop="methodName">
-        <el-input v-model="dataForm.methodName" placeholder="方法名称"></el-input>
+        <el-input v-model="dataForm.methodName" placeholder="方法名称" />
       </el-form-item>
       <el-form-item label="参数" prop="params">
-        <el-input v-model="dataForm.params" placeholder="参数"></el-input>
+        <el-input v-model="dataForm.params" placeholder="参数" />
       </el-form-item>
       <el-form-item label="cron表达式" prop="cronExpression">
-        <el-input v-model="dataForm.cronExpression" placeholder="如: 0 0 12 * * ?"></el-input>
+        <el-input v-model="dataForm.cronExpression" placeholder="如: 0 0 12 * * ?" />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+        <el-input v-model="dataForm.remark" placeholder="备注" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

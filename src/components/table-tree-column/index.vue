@@ -1,8 +1,8 @@
 <template>
   <el-table-column :prop="prop" v-bind="$attrs">
     <template slot-scope="scope">
-      <span @click.prevent="toggleHandle(scope.$index, scope.row)" :style="childStyles(scope.row)">
-        <i :class="iconClasses(scope.row)" :style="iconStyles(scope.row)"></i>
+      <span :style="childStyles(scope.row)" @click.prevent="toggleHandle(scope.$index, scope.row)">
+        <i :class="iconClasses(scope.row)" :style="iconStyles(scope.row)" />
         {{ scope.row[prop] }}
       </span>
     </template>
@@ -12,7 +12,7 @@
 <script>
   import isArray from 'lodash/isArray'
   export default {
-    name: 'table-tree-column',
+    name: 'TableTreeColumn',
     props: {
       prop: {
         type: String

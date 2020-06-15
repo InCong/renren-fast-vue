@@ -3,21 +3,22 @@
     title="按步骤创建退货记录"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    width="60%">
+    width="60%"
+  >
     <el-steps :active="active" align-center finish-status="success">
-      <el-step title="步骤1" description="选择对应的采购进货记录"></el-step>
-      <el-step title="步骤2" description="填写退货数量与备注"></el-step>
+      <el-step title="步骤1" description="选择对应的采购进货记录" />
+      <el-step title="步骤2" description="填写退货数量与备注" />
     </el-steps>
     <div v-if="active===0" style="margin-top: 20px">
-      <el-form :inline="true" :model="dataForm" >
+      <el-form :inline="true" :model="dataForm">
         <el-form-item>
           <el-select v-model="dataForm.wdGoodsId" clearable filterable placeholder="商品">
             <el-option
               v-for="item in goodsList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -26,111 +27,114 @@
               v-for="item in typeList"
               :key="item.id"
               :label="item.name"
-              :value="item.id">
-            </el-option>
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button @click="getDataList()">查询</el-button>
+          <el-button @click="getDataList()">
+            查询
+          </el-button>
         </el-form-item>
       </el-form>
       <el-table
-        :data="dataList"
         ref="singleTable"
-        border
         v-loading="dataListLoading"
+        :data="dataList"
+        border
         highlight-current-row
+        style="width: 100%;"
         @current-change="selectChange"
-        style="width: 100%;">
+      >
         <el-table-column
           prop="id"
           header-align="center"
           align="center"
           label="id"
-          width="50">
-        </el-table-column>
+          width="50"
+        />
         <el-table-column
           prop="wdGoodsId"
           header-align="center"
           align="center"
           :formatter="formatGoods"
-          label="商品">
-        </el-table-column>
+          label="商品"
+        />
         <el-table-column
           prop="wdGoodsTypeId"
           header-align="center"
           align="center"
           :formatter="formatType"
-          label="商品种类">
-        </el-table-column>
+          label="商品种类"
+        />
         <el-table-column
           prop="wdSupplierId"
           header-align="center"
           align="center"
           :formatter="formatSupplier"
           show-overflow-tooltip
-          label="供应商">
-        </el-table-column>
+          label="供应商"
+        />
         <el-table-column
           prop="qty"
           header-align="center"
           align="center"
           label="数量"
-          width="80">
-        </el-table-column>
+          width="80"
+        />
         <el-table-column
           prop="backQty"
           header-align="center"
           align="center"
           label="退货数量"
-          width="80">
-        </el-table-column>
+          width="80"
+        />
         <el-table-column
           prop="price"
           header-align="center"
           align="center"
-          label="进货单价（元）">
-        </el-table-column>
+          label="进货单价（元）"
+        />
         <el-table-column
           prop="createTime"
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="创建时间">
-        </el-table-column>
+          label="创建时间"
+        />
         <el-table-column
           prop="remark"
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="备注">
-        </el-table-column>
+          label="备注"
+        />
       </el-table>
       <el-pagination
-        @size-change="sizeChangeHandle"
-        @current-change="currentChangeHandle"
         :current-page="pageIndex"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
         :total="totalPage"
-        layout="total, sizes, prev, pager, next, jumper">
-      </el-pagination>
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="sizeChangeHandle"
+        @current-change="currentChangeHandle"
+      />
     </div>
     <div v-if="active===1" style="margin-top: 20px">
-      <el-form :model="dataForm" ref="dataForm" label-width="80px">
+      <el-form ref="dataForm" :model="dataForm" label-width="80px">
         <el-form-item label="退货数量" prop="qty">
-          <el-input-number v-model="dataForm.qty" placeholder="退货数量" :min="1" :max="currentBuyQty - currentBuyBackQty" :step="1"></el-input-number>
+          <el-input-number v-model="dataForm.qty" placeholder="退货数量" :min="1" :max="currentBuyQty - currentBuyBackQty" :step="1" />
         </el-form-item>
         <el-form-item label="退货备注" prop="remark">
-          <el-input v-model="dataForm.remark" placeholder="退货备注"></el-input>
+          <el-input v-model="dataForm.remark" placeholder="退货备注" />
         </el-form-item>
       </el-form>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="next" v-if="active===0">下一步</el-button>
-      <el-button type="primary" @click="previous" v-if="active===1">上一步</el-button>
-      <el-button type="primary" @click="dataFormSubmit()" v-if="active===1">确定</el-button>
+      <el-button v-if="active===0" type="primary" @click="next">下一步</el-button>
+      <el-button v-if="active===1" type="primary" @click="previous">上一步</el-button>
+      <el-button v-if="active===1" type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
 </template>

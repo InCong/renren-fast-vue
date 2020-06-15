@@ -5,11 +5,12 @@
     :append-to-body="true"
     :show-close="false"
     width="480px"
+    center
     @close="closeDialog"
-    center>
-    <span slot="title"><h1 id = "title">绑定微信</h1></span>
+  >
+    <span slot="title"><h1 id="title">绑定微信</h1></span>
     <div class="marginCenter">
-      <img id="qrImg" :src="qrCodeUrl" alt="qrCodeUrl"/>
+      <img id="qrImg" :src="qrCodeUrl" alt="qrCodeUrl">
     </div>
   </el-dialog>
 </template>

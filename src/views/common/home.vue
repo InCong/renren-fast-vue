@@ -2,7 +2,7 @@
   <div>
     <div style="margin-bottom: 25px;margin-top: 10px">
       <span style="font-size: 25px;font-weight: 900">数据概览</span>
-      <el-button class="el-icon-refresh" type="primary" size="mini" circle style="margin-left: 20px;font-size: 20px" @click="refresh"></el-button>
+      <el-button class="el-icon-refresh" type="primary" size="mini" circle style="margin-left: 20px;font-size: 20px" @click="refresh" />
     </div>
     <div class="mod-home">
       <el-row :gutter="20">
@@ -11,8 +11,8 @@
             <div slot="header" class="cardHeader">
               今日新增学员
             </div>
-            <div class="cardContent" v-loading="studentAddLoading">
-              <span>{{studentAddNum}}</span><span style="font-size: 20px"> 人</span>
+            <div v-loading="studentAddLoading" class="cardContent">
+              <span>{{ studentAddNum }}</span><span style="font-size: 20px"> 人</span>
             </div>
           </el-card>
         </el-col>
@@ -21,8 +21,8 @@
             <div slot="header" class="cardHeader">
               今日新增购买课时
             </div>
-            <div class="cardContent" v-loading="classBuyAddLoading">
-              <span>{{classBuyAddNum}}</span><span style="font-size: 20px"> 个</span>
+            <div v-loading="classBuyAddLoading" class="cardContent">
+              <span>{{ classBuyAddNum }}</span><span style="font-size: 20px"> 个</span>
             </div>
           </el-card>
         </el-col>
@@ -31,8 +31,8 @@
             <div slot="header" class="cardHeader">
               今日上课教师
             </div>
-            <div class="cardContent" v-loading="teacherTodayLoading">
-              <span>{{teacherTodayNum}}</span><span style="font-size: 20px"> 个</span>
+            <div v-loading="teacherTodayLoading" class="cardContent">
+              <span>{{ teacherTodayNum }}</span><span style="font-size: 20px"> 个</span>
             </div>
           </el-card>
         </el-col>
@@ -41,8 +41,8 @@
             <div slot="header" class="cardHeader">
               今日上课学员
             </div>
-            <div class="cardContent" v-loading="studentTodayLoading">
-              <span>{{studentTodayNum}}</span><span style="font-size: 20px"> 个</span>
+            <div v-loading="studentTodayLoading" class="cardContent">
+              <span>{{ studentTodayNum }}</span><span style="font-size: 20px"> 个</span>
             </div>
           </el-card>
         </el-col>
@@ -51,7 +51,7 @@
             <div slot="header" class="cardHeader">
               今日签到占比
             </div>
-            <div id="classSignFormChartBar" class="chart-box"></div>
+            <div id="classSignFormChartBar" class="chart-box" />
           </el-card>
         </el-col>
         <el-col :span="8">
@@ -59,7 +59,7 @@
             <div slot="header" class="cardHeader">
               今日课程种类占比
             </div>
-            <div id="classSignFormChartBar2" class="chart-box"></div>
+            <div id="classSignFormChartBar2" class="chart-box" />
           </el-card>
         </el-col>
         <el-col :span="8">
@@ -67,7 +67,7 @@
             <div slot="header" class="cardHeader">
               今日销售占比
             </div>
-            <div id="classSignFormChartBar3" class="chart-box"></div>
+            <div id="classSignFormChartBar3" class="chart-box" />
           </el-card>
         </el-col>
       </el-row>
@@ -77,6 +77,7 @@
 
 <script>
   import echarts from 'echarts'
+
   export default {
     data () {
       return {
@@ -407,8 +408,7 @@
           })
         } else {
           // 以下是暂无数据显示样式(样式根据本身需求进行调整)
-          const html = '<div><span style="position: absolute;top: 60%;margin-left: 10%;color:#868686; font-size: 20px;">暂无数据</span></div>'
-          document.getElementById('classSignFormChartBar2').innerHTML = html
+          document.getElementById('classSignFormChartBar2').innerHTML = '<div><span style="position: absolute;top: 60%;margin-left: 10%;color:#868686; font-size: 20px;">暂无数据</span></div>'
           document.getElementById('classSignFormChartBar2').removeAttribute('_echarts_instance_')
         }
       },

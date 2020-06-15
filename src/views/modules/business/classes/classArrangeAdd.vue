@@ -3,15 +3,21 @@
     :title="'排课 — 【' + title + '】'"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    @close="closeDialog">
-    <el-divider content-position="left"><span style="color: #00a0e9">日期与时间</span></el-divider>
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    @close="closeDialog"
+  >
+    <el-divider content-position="left">
+      <span style="color: #00a0e9">日期与时间</span>
+    </el-divider>
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
         <el-radio-group v-model="dataForm.arrangeDate" @change="clearClassSelect">
-          <el-radio-button v-for="item in dayList" v-bind:key="item.id" v-if="item.length > 5" :label="item" style="margin-right: 20px">
-            <div>
-              <el-row style="margin-bottom: 5px">{{showWeek(item)}}</el-row>
-              <el-row>{{item.substring(5)}}</el-row>
+          // 最好不要将v-for和v-if放一起
+          <el-radio-button v-for="item in dayList" :key="item.id" :label="item" style="margin-right: 20px">
+            <div v-if="item.length > 5">
+              <el-row style="margin-bottom: 5px">
+                {{ showWeek(item) }}
+              </el-row>
+              <el-row>{{ item.substring(5) }}</el-row>
             </div>
           </el-radio-button>
         </el-radio-group>
@@ -21,106 +27,124 @@
           v-model="isTimeSelect"
           active-text="选择时间"
           inactive-text="填写时间"
-          style="margin-right: 10px">
-        </el-switch>
+          style="margin-right: 10px"
+        />
         <el-input
-          v-model="hours"
           v-if="!isTimeSelect"
+          v-model="hours"
           type="number"
           placeholder="时"
           style="width: 80px"
-          @change="hourChange">
-        </el-input>
+          @change="hourChange"
+        />
         <a v-if="!isTimeSelect">：</a>
         <el-input
-          v-model="minutes"
           v-if="!isTimeSelect"
+          v-model="minutes"
           type="number"
           placeholder="分"
           style="width: 80px"
-          @change="minuteChange">
-        </el-input>
+          @change="minuteChange"
+        />
         <el-time-select
-          placeholder="起始时间"
-          v-model="dataForm.startTime"
           v-if="isTimeSelect"
+          v-model="dataForm.startTime"
+          placeholder="起始时间"
           style="width: 120px"
-          @change="startTimeChange"
           :editable="false"
           :clearable="false"
           :picker-options="{
-              start: '07:00',
-              step: '00:15',
-              end: '22:00'
-            }">
-        </el-time-select>
+            start: '07:00',
+            step: '00:15',
+            end: '22:00'
+          }"
+          @change="startTimeChange"
+        />
         <span style="margin-left: 10px;margin-right: 20px">至</span>
         <el-time-select
-          placeholder="结束时间"
           v-model="dataForm.endTime"
+          placeholder="结束时间"
           style="width: 120px"
           :clearable="false"
           :disabled="true"
           :picker-options="{
-              start: '07:00',
-              step: '00:01',
-              end: '23:00',
-              minTime: dataForm.startTime
-            }">
-        </el-time-select>
+            start: '07:00',
+            step: '00:01',
+            end: '23:00',
+            minTime: dataForm.startTime
+          }"
+        />
         <el-switch
           v-model="isTimeChange"
           active-text="修改时长"
           :disabled="classLength <= 0"
-          style="margin-left: 10px">
-        </el-switch>
+          style="margin-left: 10px"
+        />
         <el-input
           v-model="classLength"
           :disabled="!isTimeChange || classLength <= 0"
           type="number"
           style="width: 80px"
-          @change="classLengthChange">
-        </el-input>
+          @change="classLengthChange"
+        />
       </div>
-      <el-divider content-position="left"><span style="color: #00a0e9">课程</span></el-divider>
+      <el-divider content-position="left">
+        <span style="color: #00a0e9">课程</span>
+      </el-divider>
       <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
         <el-radio-group v-model="radioClassWay" @change="classWayChange">
-          <el-radio-button v-for="item in classWayList" v-bind:key="item.id" :label="item" style="margin-right: 20px">{{item.name}}</el-radio-button>
+          <el-radio-button v-for="item in classWayList" :key="item.id" :label="item" style="margin-right: 20px">
+            {{ item.name }}
+          </el-radio-button>
         </el-radio-group>
-        <el-button type="success" @click="specialClassClick">班课参考</el-button>
+        <el-button type="success" @click="specialClassClick">
+          班课参考
+        </el-button>
       </div>
       <div style="text-align: center;margin-bottom: 20px">
         <el-radio-group v-model="dataForm.bdClassesStudentId" @change="classChange">
-          <el-tooltip v-for="item in classesList" v-bind:key="item.id" effect="light" placement="right">
+          <el-tooltip v-for="item in classesList" :key="item.id" effect="light" placement="right">
             <div slot="content" style="text-align: left;font-size: 16px">
-              <el-row style="margin-bottom: 10px"><span>剩余课时：</span>{{item.remainNum}}</el-row>
-              <el-row style="margin-bottom: 10px"><span>课程时长（分钟）：</span>{{item.length}}</el-row>
-              <el-row><span>备注：</span>{{item.remark}}</el-row>
+              <el-row style="margin-bottom: 10px">
+                <span>剩余课时：</span>{{ item.remainNum }}
+              </el-row>
+              <el-row style="margin-bottom: 10px">
+                <span>课程时长（分钟）：</span>{{ item.length }}
+              </el-row>
+              <el-row><span>备注：</span>{{ item.remark }}</el-row>
             </div>
-            <el-radio-button :label="item.id + '_' + item.length" style="margin-right: 20px;margin-bottom: 10px">{{item.className}}</el-radio-button>
+            <el-radio-button :label="item.id + '_' + item.length" style="margin-right: 20px;margin-bottom: 10px">
+              {{ item.className }}
+            </el-radio-button>
           </el-tooltip>
         </el-radio-group>
       </div>
       <div style="text-align: center;margin-bottom: 10px">
-        <span v-if="count !== ''">已安排学员数量：{{count}}</span>
+        <span v-if="count !== ''">已安排学员数量：{{ count }}</span>
       </div>
-      <el-divider content-position="left"><span style="color: #00a0e9">自动提醒</span></el-divider>
+      <el-divider content-position="left">
+        <span style="color: #00a0e9">自动提醒</span>
+      </el-divider>
       <div style="margin-top: 30px;margin-bottom: 30px;text-align: center">
         <el-switch
           v-model="isAutoNotice"
           active-text="是否自动提醒"
           inactive-value="0"
           active-value="1"
-          @change="changeAutoNotice">
-        </el-switch>
+          @change="changeAutoNotice"
+        />
         <el-tooltip placement="top" effect="light" style="margin-left: 10px">
-          <div slot="content">系统会将第二天的课程提醒信息于当天10点通过微信公众号群发给对应的教师、家长。</div>
-          <i class="el-icon-question"></i>
+          <div slot="content">
+            系统会将第二天的课程提醒信息于当天10点通过微信公众号群发给对应的教师、家长。
+          </div>
+          <i class="el-icon-question" />
         </el-tooltip>
       </div>
-      <el-divider content-position="left"><span style="color: #00a0e9">备注</span></el-divider>
+      <el-divider content-position="left">
+        <span style="color: #00a0e9">备注</span>
+      </el-divider>
       <div style="text-align: center;margin-top: 30px">
-        <el-input type="text" v-model="dataForm.remark" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%"></el-input>
+        <el-input v-model="dataForm.remark" type="text" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%" />
       </div>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -129,19 +153,17 @@
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
-    <select-reference-class v-if="selectReferenceClassVisible" ref="selectReferenceClass" @getReferenceTime="getReferenceTime" @referenceTimeClose="referenceTimeClose"></select-reference-class>
+    <select-reference-class v-if="selectReferenceClassVisible" ref="selectReferenceClass" @getReferenceTime="getReferenceTime" @referenceTimeClose="referenceTimeClose" />
   </el-dialog>
 </template>
 
 <script>
   import moment from 'moment'
   import 'moment/locale/zh-cn'
-  import DatePicker from 'vue2-datepicker'
   import SelectReferenceClass from './selectReferenceClass'
   export default {
     components: {
-      SelectReferenceClass,
-      DatePicker
+      SelectReferenceClass
     },
     data () {
       return {

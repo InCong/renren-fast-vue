@@ -3,31 +3,38 @@
     <div class="site-content__wrapper">
       <div class="site-content">
         <div class="brand-info">
-          <h2 class="brand-info__text">教务管理系统</h2>
-          <p class="brand-info__intro">教务信息化，让管理变得更简单</p>
+          <h2 class="brand-info__text">
+            教务管理系统
+          </h2>
+          <p class="brand-info__intro">
+            教务信息化，让管理变得更简单
+          </p>
         </div>
         <div class="login-main">
-          <h3 class="login-title">用户登录</h3>
-          <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" status-icon>
+          <h3 class="login-title">
+            用户登录
+          </h3>
+          <el-form ref="dataForm" :model="dataForm" :rules="dataRule" status-icon @keyup.enter.native="dataFormSubmit()">
             <el-form-item prop="userName">
-              <el-input v-model="dataForm.userName" placeholder="帐号"></el-input>
+              <el-input v-model="dataForm.userName" placeholder="帐号" />
             </el-form-item>
             <el-form-item prop="password">
-              <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
+              <el-input v-model="dataForm.password" type="password" placeholder="密码" />
             </el-form-item>
             <el-form-item prop="captcha">
               <el-row :gutter="20">
                 <el-col :span="14">
-                  <el-input v-model="dataForm.captcha" placeholder="验证码">
-                  </el-input>
+                  <el-input v-model="dataForm.captcha" placeholder="验证码" />
                 </el-col>
                 <el-col :span="10" class="login-captcha">
-                  <img :src="captchaPath" @click="getCaptcha()" alt="">
+                  <img :src="captchaPath" alt="" @click="getCaptcha()">
                 </el-col>
               </el-row>
             </el-form-item>
             <el-form-item>
-              <el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">登录</el-button>
+              <el-button class="login-btn-submit" type="primary" @click="dataFormSubmit()">
+                登录
+              </el-button>
             </el-form-item>
           </el-form>
         </div>

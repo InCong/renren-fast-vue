@@ -3,50 +3,55 @@
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    @close="closeDialog">
+    @close="closeDialog"
+  >
     <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane label="信息填写" name="editInfo">
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="100px">
+        <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="100px">
           <el-form-item label="昵称" prop="nickname">
-            <el-input v-model="dataForm.nickname" placeholder="昵称"></el-input>
+            <el-input v-model="dataForm.nickname" placeholder="昵称" />
           </el-form-item>
           <el-form-item label="性别" prop="sex">
             <el-radio-group v-model="dataForm.sex" placeholder="性别，1-男，0-女">
-              <el-radio :label="1">男</el-radio>
-              <el-radio :label="0">女</el-radio>
+              <el-radio :label="1">
+                男
+              </el-radio>
+              <el-radio :label="0">
+                女
+              </el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="出生日期" prop="birthday">
             <el-date-picker
               v-model="dataForm.birthday"
               type="date"
-              placeholder="选择日期">
-            </el-date-picker>
+              placeholder="选择日期"
+            />
           </el-form-item>
           <el-form-item label="手机号码" prop="mobile">
-            <el-input v-model="dataForm.mobile" placeholder="手机号码"></el-input>
+            <el-input v-model="dataForm.mobile" placeholder="手机号码" />
           </el-form-item>
           <el-row>
             <el-col :span="12">
               <el-form-item label="联系电话1" prop="mobile2">
-                <el-input v-model="dataForm.mobile2" placeholder="紧急联系人电话"></el-input>
+                <el-input v-model="dataForm.mobile2" placeholder="紧急联系人电话" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="联系电话2" prop="mobile3">
-                <el-input v-model="dataForm.mobile3" placeholder="紧急联系人电话"></el-input>
+                <el-input v-model="dataForm.mobile3" placeholder="紧急联系人电话" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-form-item label="邮箱地址" prop="email">
-            <el-input v-model="dataForm.email" placeholder="邮箱地址"></el-input>
+            <el-input v-model="dataForm.email" placeholder="邮箱地址" />
           </el-form-item>
           <el-form-item label="入学时间" prop="entryTime">
             <el-date-picker
               v-model="dataForm.entryTime"
               type="date"
-              placeholder="入学时间">
-            </el-date-picker>
+              placeholder="入学时间"
+            />
           </el-form-item>
           <el-row>
             <el-col :span="8">
@@ -56,8 +61,8 @@
                     v-for="item in areaList"
                     :key="item.id"
                     :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                    :value="item.id"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -68,8 +73,8 @@
                     v-for="item in studentLevelList"
                     :key="item.id"
                     :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                    :value="item.id"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -80,18 +85,18 @@
                     v-for="item in statusList"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
-                  </el-option>
+                    :value="item.value"
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-form-item label="创建时间" prop="createTime">
-            <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
+            <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true" />
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="课程购买" name="buyClass" v-if="!dataForm.id">
+      <el-tab-pane v-if="!dataForm.id" label="课程购买" name="buyClass">
         <div style="margin-bottom: 20px;margin-left: 20px">
           <el-switch
             v-model="buyMode"
@@ -99,19 +104,19 @@
             active-value="1"
             inactive-text="套餐购买"
             inactive-value="2"
-            @change="buyModeChange">
-          </el-switch>
+            @change="buyModeChange"
+          />
         </div>
         <div v-if="buyMode === '1'">
-          <el-form :model="dataForm1" ref="dataForm1" label-width="80px">
+          <el-form ref="dataForm1" :model="dataForm1" label-width="80px">
             <el-form-item label="教师" prop="bdTeacherId">
               <el-select v-model="dataForm1.bdTeacherId" clearable placeholder="先选择教师，再选择课程" filterable @change="handleITeacherChange">
                 <el-option
                   v-for="item in teacherList"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
-                </el-option>
+                  :value="item.id"
+                />
               </el-select>
             </el-form-item>
             <el-form-item label="课程" prop="bdClassesId">
@@ -120,18 +125,18 @@
                   v-for="item in classList"
                   :key="item.bdClassesId"
                   :label="item.bdClassesName"
-                  :value="item.bdClassesId">
-                </el-option>
+                  :value="item.bdClassesId"
+                />
               </el-select>
             </el-form-item>
             <el-form-item label="课时" prop="num">
-              <el-input v-model="dataForm1.num" placeholder="课时数量" type="number" @input="numChange()"></el-input>
+              <el-input v-model="dataForm1.num" placeholder="课时数量" type="number" @input="numChange()" />
             </el-form-item>
             <el-form-item label="剩余课时" prop="remainNum">
-              <el-input v-model="dataForm1.remainNum" placeholder="剩余课时" :disabled="true" type="number"></el-input>
+              <el-input v-model="dataForm1.remainNum" placeholder="剩余课时" :disabled="true" type="number" />
             </el-form-item>
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="dataForm1.remark" placeholder="备注"></el-input>
+              <el-input v-model="dataForm1.remark" placeholder="备注" />
             </el-form-item>
           </el-form>
         </div>
@@ -139,114 +144,121 @@
           <div style="margin-bottom: 10px">
             <el-row :gutter="10">
               <el-col :span="4">
-                <el-input v-model="name" placeholder="名称" clearable></el-input>
+                <el-input v-model="name" placeholder="名称" clearable />
               </el-col>
               <el-col :span="20">
-                <el-button @click="getDataList()" type="primary">查询</el-button>
+                <el-button type="primary" @click="getDataList()">
+                  查询
+                </el-button>
               </el-col>
             </el-row>
           </div>
           <div>
             <el-table
+              v-loading="dataListLoading"
               :data="packageList"
               border
               highlight-current-row
+              style="width: 100%;"
               @current-change="handleCurrentChange"
-              v-loading="dataListLoading"
-              style="width: 100%;">
+            >
               <el-table-column
                 prop="id"
                 header-align="center"
                 align="center"
                 label="id"
-                width="50">
-              </el-table-column>
+                width="50"
+              />
               <el-table-column
                 prop="name"
                 header-align="center"
                 align="center"
-                label="名称">
-              </el-table-column>
+                label="名称"
+              />
               <el-table-column
                 prop="originalAmount"
                 header-align="center"
                 align="center"
-                label="原金额">
-              </el-table-column>
+                label="原金额"
+              />
               <el-table-column
                 prop="amount"
                 header-align="center"
                 align="center"
-                label="实际金额">
-              </el-table-column>
+                label="实际金额"
+              />
               <el-table-column
                 prop="num"
                 header-align="center"
                 align="center"
-                label="总课时">
-              </el-table-column>
+                label="总课时"
+              />
               <el-table-column
                 prop="createTime"
                 header-align="center"
                 align="center"
                 show-overflow-tooltip
-                label="创建时间">
-              </el-table-column>
+                label="创建时间"
+              />
               <el-table-column
                 prop="remark"
                 header-align="center"
                 align="center"
                 show-overflow-tooltip
-                label="备注">
-              </el-table-column>
+                label="备注"
+              />
             </el-table>
             <el-pagination
-              @size-change="sizeChangeHandle"
-              @current-change="currentChangeHandle"
               :current-page="pageIndex"
               :hide-on-single-page="true"
               :page-sizes="[10, 20, 50, 100]"
               :page-size="pageSize"
               :total="totalPage"
               layout="total, sizes, prev, pager, next, jumper"
-              style="margin-top: 10px;text-align: right">
-            </el-pagination>
+              style="margin-top: 10px;text-align: right"
+              @size-change="sizeChangeHandle"
+              @current-change="currentChangeHandle"
+            />
             <div v-if="isShowTeacherSelector" style="margin-top: 30px">
               <div style="margin-bottom: 30px">
-                <el-divider content-position="left"><span style="color: #00a0e9">选择任课教师</span></el-divider>
+                <el-divider content-position="left">
+                  <span style="color: #00a0e9">选择任课教师</span>
+                </el-divider>
               </div>
               <el-table
                 :data="packageDetailList"
                 :header-cell-style="headerCellClass"
                 border
-                style="width: 100%;">
+                style="width: 100%;"
+              >
                 <el-table-column
                   prop="id"
                   header-align="center"
                   align="center"
                   label="id"
-                  width="50">
-                </el-table-column>
+                  width="50"
+                />
                 <el-table-column
                   prop="name"
                   header-align="center"
                   align="center"
-                  label="课程名">
-                </el-table-column>
+                  label="课程名"
+                />
                 <el-table-column
                   prop="bdTeacherId"
                   header-align="center"
                   align="center"
                   label="任课教师"
-                  width="200px">
+                  width="200px"
+                >
                   <template slot-scope="scope">
                     <el-select v-model="scope.row.bdTeacherId" filterable placeholder="请选择任课教师" @change="changeRowTeacher($event, scope.$index)">
                       <el-option
                         v-for="item in teacherList"
                         :key="item.id"
                         :label="item.name"
-                        :value="item.id">
-                      </el-option>
+                        :value="item.id"
+                      />
                     </el-select>
                   </template>
                 </el-table-column>
@@ -254,28 +266,33 @@
                   prop="originalPrice"
                   header-align="center"
                   align="center"
-                  label="原价">
-                </el-table-column>
+                  label="原价"
+                />
                 <el-table-column
                   prop="currentPrice"
                   header-align="center"
                   align="center"
-                  label="现价">
-                </el-table-column>
+                  label="现价"
+                />
                 <el-table-column
                   prop="num"
                   header-align="center"
                   align="center"
-                  label="课时">
-                </el-table-column>
+                  label="课时"
+                />
                 <el-table-column
                   prop="otherType"
                   header-align="center"
                   align="center"
-                  label="类型">
+                  label="类型"
+                >
                   <template slot-scope="scope">
-                    <el-tag v-if="scope.row.otherType === 1" size="small">普通</el-tag>
-                    <el-tag v-if="scope.row.otherType === 2" size="small">赠送</el-tag>
+                    <el-tag v-if="scope.row.otherType === 1" size="small">
+                      普通
+                    </el-tag>
+                    <el-tag v-if="scope.row.otherType === 2" size="small">
+                      赠送
+                    </el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column
@@ -283,8 +300,8 @@
                   header-align="center"
                   align="center"
                   show-overflow-tooltip
-                  label="备注">
-                </el-table-column>
+                  label="备注"
+                />
               </el-table>
             </div>
           </div>
@@ -303,7 +320,7 @@
   import moment from 'moment'
   export default {
     data () {
-      var validateMobile = (rule, value, callback) => {
+      const validateMobile = (rule, value, callback) => {
         if (value && !isMobile(value)) {
           callback(new Error('手机号格式错误'))
         } else {

@@ -2,51 +2,53 @@
   <el-dialog
     title="请选择作为参照的班课"
     :visible.sync="visible"
-    append-to-body>
+    append-to-body
+  >
     <el-table
       :data="dataList"
       highlight-current-row
       border
       stripe
+      style="width: 100%"
       @current-change="handleCurrentChange"
-      style="width: 100%">
+    >
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
         width="50"
-        label="id">
-      </el-table-column>
+        label="id"
+      />
       <el-table-column
         prop="className"
         header-align="center"
         align="center"
-        label="课程">
-      </el-table-column>
+        label="课程"
+      />
       <el-table-column
         prop="studentName"
         header-align="center"
         align="center"
-        label="学员">
-      </el-table-column>
+        label="学员"
+      />
       <el-table-column
         prop="arrangeDate"
         header-align="center"
         align="center"
-        label="排课日期">
-      </el-table-column>
+        label="排课日期"
+      />
       <el-table-column
         prop="startTime"
         header-align="center"
         align="center"
-        label="开始时间">
-      </el-table-column>
+        label="开始时间"
+      />
       <el-table-column
         prop="endTime"
         header-align="center"
         align="center"
-        label="结束时间">
-      </el-table-column>
+        label="结束时间"
+      />
     </el-table>
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancelClick">取消</el-button>

@@ -4,119 +4,127 @@
     :append-to-body="true"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    @close="closeDialog">
+    @close="closeDialog"
+  >
     <div style="margin-bottom: 10px">
       <el-row :gutter="10">
         <el-col :span="4">
-          <el-input v-model="name" placeholder="名称" clearable></el-input>
+          <el-input v-model="name" placeholder="名称" clearable />
         </el-col>
         <el-col :span="20">
-          <el-button @click="getDataList()" type="primary">查询</el-button>
+          <el-button type="primary" @click="getDataList()">
+            查询
+          </el-button>
         </el-col>
       </el-row>
     </div>
     <div>
       <el-table
+        v-loading="dataListLoading"
         :data="packageList"
         border
         highlight-current-row
+        style="width: 100%;"
         @current-change="handleCurrentChange"
-        v-loading="dataListLoading"
-        style="width: 100%;">
+      >
         <el-table-column
           prop="id"
           header-align="center"
           align="center"
           label="id"
-          width="50">
-        </el-table-column>
+          width="50"
+        />
         <el-table-column
           prop="name"
           header-align="center"
           align="center"
-          label="名称">
-        </el-table-column>
+          label="名称"
+        />
         <el-table-column
           prop="originalAmount"
           header-align="center"
           align="center"
-          label="原金额">
-        </el-table-column>
+          label="原金额"
+        />
         <el-table-column
           prop="amount"
           header-align="center"
           align="center"
-          label="实际金额">
-        </el-table-column>
+          label="实际金额"
+        />
         <el-table-column
           prop="num"
           header-align="center"
           align="center"
-          label="总课时">
-        </el-table-column>
+          label="总课时"
+        />
         <el-table-column
           prop="createTime"
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="创建时间">
-        </el-table-column>
+          label="创建时间"
+        />
         <el-table-column
           prop="remark"
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="备注">
-        </el-table-column>
+          label="备注"
+        />
       </el-table>
       <el-pagination
-        @size-change="sizeChangeHandle"
-        @current-change="currentChangeHandle"
         :current-page="pageIndex"
         :hide-on-single-page="true"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
         :total="totalPage"
         layout="total, sizes, prev, pager, next, jumper"
-        style="margin-top: 10px;text-align: right">
-      </el-pagination>
+        style="margin-top: 10px;text-align: right"
+        @size-change="sizeChangeHandle"
+        @current-change="currentChangeHandle"
+      />
     </div>
     <div v-if="isShowTeacherSelector" style="margin-top: 30px">
       <div style="margin-bottom: 30px">
-        <el-divider content-position="left"><span style="color: #00a0e9">选择任课教师</span></el-divider>
+        <el-divider content-position="left">
+          <span style="color: #00a0e9">选择任课教师</span>
+        </el-divider>
       </div>
       <el-table
         :data="classesList"
         :header-cell-style="headerCellClass"
         border
-        style="width: 100%;">
+        style="width: 100%;"
+      >
         <el-table-column
           prop="id"
           header-align="center"
           align="center"
           label="id"
-          width="50">
-        </el-table-column>
+          width="50"
+        />
         <el-table-column
           prop="name"
           header-align="center"
           align="center"
-          label="课程名">
-        </el-table-column>
+          label="课程名"
+        />
         <el-table-column
           prop="bdTeacherId"
           header-align="center"
           align="center"
           label="任课教师"
-          width="200px">
+          width="200px"
+        >
           <template slot-scope="scope">
             <el-select v-model="scope.row.bdTeacherId" filterable placeholder="请选择任课教师" @change="changeRowTeacher($event, scope.$index)">
               <el-option
                 v-for="item in teacherList"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id">
-              </el-option>
+                :value="item.id"
+              />
             </el-select>
           </template>
         </el-table-column>
@@ -124,28 +132,33 @@
           prop="originalPrice"
           header-align="center"
           align="center"
-          label="原价">
-        </el-table-column>
+          label="原价"
+        />
         <el-table-column
           prop="currentPrice"
           header-align="center"
           align="center"
-          label="现价">
-        </el-table-column>
+          label="现价"
+        />
         <el-table-column
           prop="num"
           header-align="center"
           align="center"
-          label="课时">
-        </el-table-column>
+          label="课时"
+        />
         <el-table-column
           prop="otherType"
           header-align="center"
           align="center"
-          label="类型">
+          label="类型"
+        >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.otherType === 1" size="small">普通</el-tag>
-            <el-tag v-if="scope.row.otherType === 2" size="small">赠送</el-tag>
+            <el-tag v-if="scope.row.otherType === 1" size="small">
+              普通
+            </el-tag>
+            <el-tag v-if="scope.row.otherType === 2" size="small">
+              赠送
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -153,8 +166,8 @@
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="备注">
-        </el-table-column>
+          label="备注"
+        />
       </el-table>
     </div>
     <span slot="footer" class="dialog-footer">

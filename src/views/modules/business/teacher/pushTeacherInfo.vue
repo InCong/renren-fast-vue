@@ -4,36 +4,40 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     width="20%"
-    @close="closeDialog">
+    @close="closeDialog"
+  >
     <div style="margin-bottom: 20px">
-      <el-input v-model="studentName" placeholder="名称" clearable style="width: 40%;margin-right: 10px"></el-input>
-      <el-button type="primary" @click="getDataList">查询</el-button>
+      <el-input v-model="studentName" placeholder="名称" clearable style="width: 40%;margin-right: 10px" />
+      <el-button type="primary" @click="getDataList">
+        查询
+      </el-button>
     </div>
     <div>
       <el-table
+        v-loading="dataListLoading"
         :data="dataList"
         border
         highlight-current-row
+        style="width: 100%;"
         @current-change="handleCurrentChange"
-        v-loading="dataListLoading"
-        style="width: 100%;">
+      >
         <el-table-column
           prop="nickname"
           header-align="center"
           align="center"
-          label="名称">
-        </el-table-column>
+          label="名称"
+        />
       </el-table>
       <el-pagination
-        @size-change="sizeChangeHandle"
-        @current-change="currentChangeHandle"
         :current-page="pageIndex"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
         :pager-count="5"
         :total="totalPage"
-        layout="total, prev, pager, next">
-      </el-pagination>
+        layout="total, prev, pager, next"
+        @size-change="sizeChangeHandle"
+        @current-change="currentChangeHandle"
+      />
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

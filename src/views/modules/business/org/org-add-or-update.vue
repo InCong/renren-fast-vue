@@ -2,41 +2,43 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="dataForm.name" placeholder="名称"></el-input>
-    </el-form-item>
-    <el-form-item label="负责人" prop="header">
-      <el-input v-model="dataForm.header" placeholder="负责人"></el-input>
-    </el-form-item>
-    <el-form-item label="联系电话" prop="mobile">
-      <el-input v-model="dataForm.mobile" placeholder="联系电话"></el-input>
-    </el-form-item>
-    <el-form-item label="描述" prop="remark">
-      <el-input v-model="dataForm.remark" placeholder="描述"></el-input>
-    </el-form-item>
-    <el-form-item label="上级" prop="parentName">
-      <el-popover
-        ref="orgListPopover"
-        placement="bottom-start"
-        trigger="click">
-        <el-tree
-          :data="orgList"
-          :props="orgListTreeProps"
-          node-key="id"
-          ref="orgListTree"
-          @current-change="orgListTreeCurrentChangeHandle"
-          :default-expand-all="true"
-          :highlight-current="true"
-          :expand-on-click-node="false">
-        </el-tree>
-      </el-popover>
-      <el-input v-model="dataForm.parentName" v-popover:orgListPopover :readonly="true" placeholder="点击选择部门" class="menu-list__input"></el-input>
-    </el-form-item>
-    <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间，无需填写，自动生成" :disabled="true"></el-input>
-    </el-form-item>
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="名称" />
+      </el-form-item>
+      <el-form-item label="负责人" prop="header">
+        <el-input v-model="dataForm.header" placeholder="负责人" />
+      </el-form-item>
+      <el-form-item label="联系电话" prop="mobile">
+        <el-input v-model="dataForm.mobile" placeholder="联系电话" />
+      </el-form-item>
+      <el-form-item label="描述" prop="remark">
+        <el-input v-model="dataForm.remark" placeholder="描述" />
+      </el-form-item>
+      <el-form-item label="上级" prop="parentName">
+        <el-popover
+          ref="orgListPopover"
+          placement="bottom-start"
+          trigger="click"
+        >
+          <el-tree
+            ref="orgListTree"
+            :data="orgList"
+            :props="orgListTreeProps"
+            node-key="id"
+            :default-expand-all="true"
+            :highlight-current="true"
+            :expand-on-click-node="false"
+            @current-change="orgListTreeCurrentChangeHandle"
+          />
+        </el-popover>
+        <el-input v-model="dataForm.parentName" v-popover:orgListPopover :readonly="true" placeholder="点击选择部门" class="menu-list__input" />
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-input v-model="dataForm.createTime" placeholder="创建时间，无需填写，自动生成" :disabled="true" />
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

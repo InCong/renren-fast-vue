@@ -2,17 +2,18 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="dataForm.name" placeholder="名称"></el-input>
-    </el-form-item>
-    <el-form-item label="联系电话" prop="mobile">
-      <el-input v-model="dataForm.mobile" placeholder="联系电话"></el-input>
-    </el-form-item>
-    <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
-    </el-form-item>
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="名称" />
+      </el-form-item>
+      <el-form-item label="联系电话" prop="mobile">
+        <el-input v-model="dataForm.mobile" placeholder="联系电话" />
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true" />
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

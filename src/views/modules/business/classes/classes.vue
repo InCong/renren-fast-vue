@@ -2,60 +2,80 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="multiAdd()">批量新增</el-button>
-        <el-button v-if="isAuth('business:classes:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
-        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="packageManage()">套餐管理</el-button>
+        <el-button @click="getDataList()">
+          查询
+        </el-button>
+        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="addOrUpdateHandle()">
+          新增
+        </el-button>
+        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="multiAdd()">
+          批量新增
+        </el-button>
+        <el-button v-if="isAuth('business:classes:delete')" type="danger" :disabled="dataListSelections.length <= 0" @click="deleteHandle()">
+          批量删除
+        </el-button>
+        <el-button v-if="isAuth('business:classes:save')" type="primary" @click="packageManage()">
+          套餐管理
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="dataListLoading"
       :data="dataList"
       border
-      v-loading="dataListLoading"
+      style="width: 100%;"
       @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    >
       <el-table-column
         type="selection"
         header-align="center"
         align="center"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
         width="50"
-        label="id">
-      </el-table-column>
+        label="id"
+      />
       <el-table-column
         prop="name"
         header-align="center"
         align="center"
-        label="课程别名">
-      </el-table-column>
+        label="课程别名"
+      />
       <el-table-column
         prop="bdClassTypeId"
         header-align="center"
         align="center"
         width="150"
         :formatter="formatClassType"
-        label="课程种类">
-      </el-table-column>
+        label="课程种类"
+      />
       <el-table-column
         prop="bdClassWayId"
         header-align="center"
         align="center"
         width="150"
-        label="上课方式">
+        label="上课方式"
+      >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.bdClassWayId === 1">一对一</el-tag>
-          <el-tag v-if="scope.row.bdClassWayId === 2">一对多</el-tag>
-          <el-tag v-if="scope.row.bdClassWayId === 3">多对一</el-tag>
-          <el-tag v-if="scope.row.bdClassWayId === 4">多对多</el-tag>
+          <el-tag v-if="scope.row.bdClassWayId === 1">
+            一对一
+          </el-tag>
+          <el-tag v-if="scope.row.bdClassWayId === 2">
+            一对多
+          </el-tag>
+          <el-tag v-if="scope.row.bdClassWayId === 3">
+            多对一
+          </el-tag>
+          <el-tag v-if="scope.row.bdClassWayId === 4">
+            多对多
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -63,27 +83,38 @@
         header-align="center"
         align="center"
         width="150"
-        label="价格">
-      </el-table-column>
+        label="价格"
+      />
       <el-table-column
         prop="length"
         header-align="center"
         align="center"
         width="150"
-        label="时长（分钟）">
-      </el-table-column>
+        label="时长（分钟）"
+      />
       <el-table-column
         prop="status"
         header-align="center"
         align="center"
         width="150"
-        label="状态">
+        label="状态"
+      >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" type="danger">未知</el-tag>
-          <el-tag v-if="scope.row.status === 1">正常</el-tag>
-          <el-tag v-if="scope.row.status === 2" type="warning">暂停</el-tag>
-          <el-tag v-if="scope.row.status === 3" type="danger">撤销</el-tag>
-          <el-tag v-if="scope.row.status === 9" type="warning">其它</el-tag>
+          <el-tag v-if="scope.row.status === 0" type="danger">
+            未知
+          </el-tag>
+          <el-tag v-if="scope.row.status === 1">
+            正常
+          </el-tag>
+          <el-tag v-if="scope.row.status === 2" type="warning">
+            暂停
+          </el-tag>
+          <el-tag v-if="scope.row.status === 3" type="danger">
+            撤销
+          </el-tag>
+          <el-tag v-if="scope.row.status === 9" type="warning">
+            其它
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -91,45 +122,58 @@
         header-align="center"
         align="center"
         show-overflow-tooltip
-        label="备注">
-      </el-table-column>
+        label="备注"
+      />
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="250"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
           <el-row style="margin-bottom:10px">
-            <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button></el-col>
-            <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+            <el-col :span="12">
+              <el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">
+                修改
+              </el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">
+                删除
+              </el-button>
+            </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12"><el-button size="mini" type="primary" @click="classesTeacher(scope.row.id)">教师</el-button></el-col>
-<!--            <el-col :span="12"><el-button size="mini" type="primary" @click="classesStudent(scope.row.id)">学员</el-button></el-col>-->
+            <el-col :span="12">
+              <el-button size="mini" type="primary" @click="classesTeacher(scope.row.id)">
+                教师
+              </el-button>
+            </el-col>
+            <!--            <el-col :span="12"><el-button size="mini" type="primary" @click="classesStudent(scope.row.id)">学员</el-button></el-col>-->
           </el-row>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
       :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+    />
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
     <!-- 弹窗, 批量新增 -->
-    <multi-add v-if="multiAddVisible" ref="multiAdd" @refreshDataList="getDataList"></multi-add>
+    <multi-add v-if="multiAddVisible" ref="multiAdd" @refreshDataList="getDataList" />
     <!-- 弹窗, 与教师绑定 -->
-    <classes-teacher v-if="classesTeacherVisible" ref="classesTeacher"></classes-teacher>
+    <classes-teacher v-if="classesTeacherVisible" ref="classesTeacher" />
     <!-- 弹窗, 与教师绑定 -->
-    <classes-student v-if="classesStudentVisible" ref="classesStudent"></classes-student>
+    <classes-student v-if="classesStudentVisible" ref="classesStudent" />
     <!-- 弹窗，显示套餐管理界面 -->
-    <package v-if="packageVisible" ref="package"></package>
+    <package v-if="packageVisible" ref="package" />
   </div>
 </template>
 
@@ -140,6 +184,13 @@
   import ClassesStudent from './classesStudent'
   import Package from './package'
   export default {
+    components: {
+      ClassesTeacher,
+      ClassesStudent,
+      AddOrUpdate,
+      Package,
+      MultiAdd
+    },
     data () {
       return {
         dataForm: {
@@ -158,13 +209,6 @@
         classesStudentVisible: false,
         packageVisible: false
       }
-    },
-    components: {
-      ClassesTeacher,
-      ClassesStudent,
-      AddOrUpdate,
-      Package,
-      MultiAdd
     },
     activated () {
       this.getDataList()
@@ -218,7 +262,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        const ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

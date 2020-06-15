@@ -2,26 +2,29 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="用户名" prop="userName">
-        <el-input v-model="dataForm.userName" placeholder="登录帐号"></el-input>
+        <el-input v-model="dataForm.userName" placeholder="登录帐号" />
       </el-form-item>
       <el-form-item label="密码" prop="password" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.password" type="password" placeholder="密码"></el-input>
+        <el-input v-model="dataForm.password" type="password" placeholder="密码" />
       </el-form-item>
       <el-form-item label="确认密码" prop="comfirmPassword" :class="{ 'is-required': !dataForm.id }">
-        <el-input v-model="dataForm.comfirmPassword" type="password" placeholder="确认密码"></el-input>
+        <el-input v-model="dataForm.comfirmPassword" type="password" placeholder="确认密码" />
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
+        <el-input v-model="dataForm.email" placeholder="邮箱" />
       </el-form-item>
       <el-form-item label="手机号" prop="mobile">
-        <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
+        <el-input v-model="dataForm.mobile" placeholder="手机号" />
       </el-form-item>
       <el-form-item label="角色" size="mini" prop="roleIdList">
         <el-checkbox-group v-model="dataForm.roleIdList">
-          <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
+          <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">
+            {{ role.roleName }}
+          </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="身份" prop="identity">
@@ -30,8 +33,8 @@
             v-for="item in identities"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </el-option>
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="所属机构" prop="bdOrgId">
@@ -40,14 +43,18 @@
             v-for="item in orgList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="状态" size="mini" prop="status">
         <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">禁用</el-radio>
-          <el-radio :label="1">正常</el-radio>
+          <el-radio :label="0">
+            禁用
+          </el-radio>
+          <el-radio :label="1">
+            正常
+          </el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -62,14 +69,14 @@
   import { isMobile } from '@/utils/validate'
   export default {
     data () {
-      var validatePassword = (rule, value, callback) => {
+      const validatePassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
           callback(new Error('密码不能为空'))
         } else {
           callback()
         }
       }
-      var validateComfirmPassword = (rule, value, callback) => {
+      const validateComfirmPassword = (rule, value, callback) => {
         if (!this.dataForm.id && !/\S/.test(value)) {
           callback(new Error('确认密码不能为空'))
         } else if (this.dataForm.password !== value) {
@@ -78,7 +85,7 @@
           callback()
         }
       }
-      var validateMobile = (rule, value, callback) => {
+      const validateMobile = (rule, value, callback) => {
         if (!isMobile(value)) {
           callback(new Error('手机号格式错误'))
         } else {

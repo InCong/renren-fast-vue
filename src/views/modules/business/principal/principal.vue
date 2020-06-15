@@ -2,53 +2,65 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('business:principal:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('business:principal:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button @click="getDataList()">
+          查询
+        </el-button>
+        <el-button v-if="isAuth('business:principal:save')" type="primary" @click="addOrUpdateHandle()">
+          新增
+        </el-button>
+        <el-button v-if="isAuth('business:principal:delete')" type="danger" :disabled="dataListSelections.length <= 0" @click="deleteHandle()">
+          批量删除
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="dataListLoading"
       :data="dataList"
       border
-      v-loading="dataListLoading"
+      style="width: 100%;"
       @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    >
       <el-table-column
         type="selection"
         header-align="center"
         align="center"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
         label="ID"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="name"
         header-align="center"
         align="center"
-        label="名称">
-      </el-table-column>
+        label="名称"
+      />
       <el-table-column
         prop="mobile"
         header-align="center"
         align="center"
-        label="联系电话">
-      </el-table-column>
+        label="联系电话"
+      />
       <el-table-column
         prop="isBindWechat"
         header-align="center"
         align="center"
-        label="是否绑定微信">
+        label="是否绑定微信"
+      >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.isBindWechat === 0" size="small" type="danger">否</el-tag>
-          <el-tag v-if="scope.row.isBindWechat === 1" size="small">是</el-tag>
+          <el-tag v-if="scope.row.isBindWechat === 0" size="small" type="danger">
+            否
+          </el-tag>
+          <el-tag v-if="scope.row.isBindWechat === 1" size="small">
+            是
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -56,38 +68,51 @@
         header-align="center"
         align="center"
         :formatter="formatOrg"
-        label="所属机构">
-      </el-table-column>
+        label="所属机构"
+      />
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
           <el-row style="margin-bottom:10px">
-            <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button></el-col>
-            <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+            <el-col :span="12">
+              <el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">
+                修改
+              </el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">
+                删除
+              </el-button>
+            </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
+            <el-col :span="12">
+              <el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">
+                微信
+              </el-button>
+            </el-col>
           </el-row>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
       :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+    />
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
     <!-- 弹窗, 绑定微信 -->
-    <principalBindingWechat v-if="principalBindingWechatVisible" ref="principalBindingWechat" @refreshDataList="getDataList"></principalBindingWechat>
+    <principalBindingWechat v-if="principalBindingWechatVisible" ref="principalBindingWechat" @refreshDataList="getDataList" />
   </div>
 </template>
 
@@ -95,6 +120,10 @@
   import AddOrUpdate from './principal-add-or-update'
   import PrincipalBindingWechat from '../binding-wechat'
   export default {
+    components: {
+      AddOrUpdate,
+      PrincipalBindingWechat
+    },
     data () {
       return {
         dataForm: {
@@ -110,10 +139,6 @@
         addOrUpdateVisible: false,
         principalBindingWechatVisible: false
       }
-    },
-    components: {
-      AddOrUpdate,
-      PrincipalBindingWechat
     },
     activated () {
       this.getDataList()
@@ -177,7 +202,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        const ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

@@ -7,8 +7,8 @@
             v-for="item in goodsList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -17,112 +17,126 @@
             v-for="item in typeList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('warehouse:countdetail:save')" type="primary" @click="createCountDetail">创建盘点任务</el-button>
-<!--        <el-button v-if="isAuth('warehouse:countdetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
+        <el-button @click="getDataList()">
+          查询
+        </el-button>
+        <el-button v-if="isAuth('warehouse:countdetail:save')" type="primary" @click="createCountDetail">
+          创建盘点任务
+        </el-button>
+        <!--        <el-button v-if="isAuth('warehouse:countdetail:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>-->
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="dataListLoading"
       :data="dataList"
       border
-      v-loading="dataListLoading"
+      style="width: 100%;"
       @selection-change="selectionChangeHandle"
-      style="width: 100%;">
-<!--      <el-table-column-->
-<!--        type="selection"-->
-<!--        header-align="center"-->
-<!--        align="center"-->
-<!--        width="50">-->
-<!--      </el-table-column>-->
+    >
+      <!--      <el-table-column-->
+      <!--        type="selection"-->
+      <!--        header-align="center"-->
+      <!--        align="center"-->
+      <!--        width="50">-->
+      <!--      </el-table-column>-->
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
         label="id"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="wdGoodsId"
         header-align="center"
         align="center"
         :formatter="formatGoods"
-        label="商品">
-      </el-table-column>
+        label="商品"
+      />
       <el-table-column
         prop="wdGoodsTypeId"
         header-align="center"
         align="center"
         :formatter="formatType"
-        label="商品种类">
-      </el-table-column>
+        label="商品种类"
+      />
       <el-table-column
         prop="staticQty"
         header-align="center"
         align="center"
-        label="静态库存">
-      </el-table-column>
+        label="静态库存"
+      />
       <el-table-column
         prop="qty"
         header-align="center"
         align="center"
-        label="盘点数量">
-      </el-table-column>
+        label="盘点数量"
+      />
       <el-table-column
         prop="diffQty"
         header-align="center"
         align="center"
-        label="差异数量">
-      </el-table-column>
+        label="差异数量"
+      />
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
-        label="创建时间">
-      </el-table-column>
+        label="创建时间"
+      />
       <el-table-column
         prop="modifyTime"
         header-align="center"
         align="center"
-        label="盘点时间">
-      </el-table-column>
+        label="盘点时间"
+      />
       <el-table-column
         prop="remark"
         header-align="center"
         align="center"
-        label="盘点情况">
-      </el-table-column>
+        label="盘点情况"
+      />
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="200"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
           <el-row style="margin-bottom:10px">
-            <el-col :span="12"><el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.modifyTime)">盘点录入</el-button></el-col>
-            <el-col :span="12"><el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.wdGoodsId, scope.row.modifyTime)">删除</el-button></el-col>
+            <el-col :span="12">
+              <el-button size="small" type="primary" @click="addOrUpdateHandle(scope.row.id, scope.row.modifyTime)">
+                盘点录入
+              </el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button size="small" type="danger" @click="deleteHandle(scope.row.id, scope.row.wdGoodsId, scope.row.modifyTime)">
+                删除
+              </el-button>
+            </el-col>
           </el-row>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
       :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+    />
     <!-- 弹窗, 盘点录入 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
     <!-- 弹窗，新增商品盘点任务 -->
-    <count-detail-create v-if="countDetailCreateVisible" ref="countDetailCreate" @refreshDataList="getDataList"></count-detail-create>
+    <count-detail-create v-if="countDetailCreateVisible" ref="countDetailCreate" @refreshDataList="getDataList" />
   </div>
 </template>
 
@@ -131,6 +145,10 @@
   import CountDetailCreate from './countdetail-create'
   import moment from 'moment'
   export default {
+    components: {
+      AddOrUpdate,
+      CountDetailCreate
+    },
     data () {
       return {
         dataForm: {
@@ -148,10 +166,6 @@
         goodsList: [],
         typeList: []
       }
-    },
-    components: {
-      AddOrUpdate,
-      CountDetailCreate
     },
     activated () {
       this.getDataList()
@@ -230,7 +244,7 @@
             duration: 1500
           })
         } else {
-          var ids = id ? [id] : this.dataListSelections.map(item => {
+          const ids = id ? [id] : this.dataListSelections.map(item => {
             return item.id
           })
           this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

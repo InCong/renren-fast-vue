@@ -2,48 +2,64 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <el-button @click="getDataList()">
+          查询
+        </el-button>
       </el-form-item>
     </el-form>
     <el-row :gutter="20">
-      <el-col :span="8" v-for="item in dataList" :key=item.id style="margin-bottom:40px" >
+      <el-col v-for="item in dataList" :key="item.id" :span="8" style="margin-bottom:40px">
         <el-card :body-style="{ padding: '0px'}">
           <el-row :gutter="10">
-            <el-col :span="12"><img :src="item.url ? item.url : './static/img/avatar.png'" class="image" width="250px" height="250px"></el-col>
+            <el-col :span="12">
+              <img :src="item.url ? item.url : './static/img/avatar.png'" class="image" width="250px" height="250px">
+            </el-col>
             <el-col :span="12">
               <el-row>
                 <el-col :span="12">
                   <h1>
-                    {{item.name}}
+                    {{ item.name }}
                   </h1>
                 </el-col>
                 <el-col :span="6">
                   <h1>
-                    <el-button type="primary" size="mini" @click="showTeacherVideo(item.id)"><icon-svg name="video" style="font-size: 16px"></icon-svg></el-button>
+                    <el-button type="primary" size="mini" @click="showTeacherVideo(item.id)">
+                      <icon-svg name="video" style="font-size: 16px" />
+                    </el-button>
                   </h1>
                 </el-col>
                 <el-col :span="6">
                   <h1>
-                    <el-button type="success" size="mini" @click="pushTeacherInfo(item.name, item.url, item.mobile, item.classTypeName)"><icon-svg name="wechat" style="font-size: 16px" class="wechatIcon"></icon-svg></el-button>
+                    <el-button type="success" size="mini" @click="pushTeacherInfo(item.name, item.url, item.mobile, item.classTypeName)">
+                      <icon-svg name="wechat" style="font-size: 16px" class="wechatIcon" />
+                    </el-button>
                   </h1>
                 </el-col>
               </el-row>
               <el-row>
-                <el-col :span="24" style="margin-bottom:15px"><i class="el-icon-phone"></i><label class="label-content">{{item.mobile}}</label></el-col>
+                <el-col :span="24" style="margin-bottom:15px">
+                  <i class="el-icon-phone" /><label class="label-content">{{ item.mobile }}</label>
+                </el-col>
               </el-row>
               <el-row>
-                <el-col :span="24" style="margin-bottom:15px"><i class="el-icon-message"></i><label class="label-content">{{item.email}}</label></el-col>
+                <el-col :span="24" style="margin-bottom:15px">
+                  <i class="el-icon-message" /><label class="label-content">{{ item.email }}</label>
+                </el-col>
               </el-row>
               <el-row>
-                <el-col :span="24" style="margin-bottom:15px"><label>课程：</label><label class="label-content">{{item.classCount}}  门</label></el-col>
+                <el-col :span="24" style="margin-bottom:15px">
+                  <label>课程：</label><label class="label-content">{{ item.classCount }}  门</label>
+                </el-col>
               </el-row>
               <el-row>
                 <el-col :span="24" style="margin-bottom:0px">
                   <label>科目：</label>
-                  <el-tag type="danger" v-if="item.classTypeName">{{item.classTypeName}}</el-tag>
+                  <el-tag v-if="item.classTypeName" type="danger">
+                    {{ item.classTypeName }}
+                  </el-tag>
                 </el-col>
               </el-row>
             </el-col>
@@ -52,18 +68,18 @@
       </el-col>
     </el-row>
     <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
       :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+    />
     <!-- 弹窗，查看该教师的视频 -->
-    <teacher-video v-if="teacherVideoVisible" ref="teacherVideo"></teacher-video>
+    <teacher-video v-if="teacherVideoVisible" ref="teacherVideo" />
     <!-- 弹窗，选择需要推送的学员 -->
-    <push-teacher-info v-if="pushTeacherInfoVisible" ref="pushTeacherInfo"></push-teacher-info>
+    <push-teacher-info v-if="pushTeacherInfoVisible" ref="pushTeacherInfo" />
   </div>
 </template>
 

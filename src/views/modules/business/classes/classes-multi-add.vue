@@ -4,26 +4,27 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     width="30%"
-    @close="closeDialog">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    @close="closeDialog"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="课程种类" prop="bdClassTypeId">
         <el-select v-model="dataForm.bdClassTypeId" clearable placeholder="请选择" @change="classTypeChange">
           <el-option
             v-for="item in classTypeList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="最低价格" prop="minPrice">
-        <el-input-number v-model="dataForm.minPrice" placeholder="最低价格" :min="0" :step="10" :precision="2"></el-input-number>
+        <el-input-number v-model="dataForm.minPrice" placeholder="最低价格" :min="0" :step="10" :precision="2" />
       </el-form-item>
       <el-form-item label="价格区间" prop="priceStep">
-        <el-input-number v-model="dataForm.priceStep" placeholder="价格区间" :min="0" :step="10" :precision="2"></el-input-number>
+        <el-input-number v-model="dataForm.priceStep" placeholder="价格区间" :min="0" :step="10" :precision="2" />
       </el-form-item>
       <el-form-item label="课程时长" prop="length">
-        <el-input-number v-model="dataForm.length" :step="15"></el-input-number>
+        <el-input-number v-model="dataForm.length" :step="15" />
       </el-form-item>
       <el-form-item label="上课方式" prop="bdClassWayId">
         <el-select v-model="dataForm.bdClassWayId" clearable placeholder="请选择">
@@ -31,8 +32,8 @@
             v-for="item in classWayList"
             :key="item.id"
             :label="item.name"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="课程级别种类" prop="type">
@@ -41,12 +42,12 @@
             v-for="item in typeList"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </el-option>
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="最大数量" prop="maxLevel" v-if="isShowMaxLevel">
-        <el-input-number v-model="dataForm.maxLevel" placeholder="最高级别" :min="1" :step="1"></el-input-number>
+      <el-form-item v-if="isShowMaxLevel" label="最大数量" prop="maxLevel">
+        <el-input-number v-model="dataForm.maxLevel" placeholder="最高级别" :min="1" :step="1" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

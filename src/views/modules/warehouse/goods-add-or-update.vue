@@ -2,33 +2,34 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="名称" prop="name">
-      <el-input v-model="dataForm.name" placeholder="名称"></el-input>
-    </el-form-item>
-    <el-form-item label="参考单价" prop="price">
-      <el-input-number v-model="dataForm.price" placeholder="参考单价" :min="0" :step="10" :precision="2"></el-input-number>
-    </el-form-item>
-    <el-form-item label="编号" prop="code">
-      <el-input v-model="dataForm.code" placeholder="编号"></el-input>
-    </el-form-item>
-    <el-form-item label="商品种类" prop="wdGoodsTypeId">
-      <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品种类">
-        <el-option
-          v-for="item in typeList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
-    </el-form-item>
-    <el-form-item label="备注" prop="remark">
-      <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
-    </el-form-item>
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="名称" />
+      </el-form-item>
+      <el-form-item label="参考单价" prop="price">
+        <el-input-number v-model="dataForm.price" placeholder="参考单价" :min="0" :step="10" :precision="2" />
+      </el-form-item>
+      <el-form-item label="编号" prop="code">
+        <el-input v-model="dataForm.code" placeholder="编号" />
+      </el-form-item>
+      <el-form-item label="商品种类" prop="wdGoodsTypeId">
+        <el-select v-model="dataForm.wdGoodsTypeId" clearable placeholder="商品种类">
+          <el-option
+            v-for="item in typeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true" />
+      </el-form-item>
+      <el-form-item label="备注" prop="remark">
+        <el-input v-model="dataForm.remark" placeholder="备注" />
+      </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

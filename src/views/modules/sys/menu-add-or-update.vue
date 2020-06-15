@@ -2,42 +2,46 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="类型" prop="type">
         <el-radio-group v-model="dataForm.type">
-          <el-radio v-for="(type, index) in dataForm.typeList" :label="index" :key="index">{{ type }}</el-radio>
+          <el-radio v-for="(type, index) in dataForm.typeList" :key="index" :label="index">
+            {{ type }}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item :label="dataForm.typeList[dataForm.type] + '名称'" prop="name">
-        <el-input v-model="dataForm.name" :placeholder="dataForm.typeList[dataForm.type] + '名称'"></el-input>
+        <el-input v-model="dataForm.name" :placeholder="dataForm.typeList[dataForm.type] + '名称'" />
       </el-form-item>
       <el-form-item label="上级菜单" prop="parentName">
         <el-popover
           ref="menuListPopover"
           placement="bottom-start"
-          trigger="click">
+          trigger="click"
+        >
           <el-tree
+            ref="menuListTree"
             :data="menuList"
             :props="menuListTreeProps"
             node-key="menuId"
-            ref="menuListTree"
-            @current-change="menuListTreeCurrentChangeHandle"
             :default-expand-all="true"
             :highlight-current="true"
-            :expand-on-click-node="false">
-          </el-tree>
+            :expand-on-click-node="false"
+            @current-change="menuListTreeCurrentChangeHandle"
+          />
         </el-popover>
-        <el-input v-model="dataForm.parentName" v-popover:menuListPopover :readonly="true" placeholder="点击选择上级菜单" class="menu-list__input"></el-input>
+        <el-input v-model="dataForm.parentName" v-popover:menuListPopover :readonly="true" placeholder="点击选择上级菜单" class="menu-list__input" />
       </el-form-item>
       <el-form-item v-if="dataForm.type === 1" label="菜单路由" prop="url">
-        <el-input v-model="dataForm.url" placeholder="菜单路由"></el-input>
+        <el-input v-model="dataForm.url" placeholder="菜单路由" />
       </el-form-item>
       <el-form-item v-if="dataForm.type !== 0" label="授权标识" prop="perms">
-        <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔, 如: user:list,user:create"></el-input>
+        <el-input v-model="dataForm.perms" placeholder="多个用逗号分隔, 如: user:list,user:create" />
       </el-form-item>
       <el-form-item v-if="dataForm.type !== 2" label="排序号" prop="orderNum">
-        <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="0" label="排序号"></el-input-number>
+        <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="0" label="排序号" />
       </el-form-item>
       <el-form-item v-if="dataForm.type !== 2" label="菜单图标" prop="icon">
         <el-row>
@@ -46,23 +50,27 @@
               ref="iconListPopover"
               placement="bottom-start"
               trigger="click"
-              popper-class="mod-menu__icon-popover">
+              popper-class="mod-menu__icon-popover"
+            >
               <div class="mod-menu__icon-list">
                 <el-button
                   v-for="(item, index) in iconList"
                   :key="index"
+                  :class="{ 'is-active': item === dataForm.icon }"
                   @click="iconActiveHandle(item)"
-                  :class="{ 'is-active': item === dataForm.icon }">
-                  <icon-svg :name="item"></icon-svg>
+                >
+                  <icon-svg :name="item" />
                 </el-button>
               </div>
             </el-popover>
-            <el-input v-model="dataForm.icon" v-popover:iconListPopover :readonly="true" placeholder="菜单图标名称" class="icon-list__input"></el-input>
+            <el-input v-model="dataForm.icon" v-popover:iconListPopover :readonly="true" placeholder="菜单图标名称" class="icon-list__input" />
           </el-col>
           <el-col :span="2" class="icon-list__tips">
             <el-tooltip placement="top" effect="light">
-              <div slot="content">全站推荐使用SVG Sprite, 详细请参考:<a href="//github.com/daxiongYang/renren-fast-vue/blob/master/src/icons/index.js" target="_blank">icons/index.js</a>描述</div>
-              <i class="el-icon-warning"></i>
+              <div slot="content">
+                全站推荐使用SVG Sprite, 详细请参考:<a href="//github.com/daxiongYang/renren-fast-vue/blob/master/src/icons/index.js" target="_blank">icons/index.js</a>描述
+              </div>
+              <i class="el-icon-warning" />
             </el-tooltip>
           </el-col>
         </el-row>

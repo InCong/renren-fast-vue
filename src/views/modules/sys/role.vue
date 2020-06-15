@@ -2,81 +2,96 @@
   <div class="mod-role">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button @click="getDataList()">
+          查询
+        </el-button>
+        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">
+          新增
+        </el-button>
+        <el-button v-if="isAuth('sys:role:delete')" type="danger" :disabled="dataListSelections.length <= 0" @click="deleteHandle()">
+          批量删除
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="dataListLoading"
       :data="dataList"
       border
-      v-loading="dataListLoading"
+      style="width: 100%;"
       @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    >
       <el-table-column
         type="selection"
         header-align="center"
         align="center"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="roleId"
         header-align="center"
         align="center"
         width="80"
-        label="ID">
-      </el-table-column>
+        label="ID"
+      />
       <el-table-column
         prop="roleName"
         header-align="center"
         align="center"
-        label="角色名称">
-      </el-table-column>
+        label="角色名称"
+      />
       <el-table-column
         prop="remark"
         header-align="center"
         align="center"
-        label="备注">
-      </el-table-column>
+        label="备注"
+      />
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
         width="180"
-        label="创建时间">
-      </el-table-column>
+        label="创建时间"
+      />
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">
+            修改
+          </el-button>
+          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
       :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+    />
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './role-add-or-update'
   export default {
+    components: {
+      AddOrUpdate
+    },
     data () {
       return {
         dataForm: {
@@ -90,9 +105,6 @@
         dataListSelections: [],
         addOrUpdateVisible: false
       }
-    },
-    components: {
-      AddOrUpdate
     },
     activated () {
       this.getDataList()
@@ -144,7 +156,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        const ids = id ? [id] : this.dataListSelections.map(item => {
           return item.roleId
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

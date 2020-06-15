@@ -1,22 +1,23 @@
 <template>
   <el-dialog
-    :title= className
+    :title="className"
     :visible.sync="visible"
     width="40%"
-    center>
+    center
+  >
     <div style="text-align: center;margin-bottom: 20px">
       <el-card class="classInfo">
         <div slot="header">
           <span style="color: ghostwhite;font-weight: 900">课程信息</span>
         </div>
         <div style="text-align: left;margin-bottom: 20px">
-          <span>上课时间：{{arrangeDate}} {{startTime}} 至 {{endTime}}</span>
+          <span>上课时间：{{ arrangeDate }} {{ startTime }} 至 {{ endTime }}</span>
         </div>
         <div style="text-align: left;margin-bottom: 20px">
-          <span>上课方式：{{classWay}}</span>
+          <span>上课方式：{{ classWay }}</span>
         </div>
         <div style="text-align: left">
-          <span>学员：{{studentName}}</span>
+          <span>学员：{{ studentName }}</span>
         </div>
       </el-card>
     </div>
@@ -29,36 +30,42 @@
           <el-table
             :data="studentList"
             border
-            stripe>
+            stripe
+          >
             <el-table-column
               prop="bdStudentId"
               header-align="center"
               align="center"
               width="50"
-              label="ID">
-            </el-table-column>
+              label="ID"
+            />
             <el-table-column
               prop="studentName"
               header-align="center"
               align="center"
-              label="名称">
-            </el-table-column>
+              label="名称"
+            />
             <el-table-column
               prop="signType"
               header-align="center"
               align="center"
-              label="签到类型">
+              label="签到类型"
+            >
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.signType === 1" size="small">微信</el-tag>
-                <el-tag v-if="scope.row.signType === 2" size="small">手工</el-tag>
+                <el-tag v-if="scope.row.signType === 1" size="small">
+                  微信
+                </el-tag>
+                <el-tag v-if="scope.row.signType === 2" size="small">
+                  手工
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column
               prop="signTime"
               header-align="center"
               align="center"
-              label="签到时间">
-            </el-table-column>
+              label="签到时间"
+            />
           </el-table>
         </div>
       </el-card>

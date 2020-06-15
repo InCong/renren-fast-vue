@@ -4,72 +4,83 @@
     width="60%"
     :append-to-body="true"
     :close-on-click-modal="false"
-    :visible.sync="visible">
+    :visible.sync="visible"
+  >
     <div style="margin-bottom: 10px">
-      <el-button type="primary" @click="buyClass()">购买课程</el-button>
-      <el-button type="primary" @click="buyPackage()">购买套餐</el-button>
+      <el-button type="primary" @click="buyClass()">
+        购买课程
+      </el-button>
+      <el-button type="primary" @click="buyPackage()">
+        购买套餐
+      </el-button>
     </div>
     <div class="mod-config">
       <el-table
+        v-loading="dataListLoading"
         :data="dataList"
         border
         stripe
-        v-loading="dataListLoading"
-        style="width: 100%;">
+        style="width: 100%;"
+      >
         <el-table-column
           prop="id"
           header-align="center"
           align="center"
           width="50"
-          label="ID">
-        </el-table-column>
+          label="ID"
+        />
         <el-table-column
           prop="className"
           header-align="center"
           align="center"
-          label="课程">
-        </el-table-column>
+          label="课程"
+        />
         <el-table-column
           prop="teacherName"
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="任课教师">
-        </el-table-column>
+          label="任课教师"
+        />
         <el-table-column
           prop="price"
           header-align="center"
           align="center"
-          label="原价(元/课时)">
-        </el-table-column>
+          label="原价(元/课时)"
+        />
         <el-table-column
           prop="currentPrice"
           header-align="center"
           align="center"
-          label="现价(元/课时)">
-        </el-table-column>
+          label="现价(元/课时)"
+        />
         <el-table-column
           prop="num"
           header-align="center"
           align="center"
           width="100"
-          label="课时">
-        </el-table-column>
+          label="课时"
+        />
         <el-table-column
           prop="remainNum"
           header-align="center"
           align="center"
           width="100"
-          label="剩余课时">
-        </el-table-column>
+          label="剩余课时"
+        />
         <el-table-column
           prop="otherType"
           header-align="center"
           align="center"
-          label="类型">
+          label="类型"
+        >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.otherType === 1" size="small">普通</el-tag>
-            <el-tag v-if="scope.row.otherType === 2" size="small">赠送</el-tag>
+            <el-tag v-if="scope.row.otherType === 1" size="small">
+              普通
+            </el-tag>
+            <el-tag v-if="scope.row.otherType === 2" size="small">
+              赠送
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -77,46 +88,55 @@
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="创建时间">
-        </el-table-column>
+          label="创建时间"
+        />
         <el-table-column
           prop="remark"
           header-align="center"
           align="center"
           show-overflow-tooltip
-          label="备注">
-        </el-table-column>
+          label="备注"
+        />
         <el-table-column
           fixed="right"
           header-align="center"
           align="center"
           width="150"
-          label="操作">
+          label="操作"
+        >
           <template slot-scope="scope">
             <el-row style="margin-bottom:10px">
-              <el-col :span="12"><el-button size="mini" @click="updateClass(scope.row.id, scope.row.teacherName, scope.row.className, scope.row.bdClassesId, scope.row.bdTeacherId)">修改</el-button></el-col>
-              <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+              <el-col :span="12">
+                <el-button size="mini" @click="updateClass(scope.row.id, scope.row.teacherName, scope.row.className, scope.row.bdClassesId, scope.row.bdTeacherId)">
+                  修改
+                </el-button>
+              </el-col>
+              <el-col :span="12">
+                <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">
+                  删除
+                </el-button>
+              </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
-        @size-change="sizeChangeHandle"
-        @current-change="currentChangeHandle"
         :hide-on-single-page="true"
         :current-page="pageIndex"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="pageSize"
         :total="totalPage"
         layout="total, sizes, prev, pager, next, jumper"
-        style="margin-top: 10px;text-align: right">
-      </el-pagination>
+        style="margin-top: 10px;text-align: right"
+        @size-change="sizeChangeHandle"
+        @current-change="currentChangeHandle"
+      />
       <!-- 弹窗，购买课时 -->
-      <student-buy-classes v-if="studentBuyClassesVisible" ref="studentBuyClasses" @refreshDataList="init(studentId)"></student-buy-classes>
+      <student-buy-classes v-if="studentBuyClassesVisible" ref="studentBuyClasses" @refreshDataList="init(studentId)" />
       <!-- 弹窗，修改课时 -->
-      <student-update-classes-num v-if="studentUpdateClassesNumVisible" ref="studentUpdateClassesNum" @refreshDataList="init(studentId)"></student-update-classes-num>
+      <student-update-classes-num v-if="studentUpdateClassesNumVisible" ref="studentUpdateClassesNum" @refreshDataList="init(studentId)" />
       <!--  弹窗，购买套餐  -->
-      <student-buy-package v-if="studentBuyPackageVisible" ref="studentBuyPackage" @refreshDataList="init(studentId)"></student-buy-package>
+      <student-buy-package v-if="studentBuyPackageVisible" ref="studentBuyPackage" @refreshDataList="init(studentId)" />
     </div>
   </el-dialog>
 </template>
@@ -182,7 +202,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = [id]
+        const ids = [id]
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

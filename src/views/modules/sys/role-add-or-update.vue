@@ -2,22 +2,23 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
-    :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+    :visible.sync="visible"
+  >
+    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
       <el-form-item label="角色名称" prop="roleName">
-        <el-input v-model="dataForm.roleName" placeholder="角色名称"></el-input>
+        <el-input v-model="dataForm.roleName" placeholder="角色名称" />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+        <el-input v-model="dataForm.remark" placeholder="备注" />
       </el-form-item>
       <el-form-item size="mini" label="授权">
         <el-tree
+          ref="menuListTree"
           :data="menuList"
           :props="menuListTreeProps"
           node-key="menuId"
-          ref="menuListTree"
-          show-checkbox>
-        </el-tree>
+          show-checkbox
+        />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

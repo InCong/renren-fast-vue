@@ -3,95 +3,100 @@
     title="课程修改"
     :close-on-click-modal="false"
     :visible.sync="visible"
+    append-to-body
     @close="closeDialog"
-    append-to-body>
+  >
     <el-switch
       v-model="isMultiModify"
       active-text="是否批量修改"
-      style="margin-left: 10px; margin-bottom: 10px">
-    </el-switch>
-    <el-divider content-position="left"><span style="color: #00a0e9">排课日期与时间</span></el-divider>
-    <div style="text-align: center;margin-top: 30px" v-if="!isMultiModify">
+      style="margin-left: 10px; margin-bottom: 10px"
+    />
+    <el-divider content-position="left">
+      <span style="color: #00a0e9">排课日期与时间</span>
+    </el-divider>
+    <div v-if="!isMultiModify" style="text-align: center;margin-top: 30px">
       <el-date-picker
         v-model="arrangeDate"
         value-format="yyyy-MM-dd"
         type="date"
-        placeholder="选择排课日期">
-      </el-date-picker>
+        placeholder="选择排课日期"
+      />
     </div>
     <div style="text-align: center;margin-bottom: 30px;margin-top: 30px">
       <el-switch
         v-model="isTimeSelect"
         active-text="选择时间"
         inactive-text="填写时间"
-        style="margin-right: 10px">
-      </el-switch>
+        style="margin-right: 10px"
+      />
       <el-input
-        v-model="hours"
         v-if="!isTimeSelect"
+        v-model="hours"
         type="number"
         placeholder="时"
         style="width: 80px"
-        @change="hourChange">
-      </el-input>
+        @change="hourChange"
+      />
       <a v-if="!isTimeSelect">：</a>
       <el-input
-        v-model="minutes"
         v-if="!isTimeSelect"
+        v-model="minutes"
         type="number"
         placeholder="分"
         style="width: 80px"
-        @change="minuteChange">
-      </el-input>
+        @change="minuteChange"
+      />
       <el-time-select
-        placeholder="起始时间"
-        v-model="startTime"
         v-if="isTimeSelect"
+        v-model="startTime"
+        placeholder="起始时间"
         style="width: 120px"
-        @change="startTimeChange"
         :editable="false"
         :clearable="false"
         :picker-options="{
-            start: '07:00',
-            step: '00:15',
-            end: '22:00'
-          }">
-      </el-time-select>
+          start: '07:00',
+          step: '00:15',
+          end: '22:00'
+        }"
+        @change="startTimeChange"
+      />
       <span style="margin-left: 10px;margin-right: 20px">至</span>
       <el-time-select
-        placeholder="结束时间"
         v-model="endTime"
+        placeholder="结束时间"
         style="width: 120px"
         :clearable="false"
         :disabled="true"
         :picker-options="{
-            start: '07:00',
-            step: '00:01',
-            end: '23:00',
-            minTime: startTime
-          }">
-      </el-time-select>
+          start: '07:00',
+          step: '00:01',
+          end: '23:00',
+          minTime: startTime
+        }"
+      />
       <el-switch
         v-model="isTimeChange"
         active-text="修改时长"
-        style="margin-left: 10px">
-      </el-switch>
+        style="margin-left: 10px"
+      />
       <el-input
         v-model="length"
         :disabled="!isTimeChange"
         type="number"
         style="width: 80px"
-        @change="classLengthChange">
-      </el-input>
+        @change="classLengthChange"
+      />
     </div>
-    <el-divider content-position="left"><span style="color: #00a0e9" v-if="!isMultiModify">备注</span></el-divider>
-    <div style="text-align: center;margin-top: 30px" v-if="!isMultiModify">
-      <el-input type="text" v-model="remark" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%"></el-input>
+    <el-divider content-position="left">
+      <span v-if="!isMultiModify" style="color: #00a0e9">备注</span>
+    </el-divider>
+    <div v-if="!isMultiModify" style="text-align: center;margin-top: 30px">
+      <el-input v-model="remark" type="text" placeholder="请输入备注" maxlength="50" show-word-limit style="width: 70%" />
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()" v-if="!isMultiModify">确定</el-button>
-      <el-button type="primary" @click="multiModify" v-if="isMultiModify">批量修改</el-button>
+      <el-button v-if="!isMultiModify" type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button v-if="isMultiModify" type="primary" @click="multiModify">批量修改</el-button>
     </span>
   </el-dialog>
 </template>

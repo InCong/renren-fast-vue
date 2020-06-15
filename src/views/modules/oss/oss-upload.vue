@@ -2,8 +2,9 @@
   <el-dialog
     title="上传文件"
     :close-on-click-modal="false"
+    :visible.sync="visible"
     @close="closeHandle"
-    :visible.sync="visible">
+  >
     <el-upload
       drag
       :action="url"
@@ -11,10 +12,15 @@
       :on-success="successHandle"
       multiple
       :file-list="fileList"
-      style="text-align: center;">
-      <i class="el-icon-upload"></i>
-      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-      <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！</div>
+      style="text-align: center;"
+    >
+      <i class="el-icon-upload" />
+      <div class="el-upload__text">
+        将文件拖到此处，或<em>点击上传</em>
+      </div>
+      <div slot="tip" class="el-upload__tip">
+        只支持jpg、png、gif格式的图片！
+      </div>
     </el-upload>
   </el-dialog>
 </template>

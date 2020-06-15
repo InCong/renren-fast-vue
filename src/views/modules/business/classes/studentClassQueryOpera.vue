@@ -2,28 +2,33 @@
   <el-dialog
     :title="'【' + className + '】 ' + startTime + ' 至 ' + endTime"
     :visible.sync="visible"
-    @close="closeDialog"
     width="30%"
-    center>
+    center
+    @close="closeDialog"
+  >
     <div style="text-align: center">
-      <el-divider content-position="left"><span style="color: #00a0e9;font-size: 13px">发送通知</span></el-divider>
+      <el-divider content-position="left">
+        <span style="color: #00a0e9;font-size: 13px">发送通知</span>
+      </el-divider>
       <div style="margin-top: 30px">
         <el-checkbox-group v-model="checkList">
-          <el-checkbox label="学员"></el-checkbox>
-          <el-checkbox label="教师"></el-checkbox>
+          <el-checkbox label="学员" />
+          <el-checkbox label="教师" />
         </el-checkbox-group>
       </div>
       <div style="margin-top: 10px;margin-bottom: 30px">
         <el-input
+          v-model="noticeText"
           type="textarea"
           :rows="3"
           placeholder="请输入通知内容"
-          v-model="noticeText"
           maxlength="50"
           show-word-limit
-          style="margin-bottom: 20px">
-        </el-input>
-        <el-button type="success" @click="noticeButtonClick">微信通知</el-button>
+          style="margin-bottom: 20px"
+        />
+        <el-button type="success" @click="noticeButtonClick">
+          微信通知
+        </el-button>
       </div>
     </div>
   </el-dialog>

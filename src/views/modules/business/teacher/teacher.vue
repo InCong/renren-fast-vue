@@ -2,13 +2,21 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('business:teacher:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('business:teacher:save')" type="primary" @click="multiBindingClass()" :disabled="dataListSelections.length <= 0">批量绑定课程</el-button>
-        <el-button v-if="isAuth('business:teacher:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button @click="getDataList()">
+          查询
+        </el-button>
+        <el-button v-if="isAuth('business:teacher:save')" type="primary" @click="addOrUpdateHandle()">
+          新增
+        </el-button>
+        <el-button v-if="isAuth('business:teacher:save')" type="primary" :disabled="dataListSelections.length <= 0" @click="multiBindingClass()">
+          批量绑定课程
+        </el-button>
+        <el-button v-if="isAuth('business:teacher:delete')" type="danger" :disabled="dataListSelections.length <= 0" @click="deleteHandle()">
+          批量删除
+        </el-button>
       </el-form-item>
       <el-form-item>
         <el-upload
@@ -18,45 +26,54 @@
           :on-change="upload"
           :multiple="false"
           :show-file-list="false"
-          :auto-upload="false">
-          <el-button slot="trigger" type="primary">模板批量导入</el-button>
+          :auto-upload="false"
+        >
+          <el-button slot="trigger" type="primary">
+            模板批量导入
+          </el-button>
         </el-upload>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="dataListLoading"
       :data="dataList"
       border
-      v-loading="dataListLoading"
+      style="width: 100%;"
       @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    >
       <el-table-column
         type="selection"
         header-align="center"
         align="center"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
         width="50"
-        label="id">
-      </el-table-column>
+        label="id"
+      />
       <el-table-column
         prop="name"
         header-align="center"
         align="center"
-        label="名称">
-      </el-table-column>
+        label="名称"
+      />
       <el-table-column
         prop="sex"
         header-align="center"
         align="center"
         width="80"
-        label="性别">
+        label="性别"
+      >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.sex === 0" size="small">女</el-tag>
-          <el-tag v-if="scope.row.sex === 1" size="small">男</el-tag>
+          <el-tag v-if="scope.row.sex === 0" size="small">
+            女
+          </el-tag>
+          <el-tag v-if="scope.row.sex === 1" size="small">
+            男
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -64,29 +81,34 @@
         header-align="center"
         align="center"
         width="80"
-        label="年龄">
-      </el-table-column>
+        label="年龄"
+      />
       <el-table-column
         prop="mobile"
         header-align="center"
         align="center"
-        label="联系电话">
-      </el-table-column>
+        label="联系电话"
+      />
       <el-table-column
         prop="email"
         header-align="center"
         align="center"
-        label="邮箱">
-      </el-table-column>
+        label="邮箱"
+      />
       <el-table-column
         prop="isFullTime"
         header-align="center"
         align="center"
         width="80"
-        label="是否全职">
+        label="是否全职"
+      >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.isFullTime === 0" size="small" type="warning">否</el-tag>
-          <el-tag v-if="scope.row.isFullTime === 1" size="small">是</el-tag>
+          <el-tag v-if="scope.row.isFullTime === 0" size="small" type="warning">
+            否
+          </el-tag>
+          <el-tag v-if="scope.row.isFullTime === 1" size="small">
+            是
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -94,12 +116,21 @@
         header-align="center"
         align="center"
         width="80"
-        label="状态">
+        label="状态"
+      >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" size="small" type="danger">未知</el-tag>
-          <el-tag v-if="scope.row.status === 1" size="small">在职</el-tag>
-          <el-tag v-if="scope.row.status === 2" size="small" type="warning">离职</el-tag>
-          <el-tag v-if="scope.row.status === 9" size="small" type="warning">其它</el-tag>
+          <el-tag v-if="scope.row.status === 0" size="small" type="danger">
+            未知
+          </el-tag>
+          <el-tag v-if="scope.row.status === 1" size="small">
+            在职
+          </el-tag>
+          <el-tag v-if="scope.row.status === 2" size="small" type="warning">
+            离职
+          </el-tag>
+          <el-tag v-if="scope.row.status === 9" size="small" type="warning">
+            其它
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -107,23 +138,28 @@
         header-align="center"
         align="center"
         width="80"
-        label="拥有课程">
-      </el-table-column>
+        label="拥有课程"
+      />
       <el-table-column
         prop="studentCount"
         header-align="center"
         align="center"
         width="80"
-        label="拥有学生">
-      </el-table-column>
+        label="拥有学生"
+      />
       <el-table-column
         prop="isBindWechat"
         header-align="center"
         align="center"
-        label="是否绑定微信">
+        label="是否绑定微信"
+      >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.isBindWechat === 0" size="small" type="danger">否</el-tag>
-          <el-tag v-if="scope.row.isBindWechat === 1" size="small">是</el-tag>
+          <el-tag v-if="scope.row.isBindWechat === 0" size="small" type="danger">
+            否
+          </el-tag>
+          <el-tag v-if="scope.row.isBindWechat === 1" size="small">
+            是
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -131,52 +167,73 @@
         header-align="center"
         align="center"
         show-overflow-tooltip
-        label="备注">
-      </el-table-column>
+        label="备注"
+      />
       <el-table-column
         prop="bdOrgId"
         header-align="center"
         align="center"
         :formatter="formatOrg"
-        label="所属机构">
-      </el-table-column>
+        label="所属机构"
+      />
       <el-table-column
         fixed="right"
         header-align="center"
         width="250"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
           <el-row style="margin-bottom:10px">
-            <el-col :span="12"><el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">修改</el-button></el-col>
-            <el-col :span="12"><el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">删除</el-button></el-col>
+            <el-col :span="12">
+              <el-button size="mini" @click="addOrUpdateHandle(scope.row.id)">
+                修改
+              </el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button size="mini" type="danger" @click="deleteHandle(scope.row.id)">
+                删除
+              </el-button>
+            </el-col>
           </el-row>
           <el-row>
-            <el-col :span="8"><el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">微信</el-button></el-col>
-            <el-col :span="8"><el-button size="mini" type="primary" @click="uploadMultimedia(scope.row.id)">多媒体</el-button></el-col>
-            <el-col :span="8"><el-button size="mini" type="primary" @click="classSettlement(scope.row.id)">结算</el-button></el-col>
+            <el-col :span="8">
+              <el-button size="mini" type="success" @click="bindingWechat(scope.row.id)">
+                微信
+              </el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-button size="mini" type="primary" @click="uploadMultimedia(scope.row.id)">
+                多媒体
+              </el-button>
+            </el-col>
+            <el-col :span="8">
+              <el-button size="mini" type="primary" @click="classSettlement(scope.row.id)">
+                结算
+              </el-button>
+            </el-col>
           </el-row>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
       :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+    />
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
     <!-- 弹窗, 绑定微信 -->
-    <teacherBindingWechat v-if="teacherBindingWechatVisible" ref="teacherBindingWechat" @refreshDataList="getDataList"></teacherBindingWechat>
+    <teacherBindingWechat v-if="teacherBindingWechatVisible" ref="teacherBindingWechat" @refreshDataList="getDataList" />
     <!-- 弹窗，上传图片与视频 -->
-    <teacherUploadMultimedia v-if="teacherUploadMultimediaVisible" ref="teacherUploadMultimedia"></teacherUploadMultimedia>
+    <teacherUploadMultimedia v-if="teacherUploadMultimediaVisible" ref="teacherUploadMultimedia" />
     <!-- 弹窗，课程结算汇总 -->
-    <teacher-class-settlement-sum v-if="teacherClassSettlementVisibleSum" ref="teacherClassSettlementSum"></teacher-class-settlement-sum>
+    <teacher-class-settlement-sum v-if="teacherClassSettlementVisibleSum" ref="teacherClassSettlementSum" />
     <!-- 弹窗，批量绑定课程 -->
-    <multi-binding-class v-if="multiBindingClassVisible" ref="multiBindingClass"></multi-binding-class>
+    <multi-binding-class v-if="multiBindingClassVisible" ref="multiBindingClass" />
   </div>
 </template>
 
@@ -188,6 +245,13 @@
   import MultiBindingClass from './multi-binding-class'
   import XLSX from 'xlsx'
   export default {
+    components: {
+      AddOrUpdate,
+      TeacherBindingWechat,
+      TeacherUploadMultimedia,
+      TeacherClassSettlementSum,
+      MultiBindingClass
+    },
     data () {
       return {
         dataForm: {
@@ -206,13 +270,6 @@
         teacherClassSettlementVisibleSum: false,
         multiBindingClassVisible: false
       }
-    },
-    components: {
-      AddOrUpdate,
-      TeacherBindingWechat,
-      TeacherUploadMultimedia,
-      TeacherClassSettlementSum,
-      MultiBindingClass
     },
     activated () {
       this.getDataList()
@@ -276,7 +333,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        const ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

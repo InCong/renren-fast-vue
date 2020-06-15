@@ -2,76 +2,86 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.name" placeholder="名称" clearable></el-input>
+        <el-input v-model="dataForm.name" placeholder="名称" clearable />
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('business:org:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button @click="getDataList()">
+          查询
+        </el-button>
+        <el-button v-if="isAuth('business:org:save')" type="primary" @click="addOrUpdateHandle()">
+          新增
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="dataListLoading"
       :data="dataList"
       border
       stripe
-      v-loading="dataListLoading"
-      style="width: 100%;">
+      style="width: 100%;"
+    >
       <el-table-column
         type="selection"
         header-align="center"
         align="center"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
         width="80"
-        label="机构ID">
-      </el-table-column>
+        label="机构ID"
+      />
       <table-tree-column
         prop="name"
         header-align="center"
-        treeKey="id"
-        label="名称">
-      </table-tree-column>
+        tree-key="id"
+        label="名称"
+      />
       <el-table-column
         prop="header"
         header-align="center"
         align="center"
-        label="负责人">
-      </el-table-column>
+        label="负责人"
+      />
       <el-table-column
         prop="mobile"
         header-align="center"
         align="center"
-        label="联系电话">
-      </el-table-column>
+        label="联系电话"
+      />
       <el-table-column
         prop="remark"
         header-align="center"
         align="center"
-        label="描述">
-      </el-table-column>
+        label="描述"
+      />
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
-        label="创建时间">
-      </el-table-column>
+        label="创建时间"
+      />
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">
+            修改
+          </el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList" />
   </div>
 </template>
 
@@ -80,6 +90,10 @@
   import AddOrUpdate from './org-add-or-update'
   import { treeDataTranslate } from '@/utils'
   export default {
+    components: {
+      TableTreeColumn,
+      AddOrUpdate
+    },
     data () {
       return {
         dataForm: {
@@ -93,10 +107,6 @@
         dataListSelections: [],
         addOrUpdateVisible: false
       }
-    },
-    components: {
-      TableTreeColumn,
-      AddOrUpdate
     },
     activated () {
       this.getDataList()
@@ -128,7 +138,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        const ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

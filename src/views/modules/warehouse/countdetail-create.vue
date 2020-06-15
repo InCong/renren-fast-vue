@@ -3,7 +3,8 @@
     title="选择需要盘点的商品"
     :close-on-click-modal="false"
     :visible.sync="visible"
-    @close="closeDialog">
+    @close="closeDialog"
+  >
     <div style="text-align: center">
       <el-transfer
         v-model="currentValue"
@@ -11,8 +12,8 @@
         :data="goodsList"
         :filterable="true"
         :props="{key:'id',label:'name'}"
-        style="text-align: left;display: inline-block">
-      </el-transfer>
+        style="text-align: left;display: inline-block"
+      />
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>

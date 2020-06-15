@@ -4,29 +4,34 @@
     :close-on-click-modal="false"
     :visible.sync="visible"
     width="52%"
-    @close="closeDialog">
+    @close="closeDialog"
+  >
     <el-tabs v-model="activeName" type="border-card">
       <el-tab-pane label="信息填写" name="editInfo">
-        <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
+        <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="80px" @keyup.enter.native="dataFormSubmit()">
           <el-row>
             <el-col :span="16">
               <el-form-item label="名称" prop="name">
-                <el-input v-model="dataForm.name" placeholder="名称"></el-input>
+                <el-input v-model="dataForm.name" placeholder="名称" />
               </el-form-item>
               <el-form-item label="性别" prop="sex">
                 <el-radio-group v-model="dataForm.sex" placeholder="性别，1-男，0-女">
-                  <el-radio :label="1">男</el-radio>
-                  <el-radio :label="0">女</el-radio>
+                  <el-radio :label="1">
+                    男
+                  </el-radio>
+                  <el-radio :label="0">
+                    女
+                  </el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="年龄" prop="age">
-                <el-input v-model="dataForm.age" placeholder="年龄"></el-input>
+                <el-input v-model="dataForm.age" placeholder="年龄" />
               </el-form-item>
               <el-form-item label="联系电话" prop="mobile">
-                <el-input v-model="dataForm.mobile" placeholder="联系电话"></el-input>
+                <el-input v-model="dataForm.mobile" placeholder="联系电话" />
               </el-form-item>
               <el-form-item label="邮箱" prop="email">
-                <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
+                <el-input v-model="dataForm.email" placeholder="邮箱" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -34,13 +39,17 @@
             <el-date-picker
               v-model="dataForm.entryTime"
               type="date"
-              placeholder="入职时间">
-            </el-date-picker>
+              placeholder="入职时间"
+            />
           </el-form-item>
           <el-form-item label="是否全职" prop="isFullTime">
             <el-radio-group v-model="dataForm.isFullTime" placeholder="是否全职，1-是，0-否">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="0">否</el-radio>
+              <el-radio :label="1">
+                是
+              </el-radio>
+              <el-radio :label="0">
+                否
+              </el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="状态" prop="status">
@@ -49,15 +58,15 @@
                 v-for="item in statusList"
                 :key="item.value"
                 :label="item.label"
-                :value="item.value">
-              </el-option>
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="创建时间" prop="createTime">
-            <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true"></el-input>
+            <el-input v-model="dataForm.createTime" placeholder="创建时间，自动生成，无需填写" :disabled="true" />
           </el-form-item>
           <el-form-item label="备注" prop="remark">
-            <el-input v-model="dataForm.remark" placeholder="备注" type="textarea"></el-input>
+            <el-input v-model="dataForm.remark" placeholder="备注" type="textarea" />
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -69,8 +78,8 @@
             :data="classesList"
             :filterable="true"
             :props="{key:'id',label:'name'}"
-            style="text-align: left;display: inline-block">
-          </el-transfer>
+            style="text-align: left;display: inline-block"
+          />
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -86,7 +95,7 @@
   import moment from 'moment'
   export default {
     data () {
-      var validateMobile = (rule, value, callback) => {
+      const validateMobile = (rule, value, callback) => {
         if (!isMobile(value)) {
           callback(new Error('手机号格式错误'))
         } else {

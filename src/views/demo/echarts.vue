@@ -3,31 +3,34 @@
     <el-alert
       title="提示："
       type="warning"
-      :closable="false">
+      :closable="false"
+    >
       <div slot-scope="description">
-        <p class="el-alert__description">1. 此Demo只提供ECharts官方使用文档，入门部署和体验功能。具体使用请参考：http://echarts.baidu.com/index.html</p>
+        <p class="el-alert__description">
+          1. 此Demo只提供ECharts官方使用文档，入门部署和体验功能。具体使用请参考：http://echarts.baidu.com/index.html
+        </p>
       </div>
     </el-alert>
 
     <el-row :gutter="20">
       <el-col :span="24">
         <el-card>
-          <div id="J_chartLineBox" class="chart-box"></div>
+          <div id="J_chartLineBox" class="chart-box" />
         </el-card>
       </el-col>
       <el-col :span="24">
         <el-card>
-          <div id="J_chartBarBox" class="chart-box"></div>
+          <div id="J_chartBarBox" class="chart-box" />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card>
-          <div id="J_chartPieBox" class="chart-box"></div>
+          <div id="J_chartPieBox" class="chart-box" />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card>
-          <div id="J_chartScatterBox" class="chart-box"></div>
+          <div id="J_chartScatterBox" class="chart-box" />
         </el-card>
       </el-col>
     </el-row>

@@ -1,24 +1,25 @@
 <template>
-    <el-dialog
-      title="批量绑定课程【如果所选教师已有绑定课程，则该操作将会为其补充绑定课程】"
-      :close-on-click-modal="false"
-      :visible.sync="visible"
-      @close="closeDialog">
-      <div style="text-align: center">
-        <el-transfer
-          v-model="currentValue"
-          :titles="['待选课程','已选课程']"
-          :data="classesList"
-          :filterable="true"
-          :props="{key:'id',label:'name'}"
-          style="text-align: left;display: inline-block">
-        </el-transfer>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
-      </span>
-    </el-dialog>
+  <el-dialog
+    title="批量绑定课程【如果所选教师已有绑定课程，则该操作将会为其补充绑定课程】"
+    :close-on-click-modal="false"
+    :visible.sync="visible"
+    @close="closeDialog"
+  >
+    <div style="text-align: center">
+      <el-transfer
+        v-model="currentValue"
+        :titles="['待选课程','已选课程']"
+        :data="classesList"
+        :filterable="true"
+        :props="{key:'id',label:'name'}"
+        style="text-align: left;display: inline-block"
+      />
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>

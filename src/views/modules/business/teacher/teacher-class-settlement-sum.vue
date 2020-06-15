@@ -2,12 +2,14 @@
   <el-dialog
     title="课程结算概况"
     :close-on-click-modal="false"
-    :visible.sync="visible">
+    :visible.sync="visible"
+  >
     <div style="text-align: center;margin-bottom: 10px">
       <el-button
         type="primary"
+        style="margin-right: 10px"
         @click="lastWeekClick"
-        style="margin-right: 10px">
+      >
         上一月
       </el-button>
       <el-date-picker
@@ -21,79 +23,86 @@
         :default-time="['00:00:00', '23:59:59']"
         :picker-options="pickerOptions"
         :clearable="false"
-        @change="getSumList">
-      </el-date-picker>
+        @change="getSumList"
+      />
       <el-button
         type="primary"
+        style="margin-left: 10px"
         @click="nextWeekClick"
-        style="margin-left: 10px">
+      >
         下一月
       </el-button>
     </div>
     <div>
       <el-table
+        v-loading="dataListLoading"
         :data="dataList"
         border
         stripe
         show-summary
         :summary-method="getSummaries"
-        v-loading="dataListLoading"
-        style="width: 100%;">
+        style="width: 100%;"
+      >
         <el-table-column
           prop="bdClassesId"
           header-align="center"
           align="center"
           width="50"
-          label="课程ID">
-        </el-table-column>
+          label="课程ID"
+        />
         <el-table-column
           prop="className"
           header-align="center"
           align="center"
-          label="课程">
-        </el-table-column>
+          label="课程"
+        />
         <el-table-column
           prop="totalCount"
           header-align="center"
           align="center"
-          label="已排课数量">
-        </el-table-column>
+          label="已排课数量"
+        />
         <el-table-column
           prop="unSignCount"
           header-align="center"
           align="center"
-          label="未签到数量">
-        </el-table-column>
+          label="未签到数量"
+        />
         <el-table-column
           prop="unSettlementCount"
           header-align="center"
           align="center"
-          label="已签到未结算数量">
-        </el-table-column>
+          label="已签到未结算数量"
+        />
         <el-table-column
           prop="settlementCount"
           header-align="center"
           align="center"
-          label="已结算数量">
-        </el-table-column>
+          label="已结算数量"
+        />
         <el-table-column
           prop="settlementAmount"
           header-align="center"
           align="center"
-          label="已结算金额">
-        </el-table-column>
+          label="已结算金额"
+        />
         <el-table-column
           fixed="right"
           header-align="center"
           width="100"
-          label="操作">
+          label="操作"
+        >
           <template slot-scope="scope">
-            <div style="text-align: center"><el-button size="mini" type="primary" @click="settlementManage(scope.row.bdClassesId)">结算管理</el-button></div>
+            <div style="text-align: center">
+              <el-button size="mini" type="primary" @click="settlementManage(scope.row.bdClassesId)">
+                结算管理
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
       <!-- 弹窗，课程结算 -->
-      <teacher-class-settlement v-if="teacherClassSettlementVisible" ref="teacherClassSettlement" @refreshList="getSumList"></teacher-class-settlement>
+      <teacher-class-settlement v-if="teacherClassSettlementVisible" ref="teacherClassSettlement" @refreshList="getSumList" />
     </div>
   </el-dialog>
 </template>

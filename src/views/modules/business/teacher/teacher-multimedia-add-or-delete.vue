@@ -3,8 +3,9 @@
     :close-on-click-modal="false"
     width="60%"
     :visible.sync="visible"
-    @close="closeDialog">
-    <el-tabs v-model="activeName" @tab-click="handleTabClick" type="border-card" v-loading="dataListLoading">
+    @close="closeDialog"
+  >
+    <el-tabs v-model="activeName" v-loading="dataListLoading" type="border-card" @tab-click="handleTabClick">
       <el-tab-pane label="图片上传" name="pictureUpload">
         <div v-if="isPictureUploadShow">
           <el-upload
@@ -18,56 +19,68 @@
             :on-success="handlePictureSuccess"
             :on-error="handlePictureError"
             :on-exceed="handlePictureExceed"
-            :before-upload="beforePictureUpload">
-            <i class="el-icon-plus"></i>
+            :before-upload="beforePictureUpload"
+          >
+            <i class="el-icon-plus" />
           </el-upload>
           <el-dialog :visible.sync="previewDialogVisible" append-to-body>
             <img width="100%" :src="previewDialogImageUrl" alt="">
           </el-dialog>
-          <div class="el-upload__tip" slot="tip" style="margin-bottom: 10px">注意！图片顺序与列表顺序一致！图片大小不超过2mb！</div>
+          <div slot="tip" class="el-upload__tip" style="margin-bottom: 10px">
+            注意！图片顺序与列表顺序一致！图片大小不超过2mb！
+          </div>
           <el-table
+            v-loading="dataListLoading"
             :data="fileList"
             border
-            v-loading="dataListLoading"
-            style="width: 100%;">
+            style="width: 100%;"
+          >
             <el-table-column
               prop="id"
               header-align="center"
               align="center"
               width="80"
-              label="ID">
-            </el-table-column>
+              label="ID"
+            />
             <el-table-column
               prop="name"
               header-align="center"
               align="center"
               width="400"
-              label="图片名称">
-            </el-table-column>
+              label="图片名称"
+            />
             <el-table-column
               prop="flag"
               header-align="center"
               align="center"
-              label="类型">
+              label="类型"
+            >
               <template slot-scope="scope">
-                <el-tag v-if="scope.row.flag === 11" size="small" type="success">教师封面</el-tag>
-                <el-tag v-else size="small" type="warning">其它</el-tag>
+                <el-tag v-if="scope.row.flag === 11" size="small" type="success">
+                  教师封面
+                </el-tag>
+                <el-tag v-else size="small" type="warning">
+                  其它
+                </el-tag>
               </template>
             </el-table-column>
             <el-table-column
               prop="createTime"
               header-align="center"
               align="center"
-              label="上传时间">
-            </el-table-column>
+              label="上传时间"
+            />
             <el-table-column
               fixed="right"
               header-align="center"
               align="center"
               width="150"
-              label="操作">
+              label="操作"
+            >
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="changePictureFlag(scope.row.id)">设置为教师封面</el-button>
+                <el-button type="text" size="small" @click="changePictureFlag(scope.row.id)">
+                  设置为教师封面
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -80,15 +93,20 @@
             :limit="5"
             drag
             :file-list="fileList"
-            :show-file-list = "true"
+            :show-file-list="true"
             :before-upload="beforeVideoUpload"
             :on-exceed="handleVideoExceed"
             :on-success="handleVideoSuccess"
             :on-error="handleVideoError"
-            :on-remove="handleVideoRemove">
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            <div class="el-upload__tip" slot="tip">只能上传mp4、flv、avi、rmvb文件，且不超过10mb</div>
+            :on-remove="handleVideoRemove"
+          >
+            <i class="el-icon-upload" />
+            <div class="el-upload__text">
+              将文件拖到此处，或<em>点击上传</em>
+            </div>
+            <div slot="tip" class="el-upload__tip">
+              只能上传mp4、flv、avi、rmvb文件，且不超过10mb
+            </div>
           </el-upload>
         </div>
       </el-tab-pane>

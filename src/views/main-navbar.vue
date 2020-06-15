@@ -2,50 +2,58 @@
   <nav class="site-navbar" :class="'site-navbar--' + navbarLayoutType">
     <div class="site-navbar__header">
       <h1 class="site-navbar__brand" @click="$router.push({ name: 'home' })">
-        <a class="site-navbar__brand-lg" href="javascript:;">教务管理系统</a>
-        <a class="site-navbar__brand-mini" href="javascript:;">教务</a>
+        <a class="site-navbar__brand-lg" href="javascript:">教务管理系统</a>
+        <a class="site-navbar__brand-mini" href="javascript:">教务</a>
       </h1>
     </div>
     <div class="site-navbar__body clearfix">
       <el-menu
         class="site-navbar__menu"
-        mode="horizontal">
+        mode="horizontal"
+      >
         <el-menu-item class="site-navbar__switch" index="0" @click="sidebarFold = !sidebarFold">
-          <icon-svg name="zhedie"></icon-svg>
+          <icon-svg name="zhedie" />
         </el-menu-item>
       </el-menu>
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
-        mode="horizontal">
+        mode="horizontal"
+      >
         <el-menu-item index="1" @click="$router.push({ name: 'theme' })">
           <template slot="title">
-<!--            <el-badge value="new">-->
-            <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
+            <!--            <el-badge value="new">-->
+            <icon-svg name="shezhi" class="el-icon-setting" />
             <a>设置</a>
-<!--            </el-badge>-->
+            <!--            </el-badge>-->
           </template>
         </el-menu-item>
-<!--        <el-menu-item index="2">-->
-<!--          <el-badge value="hot">-->
-<!--            <a href="//www.renren.io/" target="_blank">官方社区</a>-->
-<!--          </el-badge>-->
-<!--        </el-menu-item>-->
-<!--        <el-submenu index="3">-->
-<!--          <template slot="title">Git源码</template>-->
-<!--          <el-menu-item index="2-1"><a href="//github.com/daxiongYang/renren-fast-vue" target="_blank">前端</a></el-menu-item>-->
-<!--          <el-menu-item index="2-2"><a href="//git.oschina.net/renrenio/renren-fast" target="_blank">后台</a></el-menu-item>-->
-<!--          <el-menu-item index="2-3"><a href="//git.oschina.net/renrenio/renren-generator" target="_blank">代码生成器</a></el-menu-item>-->
-<!--        </el-submenu>-->
+        <!--        <el-menu-item index="2">-->
+        <!--          <el-badge value="hot">-->
+        <!--            <a href="//www.renren.io/" target="_blank">官方社区</a>-->
+        <!--          </el-badge>-->
+        <!--        </el-menu-item>-->
+        <!--        <el-submenu index="3">-->
+        <!--          <template slot="title">Git源码</template>-->
+        <!--          <el-menu-item index="2-1"><a href="//github.com/daxiongYang/renren-fast-vue" target="_blank">前端</a></el-menu-item>-->
+        <!--          <el-menu-item index="2-2"><a href="//git.oschina.net/renrenio/renren-fast" target="_blank">后台</a></el-menu-item>-->
+        <!--          <el-menu-item index="2-3"><a href="//git.oschina.net/renrenio/renren-generator" target="_blank">代码生成器</a></el-menu-item>-->
+        <!--        </el-submenu>-->
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
               <img src="~@/assets/img/avatar.png" :alt="userName">{{ userName }}（{{ orgName }}）
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="addOrUpdateHandle()">个人设置</el-dropdown-item>
-              <el-dropdown-item @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
-<!--              <el-dropdown-item @click.native="bindingWXHandle()">绑定微信</el-dropdown-item>-->
-              <el-dropdown-item @click.native="logoutHandle()">退出</el-dropdown-item>
+              <el-dropdown-item @click.native="addOrUpdateHandle()">
+                个人设置
+              </el-dropdown-item>
+              <el-dropdown-item @click.native="updatePasswordHandle()">
+                修改密码
+              </el-dropdown-item>
+              <!--              <el-dropdown-item @click.native="bindingWXHandle()">绑定微信</el-dropdown-item>-->
+              <el-dropdown-item @click.native="logoutHandle()">
+                退出
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-menu-item>
@@ -53,11 +61,11 @@
     </div>
 
     <!-- 弹窗, 修改个人信息 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate"></add-or-update>
+    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" />
     <!-- 弹窗, 修改密码 -->
-    <update-password v-if="updatePassowrdVisible" ref="updatePassowrd"></update-password>
+    <update-password v-if="updatePassowrdVisible" ref="updatePassowrd" />
     <!-- 弹窗, 绑定微信 -->
-<!--    <binding-WX v-if="bindingWXVisible" ref="bindingWX"></binding-WX>-->
+    <!--    <binding-WX v-if="bindingWXVisible" ref="bindingWX"></binding-WX>-->
   </nav>
 </template>
 
@@ -67,17 +75,17 @@
   // import BindingWX from './main-navbar-bindingWX'
   import { clearLoginInfo } from '@/utils'
   export default {
+    components: {
+      UpdatePassword,
+      AddOrUpdate
+      // BindingWX
+    },
     data () {
       return {
         updatePassowrdVisible: false,
         addOrUpdateVisible: false
         // bindingWXVisible: false
       }
-    },
-    components: {
-      UpdatePassword,
-      AddOrUpdate
-      // BindingWX
     },
     computed: {
       navbarLayoutType: {

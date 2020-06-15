@@ -2,67 +2,75 @@
   <div class="mod-oss">
     <el-form :inline="true" :model="dataForm">
       <el-form-item>
-<!--        <el-button type="primary" @click="configHandle()">云存储配置</el-button>-->
-        <el-button type="primary" @click="uploadHandle()">上传文件</el-button>
-        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <!--        <el-button type="primary" @click="configHandle()">云存储配置</el-button>-->
+        <el-button type="primary" @click="uploadHandle()">
+          上传文件
+        </el-button>
+        <el-button type="danger" :disabled="dataListSelections.length <= 0" @click="deleteHandle()">
+          批量删除
+        </el-button>
       </el-form-item>
     </el-form>
     <el-table
+      v-loading="dataListLoading"
       :data="dataList"
       border
-      v-loading="dataListLoading"
+      style="width: 100%;"
       @selection-change="selectionChangeHandle"
-      style="width: 100%;">
+    >
       <el-table-column
         type="selection"
         header-align="center"
         align="center"
-        width="50">
-      </el-table-column>
+        width="50"
+      />
       <el-table-column
         prop="id"
         header-align="center"
         align="center"
         width="80"
-        label="ID">
-      </el-table-column>
+        label="ID"
+      />
       <el-table-column
         prop="url"
         header-align="center"
         align="center"
-        label="URL地址">
-      </el-table-column>
+        label="URL地址"
+      />
       <el-table-column
         prop="createDate"
         header-align="center"
         align="center"
         width="180"
-        label="创建时间">
-      </el-table-column>
+        label="创建时间"
+      />
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
-        label="操作">
+        label="操作"
+      >
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="sizeChangeHandle"
-      @current-change="currentChangeHandle"
       :current-page="pageIndex"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+    />
     <!-- 弹窗, 云存储配置 -->
-    <config v-if="configVisible" ref="config"></config>
+    <config v-if="configVisible" ref="config" />
     <!-- 弹窗, 上传文件 -->
-    <upload v-if="uploadVisible" ref="upload" @refreshDataList="getDataList"></upload>
+    <upload v-if="uploadVisible" ref="upload" @refreshDataList="getDataList" />
   </div>
 </template>
 
@@ -70,6 +78,10 @@
   import Config from './oss-config'
   import Upload from './oss-upload'
   export default {
+    components: {
+      Config,
+      Upload
+    },
     data () {
       return {
         dataForm: {},
@@ -82,10 +94,6 @@
         configVisible: false,
         uploadVisible: false
       }
-    },
-    components: {
-      Config,
-      Upload
     },
     activated () {
       this.getDataList()
@@ -144,7 +152,7 @@
       },
       // 删除
       deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
+        const ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {

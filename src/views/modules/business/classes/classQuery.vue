@@ -3,8 +3,9 @@
     <div style="text-align: center">
       <el-button
         type="primary"
+        style="margin-right: 10px"
         @click="lastWeekClick"
-        style="margin-right: 10px">
+      >
         上一周
       </el-button>
       <el-date-picker
@@ -18,12 +19,13 @@
         :default-time="['00:00:00', '23:59:59']"
         :picker-options="pickerOptions"
         :clearable="false"
-        @change="changeRangeDate">
-      </el-date-picker>
+        @change="changeRangeDate"
+      />
       <el-button
         type="primary"
+        style="margin-left: 10px"
         @click="nextWeekClick"
-        style="margin-left: 10px">
+      >
         下一周
       </el-button>
     </div>
@@ -34,10 +36,12 @@
             <el-col :span="24">
               <el-row :gutter="5" style="margin-bottom: 10px">
                 <el-col :span="16">
-                  <el-input v-model="queryName" placeholder="教师名称" clearable></el-input>
+                  <el-input v-model="queryName" placeholder="教师名称" clearable />
                 </el-col>
                 <el-col :span="4">
-                  <el-button @click="getTeacherList">查询</el-button>
+                  <el-button @click="getTeacherList">
+                    查询
+                  </el-button>
                 </el-col>
               </el-row>
               <el-row>
@@ -49,13 +53,14 @@
                     max-height="1000px"
                     :header-cell-style="tableHeaderColor"
                     :row-style="tableRowStyle"
-                    @row-click="teacherRowClick">
+                    @row-click="teacherRowClick"
+                  >
                     <el-table-column
                       prop="name"
                       header-align="center"
                       align="center"
-                      label="教师">
-                    </el-table-column>
+                      label="教师"
+                    />
                   </el-table>
                 </el-col>
                 <el-col :span="12">
@@ -66,28 +71,29 @@
                     max-height="1000px"
                     :header-cell-style="tableHeaderColor"
                     :row-style="tableRowStyle"
-                    @row-click="classesRowClick">
+                    @row-click="classesRowClick"
+                  >
                     <el-table-column
                       prop="bdClassesName"
                       header-align="center"
                       align="center"
                       :formatter="formatClassesName"
-                      label="课程">
-                    </el-table-column>
+                      label="课程"
+                    />
                   </el-table>
                 </el-col>
               </el-row>
               <el-pagination
-                @size-change="sizeChangeHandle"
-                @current-change="currentChangeHandle"
                 :hide-on-single-page="true"
                 :current-page="pageIndex"
                 :page-sizes="[10, 20, 50, 100]"
                 :pager-count="5"
                 :page-size="pageSize"
                 :total="totalPage"
-                layout="total, prev, pager, next">
-              </el-pagination>
+                layout="total, prev, pager, next"
+                @size-change="sizeChangeHandle"
+                @current-change="currentChangeHandle"
+              />
             </el-col>
           </el-row>
         </el-card>
@@ -95,73 +101,173 @@
       <el-col :sm="16" :lg="19" :xl="20">
         <el-card shadow="always" style="background: #a2e1da">
           <el-row>
-            <el-col :sm="2" :xl="2" style="text-align: center;height: 37px"><div style="position: relative;top: 50%;transform: translateY(-50%)">时间</div></el-col>
-            <el-col :sm="3" :xl="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week1}}</el-row><el-row>{{day1.substring(5)}}</el-row></el-col>
-            <el-col :sm="3" :xl="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week2}}</el-row><el-row>{{day2.substring(5)}}</el-row></el-col>
-            <el-col :sm="3" :xl="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week3}}</el-row><el-row>{{day3.substring(5)}}</el-row></el-col>
-            <el-col :sm="3" :xl="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week4}}</el-row><el-row>{{day4.substring(5)}}</el-row></el-col>
-            <el-col :sm="3" :xl="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week5}}</el-row><el-row>{{day5.substring(5)}}</el-row></el-col>
-            <el-col :sm="3" :xl="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week6}}</el-row><el-row>{{day6.substring(5)}}</el-row></el-col>
-            <el-col :sm="3" :xl="3" style="text-align: center"><el-row style="margin-bottom: 5px">{{week7}}</el-row><el-row>{{day7.substring(5)}}</el-row></el-col>
+            <el-col :sm="2" :xl="2" style="text-align: center;height: 37px">
+              <div style="position: relative;top: 50%;transform: translateY(-50%)">
+                时间
+              </div>
+            </el-col>
+            <el-col :sm="3" :xl="3" style="text-align: center">
+              <el-row style="margin-bottom: 5px">
+                {{ week1 }}
+              </el-row><el-row>{{ day1.substring(5) }}</el-row>
+            </el-col>
+            <el-col :sm="3" :xl="3" style="text-align: center">
+              <el-row style="margin-bottom: 5px">
+                {{ week2 }}
+              </el-row><el-row>{{ day2.substring(5) }}</el-row>
+            </el-col>
+            <el-col :sm="3" :xl="3" style="text-align: center">
+              <el-row style="margin-bottom: 5px">
+                {{ week3 }}
+              </el-row><el-row>{{ day3.substring(5) }}</el-row>
+            </el-col>
+            <el-col :sm="3" :xl="3" style="text-align: center">
+              <el-row style="margin-bottom: 5px">
+                {{ week4 }}
+              </el-row><el-row>{{ day4.substring(5) }}</el-row>
+            </el-col>
+            <el-col :sm="3" :xl="3" style="text-align: center">
+              <el-row style="margin-bottom: 5px">
+                {{ week5 }}
+              </el-row><el-row>{{ day5.substring(5) }}</el-row>
+            </el-col>
+            <el-col :sm="3" :xl="3" style="text-align: center">
+              <el-row style="margin-bottom: 5px">
+                {{ week6 }}
+              </el-row><el-row>{{ day6.substring(5) }}</el-row>
+            </el-col>
+            <el-col :sm="3" :xl="3" style="text-align: center">
+              <el-row style="margin-bottom: 5px">
+                {{ week7 }}
+              </el-row><el-row>{{ day7.substring(5) }}</el-row>
+            </el-col>
           </el-row>
         </el-card>
-        <el-card shadow="always" class="timeSheet" v-loading="classQueryListLoading">
+        <el-card v-loading="classQueryListLoading" shadow="always" class="timeSheet">
           <div style="position: relative; height: 750px; overflow: auto; overflow-x: hidden">
             <div style="position: absolute;margin-left: 110px;width: 1183px;height: 720px">
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
-              <el-row class="timeRow"><el-divider></el-divider></el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
+              <el-row class="timeRow">
+                <el-divider />
+              </el-row>
             </div>
             <el-row>
               <el-col :sm="2" :xl="2" style="text-align: center">
-                <el-row class="timeRow">7:00</el-row>
-                <el-row class="timeRow">8:00</el-row>
-                <el-row class="timeRow">9:00</el-row>
-                <el-row class="timeRow">10:00</el-row>
-                <el-row class="timeRow">11:00</el-row>
-                <el-row class="timeRow">12:00</el-row>
-                <el-row class="timeRow">13:00</el-row>
-                <el-row class="timeRow">14:00</el-row>
-                <el-row class="timeRow">15:00</el-row>
-                <el-row class="timeRow">16:00</el-row>
-                <el-row class="timeRow">17:00</el-row>
-                <el-row class="timeRow">18:00</el-row>
-                <el-row class="timeRow">19:00</el-row>
-                <el-row class="timeRow">20:00</el-row>
-                <el-row class="timeRow">21:00</el-row>
-                <el-row class="timeRow">22:00</el-row>
-                <el-row class="timeRow">23:00</el-row>
+                <el-row class="timeRow">
+                  7:00
+                </el-row>
+                <el-row class="timeRow">
+                  8:00
+                </el-row>
+                <el-row class="timeRow">
+                  9:00
+                </el-row>
+                <el-row class="timeRow">
+                  10:00
+                </el-row>
+                <el-row class="timeRow">
+                  11:00
+                </el-row>
+                <el-row class="timeRow">
+                  12:00
+                </el-row>
+                <el-row class="timeRow">
+                  13:00
+                </el-row>
+                <el-row class="timeRow">
+                  14:00
+                </el-row>
+                <el-row class="timeRow">
+                  15:00
+                </el-row>
+                <el-row class="timeRow">
+                  16:00
+                </el-row>
+                <el-row class="timeRow">
+                  17:00
+                </el-row>
+                <el-row class="timeRow">
+                  18:00
+                </el-row>
+                <el-row class="timeRow">
+                  19:00
+                </el-row>
+                <el-row class="timeRow">
+                  20:00
+                </el-row>
+                <el-row class="timeRow">
+                  21:00
+                </el-row>
+                <el-row class="timeRow">
+                  22:00
+                </el-row>
+                <el-row class="timeRow">
+                  23:00
+                </el-row>
               </el-col>
               <el-col :sm="3" :xl="3" class="classArrangeCol">
-                <div v-for="(item, index) in dayList1" v-bind:key="item.id">
+                <div v-for="(item, index) in dayList1" :key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                      <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                      <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.className }}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.classWay }}</el-row>
+                      <el-row><i class="el-icon-alarm-clock toolTipsContent" />{{ item.startTime }}至{{ item.endTime }}</el-row>
+                      <el-row><i class="el-icon-user toolTipsContent" />{{ item.studentName }}</el-row>
                     </div>
-                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList1[index - 1] != null ? ((item.diffTime - dayList1[index - 1].diffTime - dayList1[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList1[index - 1] != null ? ((item.diffTime - dayList1[index - 1].diffTime - dayList1[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" @dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                       <div class="centerContent">
                         <el-row style="margin-bottom: 5px">
-                          {{item.className}}<span v-if="item.type === 1">（{{item.studentName}}）</span>
+                          {{ item.className }}<span v-if="item.type === 1">（{{ item.studentName }}）</span>
                         </el-row>
                         <el-row style="color: lightcyan">
-                          <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
+                          <i class="el-icon-bell" style="margin-right: 10px" />{{ item.startTime }}至{{ item.endTime }}
                         </el-row>
                       </div>
                     </div>
@@ -169,21 +275,21 @@
                 </div>
               </el-col>
               <el-col :sm="3" :xl="3" class="classArrangeCol">
-                <div v-for="(item, index) in dayList2" v-bind:key="item.id">
+                <div v-for="(item, index) in dayList2" :key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                      <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                      <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.className }}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.classWay }}</el-row>
+                      <el-row><i class="el-icon-alarm-clock toolTipsContent" />{{ item.startTime }}至{{ item.endTime }}</el-row>
+                      <el-row><i class="el-icon-user toolTipsContent" />{{ item.studentName }}</el-row>
                     </div>
-                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList2[index - 1] != null ? ((item.diffTime - dayList2[index - 1].diffTime - dayList2[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList2[index - 1] != null ? ((item.diffTime - dayList2[index - 1].diffTime - dayList2[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" @dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                       <div class="centerContent">
                         <el-row style="margin-bottom: 5px">
-                          {{item.className}}<span v-if="item.type === 1">（{{item.studentName}}）</span>
+                          {{ item.className }}<span v-if="item.type === 1">（{{ item.studentName }}）</span>
                         </el-row>
                         <el-row style="color: lightcyan">
-                          <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
+                          <i class="el-icon-bell" style="margin-right: 10px" />{{ item.startTime }}至{{ item.endTime }}
                         </el-row>
                       </div>
                     </div>
@@ -191,21 +297,21 @@
                 </div>
               </el-col>
               <el-col :sm="3" :xl="3" class="classArrangeCol">
-                <div v-for="(item, index) in dayList3" v-bind:key="item.id">
+                <div v-for="(item, index) in dayList3" :key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                      <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                      <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.className }}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.classWay }}</el-row>
+                      <el-row><i class="el-icon-alarm-clock toolTipsContent" />{{ item.startTime }}至{{ item.endTime }}</el-row>
+                      <el-row><i class="el-icon-user toolTipsContent" />{{ item.studentName }}</el-row>
                     </div>
-                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList3[index - 1] != null ? ((item.diffTime - dayList3[index - 1].diffTime - dayList3[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList3[index - 1] != null ? ((item.diffTime - dayList3[index - 1].diffTime - dayList3[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" @dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                       <div class="centerContent">
                         <el-row style="margin-bottom: 5px">
-                          {{item.className}}<span v-if="item.type === 1">（{{item.studentName}}）</span>
+                          {{ item.className }}<span v-if="item.type === 1">（{{ item.studentName }}）</span>
                         </el-row>
                         <el-row style="color: lightcyan">
-                          <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
+                          <i class="el-icon-bell" style="margin-right: 10px" />{{ item.startTime }}至{{ item.endTime }}
                         </el-row>
                       </div>
                     </div>
@@ -213,21 +319,21 @@
                 </div>
               </el-col>
               <el-col :sm="3" :xl="3" class="classArrangeCol">
-                <div v-for="(item, index) in dayList4" v-bind:key="item.id">
+                <div v-for="(item, index) in dayList4" :key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                      <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                      <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.className }}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.classWay }}</el-row>
+                      <el-row><i class="el-icon-alarm-clock toolTipsContent" />{{ item.startTime }}至{{ item.endTime }}</el-row>
+                      <el-row><i class="el-icon-user toolTipsContent" />{{ item.studentName }}</el-row>
                     </div>
-                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList4[index - 1] != null ? ((item.diffTime - dayList4[index - 1].diffTime - dayList4[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList4[index - 1] != null ? ((item.diffTime - dayList4[index - 1].diffTime - dayList4[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" @dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                       <div class="centerContent">
                         <el-row style="margin-bottom: 5px">
-                          {{item.className}}<span v-if="item.type === 1">（{{item.studentName}}）</span>
+                          {{ item.className }}<span v-if="item.type === 1">（{{ item.studentName }}）</span>
                         </el-row>
                         <el-row style="color: lightcyan">
-                          <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
+                          <i class="el-icon-bell" style="margin-right: 10px" />{{ item.startTime }}至{{ item.endTime }}
                         </el-row>
                       </div>
                     </div>
@@ -235,21 +341,21 @@
                 </div>
               </el-col>
               <el-col :sm="3" :xl="3" class="classArrangeCol">
-                <div v-for="(item, index) in dayList5" v-bind:key="item.id">
+                <div v-for="(item, index) in dayList5" :key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                      <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                      <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.className }}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.classWay }}</el-row>
+                      <el-row><i class="el-icon-alarm-clock toolTipsContent" />{{ item.startTime }}至{{ item.endTime }}</el-row>
+                      <el-row><i class="el-icon-user toolTipsContent" />{{ item.studentName }}</el-row>
                     </div>
-                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList5[index - 1] != null ? ((item.diffTime - dayList5[index - 1].diffTime - dayList5[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList5[index - 1] != null ? ((item.diffTime - dayList5[index - 1].diffTime - dayList5[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" @dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                       <div class="centerContent">
                         <el-row style="margin-bottom: 5px">
-                          {{item.className}}<span v-if="item.type === 1">（{{item.studentName}}）</span>
+                          {{ item.className }}<span v-if="item.type === 1">（{{ item.studentName }}）</span>
                         </el-row>
                         <el-row style="color: lightcyan">
-                          <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
+                          <i class="el-icon-bell" style="margin-right: 10px" />{{ item.startTime }}至{{ item.endTime }}
                         </el-row>
                       </div>
                     </div>
@@ -257,21 +363,21 @@
                 </div>
               </el-col>
               <el-col :sm="3" :xl="3" class="classArrangeCol">
-                <div v-for="(item, index) in dayList6" v-bind:key="item.id">
+                <div v-for="(item, index) in dayList6" :key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                      <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                      <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.className }}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.classWay }}</el-row>
+                      <el-row><i class="el-icon-alarm-clock toolTipsContent" />{{ item.startTime }}至{{ item.endTime }}</el-row>
+                      <el-row><i class="el-icon-user toolTipsContent" />{{ item.studentName }}</el-row>
                     </div>
-                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList6[index - 1] != null ? ((item.diffTime - dayList6[index - 1].diffTime - dayList6[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList6[index - 1] != null ? ((item.diffTime - dayList6[index - 1].diffTime - dayList6[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" @dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                       <div class="centerContent">
                         <el-row style="margin-bottom: 5px">
-                          {{item.className}}<span v-if="item.type === 1">（{{item.studentName}}）</span>
+                          {{ item.className }}<span v-if="item.type === 1">（{{ item.studentName }}）</span>
                         </el-row>
                         <el-row style="color: lightcyan">
-                          <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
+                          <i class="el-icon-bell" style="margin-right: 10px" />{{ item.startTime }}至{{ item.endTime }}
                         </el-row>
                       </div>
                     </div>
@@ -279,21 +385,21 @@
                 </div>
               </el-col>
               <el-col :sm="3" :xl="3" class="classArrangeCol">
-                <div v-for="(item, index) in dayList7" v-bind:key="item.id">
+                <div v-for="(item, index) in dayList7" :key="item.id">
                   <el-tooltip effect="light" placement="right">
                     <div slot="content" style="text-align: left;font-size: 18px">
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.className}}</el-row>
-                      <el-row><i class="el-icon-reading toolTipsContent"></i>{{item.classWay}}</el-row>
-                      <el-row><i class="el-icon-alarm-clock toolTipsContent"></i>{{item.startTime}}至{{item.endTime}}</el-row>
-                      <el-row><i class="el-icon-user toolTipsContent"></i>{{item.studentName}}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.className }}</el-row>
+                      <el-row><i class="el-icon-reading toolTipsContent" />{{ item.classWay }}</el-row>
+                      <el-row><i class="el-icon-alarm-clock toolTipsContent" />{{ item.startTime }}至{{ item.endTime }}</el-row>
+                      <el-row><i class="el-icon-user toolTipsContent" />{{ item.studentName }}</el-row>
                     </div>
-                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList7[index - 1] != null ? ((item.diffTime - dayList7[index - 1].diffTime - dayList7[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" v-on:dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
+                    <div style="cursor: pointer" :style="'background: lightskyblue; height: '+ (item.num * 2) + 'cm;margin-top: ' + (dayList7[index - 1] != null ? ((item.diffTime - dayList7[index - 1].diffTime - dayList7[index - 1].num) * 2) : (item.diffTime * 2 + 0.25)) + 'cm'" @dblclick="classClick(item.bdClassesId, item.className, item.startTime, item.endTime, item.arrangeDate, item.classWay, item.studentName)">
                       <div class="centerContent">
                         <el-row style="margin-bottom: 5px">
-                          {{item.className}}<span v-if="item.type === 1">（{{item.studentName}}）</span>
+                          {{ item.className }}<span v-if="item.type === 1">（{{ item.studentName }}）</span>
                         </el-row>
                         <el-row style="color: lightcyan">
-                          <i class="el-icon-bell" style="margin-right: 10px"></i>{{item.startTime}}至{{item.endTime}}
+                          <i class="el-icon-bell" style="margin-right: 10px" />{{ item.startTime }}至{{ item.endTime }}
                         </el-row>
                       </div>
                     </div>
@@ -306,7 +412,7 @@
       </el-col>
     </el-row>
     <!-- 弹窗，显示课程操作区域 -->
-    <class-query-opera v-if="classQueryOperaVisible" ref="classQueryOpera"></class-query-opera>
+    <class-query-opera v-if="classQueryOperaVisible" ref="classQueryOpera" />
   </div>
 </template>
 
