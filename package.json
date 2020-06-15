@@ -25,9 +25,9 @@
     "gulp-load-plugins": "1.5.0",
     "gulp-replace": "0.6.1",
     "gulp-shell": "0.6.5",
-    "lodash": "4.17.5",
+    "lodash": "4.17.15",
     "moment": "^2.24.0",
-    "node-sass": "4.9.0",
+    "node-sass": "^4.14.1",
     "postcss-aspect-ratio-mini": "^1.0.1",
     "postcss-cssnext": "^3.1.0",
     "postcss-px-to-viewport": "^1.1.1",
@@ -46,7 +46,6 @@
     "xlsx": "^0.15.4"
   },
   "devDependencies": {
-    "autoprefixer": "7.1.2",
     "babel-core": "6.22.1",
     "babel-eslint": "7.1.1",
     "babel-jest": "21.0.2",
@@ -58,7 +57,7 @@
     "babel-preset-stage-2": "6.22.0",
     "babel-register": "6.22.0",
     "chalk": "2.3.0",
-    "chromedriver": "2.27.2",
+    "chromedriver": "83.0.0",
     "copy-webpack-plugin": "4.0.1",
     "cross-spawn": "5.0.1",
     "css-loader": "0.28.0",
